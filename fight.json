@@ -1,0 +1,22 @@
+{
+  "attacker": "Foo",
+  "defender": "Bar",
+  "upgrades": {
+
+  },
+  "battlefield": 1,
+  "rounds": [
+    {
+      "date": "",
+      "reserve": {
+        "1": 2
+      },
+      "front": [[1, 30, 20, 80]],
+      "range": [[], [], []],
+      "artillery": [],
+      "air": [],
+      "bomber": [],
+      "flank": []
+    }
+  ]
+}

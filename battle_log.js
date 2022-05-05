@@ -1,4 +1,4 @@
-const units = {
+const UNITS = {
   1: "Hoplite",
   2: "Steam Giant",
   3: "Spearmen",
@@ -30,7 +30,7 @@ const units = {
 };
 
 // Index of mage of unit in the 'unitsprites' image
-const unitSClass = [
+const UNIT_S_CLASS = [
   ,
   2,
   7,
@@ -123,9 +123,38 @@ class Layout {
     air: [26, true],
   };
 
-  constructor(layoutName) {
+  constructor(playerSide, layoutName) {
     [this.displayNumber, this.hasAmmo] = Layout.LAYOUTS[layoutName];
     this.slotCount = battleField.getLayoutSizes()[layoutName];
+	this.playerSide = playerSide
+  }
+
+  update(layoutData) {
+	let slot = null;
+	let slotData = null;
+  
+	for (let i = 0; i < this.slotCount; i++) {
+		let id = this.getSlotId(i);
+		let slotElement = document.getElementById(id);
+  
+		if (this.hasAmmo) {
+			slot = new RangedSlot(slotElement);
+		} else {
+			slot = new Slot(slotElement);
+		}
+	
+		slotData = layoutData[i];
+	
+		if (slotData != null) {
+			slot.setData(slotData);
+		} else {
+			slot.setEmpty();
+		}
+		}
+	}
+
+  getSlotId(slotNumber) {
+	return `slot${this.playerSide}_${this.displayNumber}_${slotNumber}`;
   }
 }
 class BattleField {
@@ -133,8 +162,8 @@ class BattleField {
     this.battleFieldNumber = battleFieldNumber;
   }
 
-  getLayout(layoutName) {
-    return new Layout(layoutName);
+  getLayout(playerSide, layoutName) {
+    return new Layout(playerSide, layoutName);
   }
 
   getLayoutSizes() {
@@ -162,7 +191,7 @@ class Slot {
     let [unitType, count, loss, healthPercent] = slotData;
 
     this.clearClassList();
-    let unitClassName = "s3" + String(unitSClass[unitType]).padStart(2, "0");
+    let unitClassName = "s3" + String(UNIT_S_CLASS[unitType]).padStart(2, "0");
     this.element.classList.add("slot", "army_small", "normal", unitClassName);
 
     this.setBarPairVisibility(Slot.HEALTH_ELEM_INDEX, "visible");
@@ -230,36 +259,11 @@ class RangedSlot extends Slot {
   }
 }
 
-function updateLayout(battleSide, layout, layoutData) {
-  let slot = null;
-  let slotData = null;
-
-  for (let i = 0; i < layout.slotCount; i++) {
-    let id = `slot${battleSide}_${layout.displayNumber}_${i}`;
-    let slotElement = document.getElementById(id);
-
-    if (layout.hasAmmo) {
-      slot = new RangedSlot(slotElement);
-    } else {
-      slot = new Slot(slotElement);
-    }
-
-    slotData = layoutData[i];
-
-    if (slotData != null) {
-      slot.setData(slotData);
-    } else {
-      slot.setEmpty();
-    }
-  }
-}
-
 function updatePlayer(battleSide, playerData) {
   for (const [key, value] of Object.entries(playerData)) {
     if (key in Layout.LAYOUTS) {
-      let layout = battleField.getLayout(key);
-      console.log(key, layout.slotCount);
-      updateLayout(battleSide, layout, value);
+		let layout = battleField.getLayout(battleSide, key);
+		layout.update(value);
     }
   }
 }

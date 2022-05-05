@@ -6,9 +6,7 @@
     <meta name="language" content="en_US" />
     <meta http-equiv="expires" content="Mon, 26 Jul 1997 05:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
-
-    <!-- <script async="" src="battle_files/analytics.js"></script> -->
-    <!-- <script src="battle_files/main.js" type="text/javascript"></script> -->
+    
     <script src="battle_log.js"></script>
   </head>
   <body>
@@ -34,16 +32,16 @@
                   </colgroup>
                   <tbody>
                     <tr>
-                      <td class="navArrow"><a class="arrow invisible" onclick="first()"><img src="../img/ikariam/arrow_first.png"> </a></td>
-                      <td class="navArrow"><a class="arrow invisible" onclick="back()"><img src="../img/ikariam/arrow_back.png"> </a></td>
-                      <td style="text-align: center">
+                      <td id="navFirst" class="navArrow"><a class="arrow invisible" onclick="first()"><img src="../img/ikariam/arrow_first.png"> </a></td>
+                      <td id="navBack" class="navArrow"><a class="arrow invisible" onclick="back()"><img src="../img/ikariam/arrow_back.png"> </a></td>
+                      <td id="battleTitle" style="text-align: center">
                         <span class="headline_big bold"
                           >Battle for WhatsForDinner Round<br />1 / 64</span
                         ><br />
                         (12.01.2017 7:13:13)
                       </td>
-                      <td class="navArrow"><a class="arrow invisible" onclick="forward()"><img src="../img/ikariam/arrow_fore.png"> </a></td>
-                      <td class="navArrow"><a class="arrow invisible" onclick="last()"><img src="../img/ikariam/arrow_last.png"> </a></td>
+                      <td id="navFore" class="navArrow"><a class="arrow invisible" onclick="forward()"><img src="../img/ikariam/arrow_fore.png"> </a></td>
+                      <td id="navLast" class="navArrow"><a class="arrow invisible" onclick="last()"><img src="../img/ikariam/arrow_last.png"> </a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -95,19 +93,31 @@
                   </div>
                   <div class="field" id="fieldAttacker">
                     <div class="location large airfighter">
-                      <div class="slot empty"></div>
-                      <div class="slot empty"></div>
+                      <div id="slot1_26_0" class="slot empty">
+                        <div class="hitpoints"></div>
+                        <div class="loss"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss"></div>
+                        <div class="number center"></div>
+                      </div>
+                      <div id="slot1_26_1" class="slot empty">
+                        <div class="hitpoints"></div>
+                        <div class="loss"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss"></div>
+                        <div class="number center"></div>
+                      </div>
                       <div style="width: 37px"></div>
                     </div>
                     <div class="location large air">
-                      <div id="slot11_25_0" class="slot army_small normal s309">
+                      <div id="slot1_25_0" class="slot army_small normal s309">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 11px"></div>
                         <div class="number center">15 (-0)</div>
                       </div>
-                      <div id="slot11_25_1" class="slot army_small normal s309">
+                      <div id="slot1_25_1" class="slot army_small normal s309">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
@@ -117,120 +127,120 @@
                       <div style="width: 37px"></div>
                     </div>
                     <div class="location large flankLeft">
-                      <div id="slot11_22_5" class="slot army_small normal s302">
+                      <div id="slot1_22_5" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">28 (-12)</div>
                       </div>
-                      <div id="slot11_22_3" class="slot army_small normal s302">
+                      <div id="slot1_22_3" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">23 (-17)</div>
                       </div>
-                      <div id="slot11_22_1" class="slot army_small normal s302">
+                      <div id="slot1_22_1" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">23 (-17)</div>
                       </div>
                     </div>
                     <div class="location large flankRight">
-                      <div id="slot11_22_0" class="slot army_small normal s302">
+                      <div id="slot1_22_0" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">23 (-17)</div>
                       </div>
-                      <div id="slot11_22_2" class="slot army_small normal s302">
+                      <div id="slot1_22_2" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">23 (-17)</div>
                       </div>
-                      <div id="slot11_22_4" class="slot army_small normal s302">
+                      <div id="slot1_22_4" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">28 (-12)</div>
                       </div>
                     </div>
                     <div class="location large main">
-                      <div id="slot11_21_5" class="slot army_small normal s303">
+                      <div id="slot1_21_5" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 3px"></div>
                         <div class="number center">41 (-9)</div>
                       </div>
-                      <div id="slot11_21_3" class="slot army_small normal s303">
+                      <div id="slot1_21_3" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">36 (-14)</div>
                       </div>
-                      <div id="slot11_21_1" class="slot army_small normal s303">
+                      <div id="slot1_21_1" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">35 (-15)</div>
                       </div>
-                      <div id="slot11_21_0" class="slot army_small normal s303">
+                      <div id="slot1_21_0" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">35 (-15)</div>
                       </div>
-                      <div id="slot11_21_2" class="slot army_small normal s303">
+                      <div id="slot1_21_2" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">36 (-14)</div>
                       </div>
-                      <div id="slot11_21_4" class="slot army_small normal s303">
+                      <div id="slot1_21_4" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 3px"></div>
                         <div class="number center">41 (-9)</div>
                       </div>
-                      <div id="slot11_21_6" class="slot army_small normal s303">
+                      <div id="slot1_21_6" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 3px"></div>
                         <div class="number center">41 (-9)</div>
                       </div>
                     </div>
                     <div class="location large longRange">
-                      <div id="slot11_23_5" class="slot army_small normal s304">
+                      <div id="slot1_23_5" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">12 (-0)</div>
                       </div>
-                      <div id="slot11_23_3" class="slot army_small normal s304">
+                      <div id="slot1_23_3" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">12 (-0)</div>
                       </div>
-                      <div id="slot11_23_1" class="slot army_small normal s304">
+                      <div id="slot1_23_1" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">12 (-0)</div>
                       </div>
-                      <div id="slot11_23_0" class="slot army_small normal s304">
+                      <div id="slot1_23_0" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">12 (-0)</div>
                       </div>
-                      <div id="slot11_23_2" class="slot army_small normal s304">
+                      <div id="slot1_23_2" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">12 (-0)</div>
                       </div>
-                      <div id="slot11_23_4" class="slot army_small normal s304">
+                      <div id="slot1_23_4" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">12 (-0)</div>
                       </div>
-                      <div id="slot11_23_6" class="slot army_small normal s304">
+                      <div id="slot1_23_6" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
@@ -239,29 +249,39 @@
                       </div>
                     </div>
                     <div class="location large artillery">
-                      <div id="slot11_24_4" class="slot army_small normal s307">
+                      <div id="slot1_24_4" class="slot army_small normal s307">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">6 (-0)</div>
                       </div>
-                      <div id="slot11_24_2" class="slot army_small normal s307">
+                      <div id="slot1_24_2" class="slot army_small normal s307">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">6 (-0)</div>
                       </div>
-                      <div id="slot11_24_0" class="slot army_small normal s307">
+                      <div id="slot1_24_0" class="slot army_small normal s307">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">6 (-0)</div>
                       </div>
-                      <div id="slot11_24_1" class="slot army_small normal s307">
+                      <div id="slot1_24_1" class="slot army_small normal s307">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">6 (-0)</div>
                       </div>
-                      <div id="slot11_24_3" class="slot army_small normal s307">
+                      <div id="slot1_24_3" class="slot army_small normal s307">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
+                        <div class="ammo"></div>
+                        <div class="ammoLoss" style="height: 6px"></div>
                         <div class="number center">6 (-0)</div>
                       </div>
                     </div>
@@ -315,7 +335,7 @@
                     <div class="location large artillery">
                       <div class="slot empty"></div>
                       <div class="slot empty"></div>
-                      <div id="slot12_24_0" class="slot army_small normal s307">
+                      <div id="slot2_24_0" class="slot army_small normal s307">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 32px"></div>
                         <div class="number center">0 (-2)</div>
@@ -324,49 +344,49 @@
                       <div class="slot empty"></div>
                     </div>
                     <div class="location large longRange">
-                      <div id="slot12_23_5" class="slot army_small normal s304">
+                      <div id="slot2_23_5" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 1px"></div>
                         <div class="number center">9 (-3)</div>
                       </div>
-                      <div id="slot12_23_3" class="slot army_small normal s304">
+                      <div id="slot2_23_3" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 1px"></div>
                         <div class="number center">8 (-4)</div>
                       </div>
-                      <div id="slot12_23_1" class="slot army_small normal s304">
+                      <div id="slot2_23_1" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 1px"></div>
                         <div class="number center">8 (-4)</div>
                       </div>
-                      <div id="slot12_23_0" class="slot army_small normal s304">
+                      <div id="slot2_23_0" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 1px"></div>
                         <div class="number center">7 (-5)</div>
                       </div>
-                      <div id="slot12_23_2" class="slot army_small normal s304">
+                      <div id="slot2_23_2" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 1px"></div>
                         <div class="number center">8 (-4)</div>
                       </div>
-                      <div id="slot12_23_4" class="slot army_small normal s304">
+                      <div id="slot2_23_4" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
                         <div class="ammoLoss" style="height: 1px"></div>
                         <div class="number center">9 (-3)</div>
                       </div>
-                      <div id="slot12_23_6" class="slot army_small normal s304">
+                      <div id="slot2_23_6" class="slot army_small normal s304">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="ammo"></div>
@@ -375,71 +395,71 @@
                       </div>
                     </div>
                     <div class="location large main">
-                      <div id="slot12_21_5" class="slot army_small normal s303">
+                      <div id="slot2_21_5" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">24 (-26)</div>
                       </div>
-                      <div id="slot12_21_3" class="slot army_small normal s303">
+                      <div id="slot2_21_3" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">22 (-28)</div>
                       </div>
-                      <div id="slot12_21_1" class="slot army_small normal s303">
+                      <div id="slot2_21_1" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">22 (-28)</div>
                       </div>
-                      <div id="slot12_21_0" class="slot army_small normal s303">
+                      <div id="slot2_21_0" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">21 (-29)</div>
                       </div>
-                      <div id="slot12_21_2" class="slot army_small normal s303">
+                      <div id="slot2_21_2" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">22 (-28)</div>
                       </div>
-                      <div id="slot12_21_4" class="slot army_small normal s303">
+                      <div id="slot2_21_4" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">22 (-28)</div>
                       </div>
-                      <div id="slot12_21_6" class="slot army_small normal s303">
+                      <div id="slot2_21_6" class="slot army_small normal s303">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 1px"></div>
                         <div class="number center">27 (-23)</div>
                       </div>
                     </div>
                     <div class="location large flankRight">
-                      <div id="slot12_22_0" class="slot army_small normal s302">
+                      <div id="slot2_22_0" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">16 (-24)</div>
                       </div>
-                      <div id="slot12_22_2" class="slot army_small normal s302">
+                      <div id="slot2_22_2" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">16 (-24)</div>
                       </div>
-                      <div id="slot12_22_4" class="slot army_small normal s302">
+                      <div id="slot2_22_4" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">22 (-18)</div>
                       </div>
                     </div>
                     <div class="location large flankLeft">
-                      <div id="slot12_22_5" class="slot army_small normal s302">
+                      <div id="slot2_22_5" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">22 (-18)</div>
                       </div>
-                      <div id="slot12_22_3" class="slot army_small normal s302">
+                      <div id="slot2_22_3" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">16 (-24)</div>
                       </div>
-                      <div id="slot12_22_1" class="slot army_small normal s302">
+                      <div id="slot2_22_1" class="slot army_small normal s302">
                         <div class="hitpoints"></div>
                         <div class="loss" style="height: 0px"></div>
                         <div class="number center">16 (-24)</div>
@@ -451,8 +471,8 @@
                       <div style="width: 37px"></div>
                     </div>
                     <div class="location large airfighter">
-                      <div class="slot empty"></div>
-                      <div class="slot empty"></div>
+                      <div id="slot2_26_1" class="slot empty"></div>
+                      <div id="slot2_26_0" class="slot empty"></div>
                       <div style="width: 37px"></div>
                     </div>
                   </div>
@@ -609,7 +629,7 @@
                 </div>
               </div>
               <div id="infoBoxes">
-                <div class="infoBox slot11_25_0">
+                <div class="infoBox slot1_25_0">
                   <h2>
                     <span><span>Balloon-Bombardier (Starman)</span></span>
                   </h2>
@@ -618,7 +638,7 @@
                   <p>Munition: 68%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_25_1">
+                <div class="infoBox slot1_25_1">
                   <h2>
                     <span><span>Balloon-Bombardier (Starman)</span></span>
                   </h2>
@@ -627,7 +647,7 @@
                   <p>Munition: 68%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_22_5">
+                <div class="infoBox slot1_22_5">
                   <h2>
                     <span><span>Swordsman (Starman)</span></span>
                   </h2>
@@ -636,7 +656,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 12</p>
                 </div>
-                <div class="infoBox slot11_22_3">
+                <div class="infoBox slot1_22_3">
                   <h2>
                     <span><span>Swordsman (Starman)</span></span>
                   </h2>
@@ -645,7 +665,7 @@
                   <p>Hit points: 95%</p>
                   <p>Losses: 17</p>
                 </div>
-                <div class="infoBox slot11_22_1">
+                <div class="infoBox slot1_22_1">
                   <h2>
                     <span><span>Swordsman (Starman)</span></span>
                   </h2>
@@ -654,7 +674,7 @@
                   <p>Hit points: 95%</p>
                   <p>Losses: 17</p>
                 </div>
-                <div class="infoBox slot11_22_0">
+                <div class="infoBox slot1_22_0">
                   <h2>
                     <span><span>Swordsman (Starman)</span></span>
                   </h2>
@@ -663,7 +683,7 @@
                   <p>Hit points: 95%</p>
                   <p>Losses: 17</p>
                 </div>
-                <div class="infoBox slot11_22_2">
+                <div class="infoBox slot1_22_2">
                   <h2>
                     <span><span>Swordsman (Starman)</span></span>
                   </h2>
@@ -672,7 +692,7 @@
                   <p>Hit points: 95%</p>
                   <p>Losses: 17</p>
                 </div>
-                <div class="infoBox slot11_22_4">
+                <div class="infoBox slot1_22_4">
                   <h2>
                     <span><span>Swordsman (Starman)</span></span>
                   </h2>
@@ -681,7 +701,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 12</p>
                 </div>
-                <div class="infoBox slot11_21_5">
+                <div class="infoBox slot1_21_5">
                   <h2>
                     <span><span>Hoplite (Starman)</span></span>
                   </h2>
@@ -690,7 +710,7 @@
                   <p>Hit points: 89%</p>
                   <p>Losses: 9</p>
                 </div>
-                <div class="infoBox slot11_21_3">
+                <div class="infoBox slot1_21_3">
                   <h2>
                     <span><span>Hoplite (Starman)</span></span>
                   </h2>
@@ -699,7 +719,7 @@
                   <p>Hit points: 97%</p>
                   <p>Losses: 14</p>
                 </div>
-                <div class="infoBox slot11_21_1">
+                <div class="infoBox slot1_21_1">
                   <h2>
                     <span><span>Hoplite (Starman)</span></span>
                   </h2>
@@ -708,7 +728,7 @@
                   <p>Hit points: 97%</p>
                   <p>Losses: 15</p>
                 </div>
-                <div class="infoBox slot11_21_0">
+                <div class="infoBox slot1_21_0">
                   <h2>
                     <span><span>Hoplite (Starman)</span></span>
                   </h2>
@@ -718,7 +738,7 @@
                   <p>Losses: 15</p>
                 </div>
                 <div
-                  class="infoBox slot11_21_2"
+                  class="infoBox slot1_21_2"
                   style="top: 221px; left: 519px; display: none"
                 >
                   <h2>
@@ -730,7 +750,7 @@
                   <p>Losses: 14</p>
                 </div>
                 <div
-                  class="infoBox slot11_21_4"
+                  class="infoBox slot1_21_4"
                   style="top: 221px; left: 565px; display: none"
                 >
                   <h2>
@@ -742,7 +762,7 @@
                   <p>Losses: 9</p>
                 </div>
                 <div
-                  class="infoBox slot11_21_6"
+                  class="infoBox slot1_21_6"
                   style="top: 221px; left: 611px; display: none"
                 >
                   <h2>
@@ -753,7 +773,7 @@
                   <p>Hit points: 89%</p>
                   <p>Losses: 9</p>
                 </div>
-                <div class="infoBox slot11_23_5">
+                <div class="infoBox slot1_23_5">
                   <h2>
                     <span><span>Sulfur Carabineer (Starman)</span></span>
                   </h2>
@@ -762,7 +782,7 @@
                   <p>Munition: 83%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_23_3">
+                <div class="infoBox slot1_23_3">
                   <h2>
                     <span><span>Sulfur Carabineer (Starman)</span></span>
                   </h2>
@@ -771,7 +791,7 @@
                   <p>Munition: 83%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_23_1">
+                <div class="infoBox slot1_23_1">
                   <h2>
                     <span><span>Sulfur Carabineer (Starman)</span></span>
                   </h2>
@@ -780,7 +800,7 @@
                   <p>Munition: 83%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_23_0">
+                <div class="infoBox slot1_23_0">
                   <h2>
                     <span><span>Sulfur Carabineer (Starman)</span></span>
                   </h2>
@@ -790,7 +810,7 @@
                   <p>Hit points: 100%</p>
                 </div>
                 <div
-                  class="infoBox slot11_23_2"
+                  class="infoBox slot1_23_2"
                   style="top: 168px; left: 519px; display: none"
                 >
                   <h2>
@@ -801,7 +821,7 @@
                   <p>Munition: 83%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_23_4">
+                <div class="infoBox slot1_23_4">
                   <h2>
                     <span><span>Sulfur Carabineer (Starman)</span></span>
                   </h2>
@@ -811,7 +831,7 @@
                   <p>Hit points: 100%</p>
                 </div>
                 <div
-                  class="infoBox slot11_23_6"
+                  class="infoBox slot1_23_6"
                   style="top: 168px; left: 611px; display: none"
                 >
                   <h2>
@@ -822,7 +842,7 @@
                   <p>Munition: 83%</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_24_4">
+                <div class="infoBox slot1_24_4">
                   <h2>
                     <span><span>Ram (Starman)</span></span>
                   </h2>
@@ -830,7 +850,7 @@
                   <p>Upgrade: Steel Roof</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_24_2">
+                <div class="infoBox slot1_24_2">
                   <h2>
                     <span><span>Ram (Starman)</span></span>
                   </h2>
@@ -838,7 +858,7 @@
                   <p>Upgrade: Steel Roof</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot11_24_0">
+                <div class="infoBox slot1_24_0">
                   <h2>
                     <span><span>Ram (Starman)</span></span>
                   </h2>
@@ -847,7 +867,7 @@
                   <p>Hit points: 100%</p>
                 </div>
                 <div
-                  class="infoBox slot11_24_3"
+                  class="infoBox slot1_24_3"
                   style="top: 113px; left: 575px; display: none"
                 >
                   <h2>
@@ -857,7 +877,7 @@
                   <p>Upgrade: Steel Roof</p>
                   <p>Hit points: 100%</p>
                 </div>
-                <div class="infoBox slot12_24_0">
+                <div class="infoBox slot2_24_0">
                   <h2>
                     <span><span>Ram (Ita[WLS])</span></span>
                   </h2>
@@ -866,7 +886,7 @@
                   <p>Hit points: 0%</p>
                   <p>Losses: 2</p>
                 </div>
-                <div class="infoBox slot12_23_5">
+                <div class="infoBox slot2_23_5">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -876,7 +896,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 3</p>
                 </div>
-                <div class="infoBox slot12_23_3">
+                <div class="infoBox slot2_23_3">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -886,7 +906,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 4</p>
                 </div>
-                <div class="infoBox slot12_23_1">
+                <div class="infoBox slot2_23_1">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -896,7 +916,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 4</p>
                 </div>
-                <div class="infoBox slot12_23_0">
+                <div class="infoBox slot2_23_0">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -906,7 +926,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 5</p>
                 </div>
-                <div class="infoBox slot12_23_2">
+                <div class="infoBox slot2_23_2">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -916,7 +936,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 4</p>
                 </div>
-                <div class="infoBox slot12_23_4">
+                <div class="infoBox slot2_23_4">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -926,7 +946,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 3</p>
                 </div>
-                <div class="infoBox slot12_23_6">
+                <div class="infoBox slot2_23_6">
                   <h2>
                     <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
                   </h2>
@@ -936,7 +956,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 3</p>
                 </div>
-                <div class="infoBox slot12_21_5">
+                <div class="infoBox slot2_21_5">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -945,7 +965,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 26</p>
                 </div>
-                <div class="infoBox slot12_21_3">
+                <div class="infoBox slot2_21_3">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -954,7 +974,7 @@
                   <p>Hit points: 96%</p>
                   <p>Losses: 28</p>
                 </div>
-                <div class="infoBox slot12_21_1">
+                <div class="infoBox slot2_21_1">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -963,7 +983,7 @@
                   <p>Hit points: 96%</p>
                   <p>Losses: 28</p>
                 </div>
-                <div class="infoBox slot12_21_0">
+                <div class="infoBox slot2_21_0">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -972,7 +992,7 @@
                   <p>Hit points: 97%</p>
                   <p>Losses: 29</p>
                 </div>
-                <div class="infoBox slot12_21_2">
+                <div class="infoBox slot2_21_2">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -981,7 +1001,7 @@
                   <p>Hit points: 96%</p>
                   <p>Losses: 28</p>
                 </div>
-                <div class="infoBox slot12_21_4">
+                <div class="infoBox slot2_21_4">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -990,7 +1010,7 @@
                   <p>Hit points: 98%</p>
                   <p>Losses: 28</p>
                 </div>
-                <div class="infoBox slot12_21_6">
+                <div class="infoBox slot2_21_6">
                   <h2>
                     <span><span>Hoplite (Ita[WLS])</span></span>
                   </h2>
@@ -999,7 +1019,7 @@
                   <p>Hit points: 96%</p>
                   <p>Losses: 23</p>
                 </div>
-                <div class="infoBox slot12_22_0">
+                <div class="infoBox slot2_22_0">
                   <h2>
                     <span><span>Swordsman (Ita[WLS])</span></span>
                   </h2>
@@ -1008,7 +1028,7 @@
                   <p>Hit points: 99%</p>
                   <p>Losses: 24</p>
                 </div>
-                <div class="infoBox slot12_22_2">
+                <div class="infoBox slot2_22_2">
                   <h2>
                     <span><span>Swordsman (Ita[WLS])</span></span>
                   </h2>
@@ -1017,7 +1037,7 @@
                   <p>Hit points: 99%</p>
                   <p>Losses: 24</p>
                 </div>
-                <div class="infoBox slot12_22_4">
+                <div class="infoBox slot2_22_4">
                   <h2>
                     <span><span>Swordsman (Ita[WLS])</span></span>
                   </h2>
@@ -1026,7 +1046,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 18</p>
                 </div>
-                <div class="infoBox slot12_22_5">
+                <div class="infoBox slot2_22_5">
                   <h2>
                     <span><span>Swordsman (Ita[WLS])</span></span>
                   </h2>
@@ -1035,7 +1055,7 @@
                   <p>Hit points: 100%</p>
                   <p>Losses: 18</p>
                 </div>
-                <div class="infoBox slot12_22_3">
+                <div class="infoBox slot2_22_3">
                   <h2>
                     <span><span>Swordsman (Ita[WLS])</span></span>
                   </h2>
@@ -1044,7 +1064,7 @@
                   <p>Hit points: 99%</p>
                   <p>Losses: 24</p>
                 </div>
-                <div class="infoBox slot12_22_1">
+                <div class="infoBox slot2_22_1">
                   <h2>
                     <span><span>Swordsman (Ita[WLS])</span></span>
                   </h2>
@@ -1103,74 +1123,6 @@
         </div>
       </div>
     </section>
-
-    <div class="lang_box">
-      <div>Русский</div>
-      <div>Български</div>
-      <div>Deutsch</div>
-      <div>Român</div>
-      <div>Čeština</div>
-      <div>Latviešu</div>
-      <div>Lietuvos</div>
-      <div>ελληνικά</div>
-    </div>
-    <div
-      style="
-        position: absolute;
-        left: 970px;
-        top: 1838px;
-        width: 103px;
-        height: 24px;
-        z-index: 99;
-      "
-    >
-      <embed
-        id="ZeroClipboardMovie_1"
-        src="battle_files/ZeroClipboard.swf"
-        loop="false"
-        menu="false"
-        quality="best"
-        bgcolor="#ffffff"
-        name="ZeroClipboardMovie_1"
-        allowscriptaccess="always"
-        allowfullscreen="false"
-        type="application/x-shockwave-flash"
-        pluginspage="//www.macromedia.com/go/getflashplayer"
-        flashvars="id=1&amp;width=103&amp;height=24"
-        wmode="transparent"
-        width="103"
-        height="24"
-        align="middle"
-      />
-    </div>
-    <div
-      style="
-        position: absolute;
-        left: 970px;
-        top: 711px;
-        width: 103px;
-        height: 24px;
-        z-index: 99;
-      "
-    >
-      <embed
-        id="ZeroClipboardMovie_2"
-        src="battle_files/ZeroClipboard.swf"
-        loop="false"
-        menu="false"
-        quality="best"
-        bgcolor="#ffffff"
-        name="ZeroClipboardMovie_2"
-        allowscriptaccess="always"
-        allowfullscreen="false"
-        type="application/x-shockwave-flash"
-        pluginspage="//www.macromedia.com/go/getflashplayer"
-        flashvars="id=2&amp;width=103&amp;height=24"
-        wmode="transparent"
-        width="103"
-        height="24"
-        align="middle"
-      />
     </div>
   </body>
 </html>

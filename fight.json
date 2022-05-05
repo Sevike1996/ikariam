@@ -1,22 +1,36 @@
 {
   "attacker": "Foo",
   "defender": "Bar",
-  "upgrades": {
-
-  },
-  "battlefield": 1,
+  "town": "",
+  "upgrades": {},
+  "battlefield": 4,
   "rounds": [
-    {
-      "date": "",
-      "reserve": {
-        "1": 2
+    [
+      {
+        "reserve": [[1, 2]],
+        "front": [[3, 30, 20, 0.85]],
+        "range": [],
+        "artillery": [],
+        "air": [],
+        "bomber": [],
+        "flank": []
       },
-      "front": [[1, 30, 20, 80]],
-      "range": [[], [], []],
-      "artillery": [],
-      "air": [],
-      "bomber": [],
-      "flank": []
-    }
+      {},
+      "(12.01.2017 7:13:13)"
+    ],
+    [
+      {
+        "date": "",
+        "reserve": {
+          "1": 2
+        },
+        "front": [[3, 30, 20, 0.85]],
+        "range": [],
+        "artillery": [],
+        "air": [],
+        "bomber": [],
+        "flank": []
+      }
+    ]
   ]
 }

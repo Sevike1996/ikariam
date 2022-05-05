@@ -1654,77 +1654,77 @@ div#battlefield .s327 {
 #IkariamReportFull ul.unitlist .s301d,
 div#battlefield .s301d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s301 {
-  background-position: 0 -36px;
+  background-position: -72px -36px;
 }
 #IkariamReportFull ul.unitlist .s302d,
 div#battlefield .s302d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s302 {
-  background-position: -36px -36px;
+  background-position: -252px -36px;
 }
 #IkariamReportFull ul.unitlist .s303d,
 div#battlefield .s303d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s303 {
-  background-position: -72px -36px;
+  background-position: -540px -36px;
 }
 #IkariamReportFull ul.unitlist .s304d,
 div#battlefield .s304d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s304 {
-  background-position: -144px -36px;
+  background-position: -36px -36px;
 }
 #IkariamReportFull ul.unitlist .s305d,
 div#battlefield .s305d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s305 {
-  background-position: -396px -36px;
+  background-position: 0px -36px;
 }
 #IkariamReportFull ul.unitlist .s306d,
 div#battlefield .s306d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s306 {
-  background-position: -360px -36px;
+  background-position: -108px -36px;
 }
 #IkariamReportFull ul.unitlist .s307d,
 div#battlefield .s307d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s307 {
-  background-position: -432px -36px;
+  background-position: -144px -36px;
 }
 #IkariamReportFull ul.unitlist .s308d,
 div#battlefield .s308d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s308 {
-  background-position: -252px -36px;
+  background-position: -432px -36px;
 }
 #IkariamReportFull ul.unitlist .s309d,
 div#battlefield .s309d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s309 {
-  background-position: -324px -36px;
+  background-position: -360px -36px;
 }
 #IkariamReportFull ul.unitlist .s310d,
 div#battlefield .s310d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s310 {
-  background-position: -216px -36px;
+  background-position: -396px -36px;
 }
 #IkariamReportFull ul.unitlist .s311d,
 div#battlefield .s311d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s311 {
-  background-position: -180px -36px;
+  background-position: -288px -36px;
 }
 #IkariamReportFull ul.unitlist .s312d,
 div#battlefield .s312d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s312 {
-  background-position: -288px -36px;
+  background-position: -324px -36px;
 }
 #IkariamReportFull ul.unitlist .s313d,
 div#battlefield .s313d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s313 {
-  background-position: -108px -36px;
+  background-position: -216px -36px;
 }
 #IkariamReportFull ul.unitlist .s314d,
 div#battlefield .s314d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s314 {
-  background-position: -468px -36px;
+  background-position: -180px -36px;
 }
 #IkariamReportFull ul.unitlist .s315d,
 div#battlefield .s315d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s315 {
-  background-position: -540px -36px;
+  background-position: -756px -36px;
 }
 #IkariamReportFull ul.unitlist .s316d,
 div#battlefield .s316d,
@@ -1780,6 +1780,11 @@ div#battlefield .s325d,
 div#battlefield .s326d,
 #IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s326 {
   background-position: -796px -36px;
+}
+#IkariamReportFull ul.unitlist .s327d,
+div#battlefield .s327d,
+#IkariamReportFull #militaryAdvisorDetailedReportView .army_small.normal.s327 {
+  background-position: -870px -36px;
 }
 #IkariamReportFull ul.unitlist .s327d,
 div#battlefield .s327d,

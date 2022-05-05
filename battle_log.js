@@ -29,40 +29,6 @@ const UNITS = {
   28: "Wall",
 };
 
-// Index of mage of unit in the 'unitsprites' image
-const UNIT_S_CLASS = [
-  ,
-  2,
-  7,
-  15,
-  1,
-  0,
-  3,
-  4,
-  12,
-  10,
-  11,
-  8,
-  9,
-  6,
-  5,
-  ,
-  13,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  12,
-];
-
 const ATTACKER = 1;
 const DEFENDER = 2;
 
@@ -191,7 +157,7 @@ class Slot {
     let [unitType, count, loss, healthPercent] = slotData;
 
     this.clearClassList();
-    let unitClassName = "s3" + String(UNIT_S_CLASS[unitType]).padStart(2, "0");
+    let unitClassName = "s3" + String(unitType).padStart(2, "0");
     this.element.classList.add("slot", "army_small", "normal", unitClassName);
 
     this.setBarPairVisibility(Slot.HEALTH_ELEM_INDEX, "visible");

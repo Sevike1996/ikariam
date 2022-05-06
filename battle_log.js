@@ -29,6 +29,7 @@ const UNITS = {
   28: "Wall",
 };
 
+const SIDES = { 1: "attacker", 2: "defender" };
 const ATTACKER = 1;
 const DEFENDER = 2;
 
@@ -78,6 +79,14 @@ const BATTLE_FIELDS = [
 var roundIndex = 1;
 var battle = null;
 var battleField = null;
+
+function getUnitClassName(unitType) {
+  return "s3" + String(unitType).padStart(2, "0");
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 class Layout {
   static LAYOUTS = {
@@ -157,7 +166,7 @@ class Slot {
     let [unitType, count, loss, healthPercent] = slotData;
 
     this.clearClassList();
-    let unitClassName = "s3" + String(unitType).padStart(2, "0");
+    let unitClassName = getUnitClassName(unitType);
     this.element.classList.add("slot", "army_small", "normal", unitClassName);
 
     this.setBarPairVisibility(Slot.HEALTH_ELEM_INDEX, "visible");
@@ -225,11 +234,36 @@ class RangedSlot extends Slot {
   }
 }
 
+function updateReserve(playerSide, reserve) {
+  let sideName = SIDES[playerSide];
+  let playerPages = document.getElementById(
+    "res" + capitalize(sideName) + "Pages"
+  );
+  playerPages.innerHTML = "";
+  let page = null;
+
+  for (let [i, [unitType, unitCount]] of Object.entries(reserve)) {
+    if (i % 9 == 0) {
+      page = document.createElement("ul");
+      playerPages.appendChild(page);
+    }
+
+    let container = document.createElement("li");
+    let image = document.createElement("div");
+    image.classList.add("army_small", "normal", getUnitClassName(unitType));
+    container.appendChild(image);
+    container.innerHTML += unitCount;
+    page.appendChild(container);
+  }
+}
+
 function updatePlayer(battleSide, playerData) {
   for (const [key, value] of Object.entries(playerData)) {
     if (key in Layout.LAYOUTS) {
-		let layout = battleField.getLayout(battleSide, key);
-		layout.update(value);
+      let layout = battleField.getLayout(battleSide, key);
+      layout.update(value);
+    } else if (key == "reserve") {
+      updateReserve(battleSide, value);
     }
   }
 }

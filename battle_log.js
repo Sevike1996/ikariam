@@ -326,7 +326,7 @@ function updateRoundNavButtons() {
 
 function setTitle(date) {
   title = document.getElementById("battleTitle");
-  title.innerHTML = `<span class="headline_big bold">Battle for ${battle.town} Round<br>${roundIndex} / 64</span><br>${date}`;
+  title.innerHTML = `<span class="headline_big bold">Battle for ${battle.town} Round<br>${roundIndex} / ${battle.rounds.length}</span><br>${date}`;
 }
 
 function setPlayerName(side) {

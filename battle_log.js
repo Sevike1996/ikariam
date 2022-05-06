@@ -415,10 +415,11 @@ function setTitle(date) {
   title.innerHTML = `<span class="headline_big bold">Battle for ${battle.town} Round<br>${roundIndex} / ${battle.rounds.length}</span><br>${date}`;
 }
 
-function setPlayerName(side) {
-  let name = battle[side];
+function setPlayerNames(side, info) {
+  let names = [];
+  info.forEach((playerInfo) => names.push(playerInfo[0]));
   let nameElement = document.getElementById(side + "Name");
-  nameElement.innerHTML = `${capitalize(side)}:<br>${name}`
+  nameElement.innerHTML = `${capitalize(side)}:<br>${names.join(", ")}`
 }
 
 function updateBackground(backgroundNumber) {
@@ -439,8 +440,8 @@ function showRound() {
 
   setTitle(round.date);
 
-  setPlayerName("attacker");
-  setPlayerName("defender");
+  setPlayerNames("attacker", round.attacker.info);
+  setPlayerNames("defender", round.defender.info);
 
   updateBackground(round.background);
 

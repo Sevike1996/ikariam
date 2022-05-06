@@ -104,7 +104,7 @@ class Layout {
     this.playerSide = playerSide;
   }
 
-  update(layoutData) {
+  update(layoutData, playerAmmo) {
     let slot = null;
     let slotData = null;
 
@@ -114,6 +114,8 @@ class Layout {
       slotData = layoutData[i];
 
       if (slotData != null) {
+        let unitType = slotData[0];
+        slotData.push(playerAmmo[unitType]);
         slot.setData(slotData);
       } else {
         slot.setEmpty();
@@ -124,6 +126,7 @@ class Layout {
   getSlot(slotNumber) {
     let id = `slot${this.playerSide}_${this.displayNumber}_${slotNumber}`;
     let slotElement = document.getElementById(id);
+
     if (this.hasAmmo) {
       return new RangedSlot(slotElement);
     } else {
@@ -165,7 +168,7 @@ class Slot {
     for (let classes of Slot.ELEMENTS_CLASSES) {
       let element = document.createElement("div");
       element.classList.add(...classes);
-      this.element.appendChild(element)
+      this.element.appendChild(element);
     }
   }
 
@@ -219,16 +222,25 @@ class Slot {
 }
 
 class RangedSlot extends Slot {
+  static ELEMENTS_CLASSES = [["ammo"], ["ammoLoss"]];
   static AMMO_DATA_INDEX = 4;
-  static AMMO_ELEM_INDEX = 2;
-  static AMMO_LOSS_ELEM_INDEX = 3;
+  static AMMO_ELEM_INDEX = 3;
+  static AMMO_LOSS_ELEM_INDEX = 4;
+
+  populate() {
+    super.populate();
+    for (let classes of RangedSlot.ELEMENTS_CLASSES) {
+      let element = document.createElement("div");
+      element.classList.add(...classes);
+      this.element.appendChild(element);
+    }
+  }
 
   setData(slotData) {
     super.setData(slotData);
-
     let ammoPercent = slotData[RangedSlot.AMMO_DATA_INDEX];
     // Even in Ranged slots, there can be units without ammunition (such as ram in artillery)
-    if (ammoPercent == null) {
+    if (ammoPercent != null) {
       this.setAmmo(ammoPercent);
     } else {
       this.setBarPairVisibility(RangedSlot.AMMO_ELEM_INDEX, "hidden");
@@ -282,7 +294,7 @@ function updatePlayer(battleSide, playerData) {
   for (const layoutName of Object.keys(Layout.LAYOUTS)) {
     let layoutData = playerData[layoutName] ?? [];
     let layout = battleField.getLayout(battleSide, layoutName);
-    layout.update(layoutData);
+    layout.update(layoutData, playerData.ammo);
   }
   updateReserve(battleSide, playerData.reserve);
 }

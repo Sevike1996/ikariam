@@ -1481,13 +1481,13 @@ textarea.form {
   text-align: left;
   width: 130px;
 }
-#IkariamReportFull #morale table.table01 .atter {
+#IkariamReportFull #morale table.table01 .attacker {
   background-image: url(../img/ikariam/unit_attack.gif);
   background-repeat: no-repeat;
   background-position: 3px 3px;
   height: 34px;
 }
-#IkariamReportFull #morale table.table01 .deffer {
+#IkariamReportFull #morale table.table01 .defender {
   background-image: url(../img/ikariam/unit_defend.gif);
   background-repeat: no-repeat;
   background-position: 3px 3px;
@@ -2022,14 +2022,14 @@ div#battlefield .s220d {
   background-image: url(../img/ikariam/unitfleets_x34_y34_enhanced.gif);
   background-repeat: no-repeat;
 }
-#IkariamReportFull #militaryAdvisorDetailedReportView .container_morale .atter {
+#IkariamReportFull #militaryAdvisorDetailedReportView .container_morale .attacker {
   background: url(../img/ikariam/unit_attack.gif) no-repeat 3px 3px #faeac6;
   height: 34px;
 }
 #IkariamReportFull
   #militaryAdvisorDetailedReportView
   .container_morale
-  .deffer {
+  .defender {
   background: url(../img/ikariam/unit_defend.gif) no-repeat 3px 3px #faeac6;
   height: 34px;
 }

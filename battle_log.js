@@ -167,6 +167,61 @@ class BattleField {
     return BATTLE_FIELDS[this.battleFieldNumber];
   }
 }
+
+class PlayerInfo {
+  constructor(name, units, losses, morale, moraleLoss) {
+    this.name = name
+    this.units = units;
+    this.losses = losses;
+    this.morale = morale;
+    this.moraleLoss = moraleLoss;
+  }
+
+  toHTML() {
+    let row = document.createElement("tr");
+
+    row.appendChild(this.createNameElement());
+    row.appendChild(this.createMilitaryCount());
+    row.appendChild(this.createMoralBar());
+    row.appendChild(this.createMoralText());
+
+    return row;
+  }
+
+  createNameElement() {
+    let element = document.createElement("td");
+    element.classList.add("avatarName");
+    element.innerHTML = this.name;
+    return element;
+  }
+
+  createMilitaryCount() {
+    let element = document.createElement("td");
+    element.classList.add("militarySize");
+    element.innerHTML = `${this.units} (-${this.losses})`;
+    return element;
+  }
+
+  createMoralBar() {
+    let element = document.createElement("td");
+    element.classList.add("militaryMorale", "right");
+
+    element.innerHTML = `
+    <div id="infoMoraleBar"class="morale_bar">
+      <div class="bar" style="background-color: #E25353; width: ${this.morale + this.moraleLoss}%"></div>
+      <div class="bar" style="margin-top: -10px; width: ${this.morale}%"></div>
+    </div>`
+
+    return element;
+  }
+
+  createMoralText() {
+    let element = document.createElement("td");
+    element.classList.add("morale", "left");
+    element.innerHTML = `${this.morale} %`;
+    return element;
+  }
+}
 class Slot {
   static ELEMENTS_CLASSES = [["number", "center"], ["hitpoints"], ["loss"]];
   static BAR_HEIGHT_PX = 32;
@@ -298,13 +353,44 @@ function createReserveElement(unitType, unitCount) {
   return container;
 }
 
-function updatePlayer(battleSide, playerData) {
-  for (const layoutName of Object.keys(Layout.LAYOUTS)) {
-    let layoutData = playerData[layoutName] ?? [];
-    let layout = battleField.getLayout(battleSide, layoutName);
-    layout.update(layoutData, playerData.ammo);
+function updateRoundInfo(battleSide, roundInfo) {
+  let sideName = SIDES[battleSide];
+  let roundInfoElement = document.getElementById("roundInfo");
+  
+  let infoTable = document.createElement("table");
+  infoTable.classList.add('table01', 'container_morale', 'center', 'border', 'dotted');
+  
+  let tableBody = document.createElement("tbody");
+  tableBody.innerHTML = `
+  <tr>
+    <th class="${sideName}">${capitalize(sideName)}</th>
+    <th>Units</th>
+    <th colspan="2">Morale</th>
+  </tr>`;
+  infoTable.appendChild(tableBody);
+  
+  for (let playerInfo of roundInfo) {
+    let player = new PlayerInfo(...playerInfo);
+    if (player.units != 0) {
+      tableBody.appendChild(player.toHTML());
+    }
   }
-  updateReserve(battleSide, playerData.reserve);
+  
+  // Hide if no sides are left
+  if (tableBody.childElementCount > 1) {
+    roundInfoElement.appendChild(infoTable);
+  }
+}
+
+function updateBattleSide(battleSide, formationData) {
+  for (const layoutName of Object.keys(Layout.LAYOUTS)) {
+    let layoutData = formationData[layoutName] ?? [];
+    let layout = battleField.getLayout(battleSide, layoutName);
+    layout.update(layoutData, formationData.ammo);
+  }
+  updateReserve(battleSide, formationData.reserve);
+
+  updateRoundInfo(battleSide, formationData.info);
 }
 
 function setNavButtonsVisibility(buttonNames, visibility) {
@@ -345,8 +431,11 @@ function updateBackground(backgroundNumber) {
 function showRound() {
   let round = battle.rounds[roundIndex - 1];
 
-  updatePlayer(ATTACKER, round.attacker);
-  updatePlayer(DEFENDER, round.defender);
+  let roundInfoElement = document.getElementById("roundInfo");
+  roundInfoElement.innerHTML = ''
+
+  updateBattleSide(ATTACKER, round.attacker);
+  updateBattleSide(DEFENDER, round.defender);
 
   setTitle(round.date);
 

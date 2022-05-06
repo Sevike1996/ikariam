@@ -151,12 +151,22 @@ class BattleField {
   }
 }
 class Slot {
+  static ELEMENTS_CLASSES = [["number", "center"], ["hitpoints"], ["loss"]];
   static BAR_HEIGHT_PX = 32;
-  static HEALTH_ELEM_INDEX = 0;
-  static HEALTH_LOSS_ELEM_INDEX = 1;
+  static TEXT_ELEM_INDEX = 0;
+  static HEALTH_ELEM_INDEX = 1;
+  static HEALTH_LOSS_ELEM_INDEX = 2;
 
   constructor(element) {
     this.element = element;
+  }
+
+  populate() {
+    for (let classes of Slot.ELEMENTS_CLASSES) {
+      let element = document.createElement("div");
+      element.classList.add(...classes);
+      this.element.appendChild(element)
+    }
   }
 
   setEmpty() {
@@ -181,10 +191,8 @@ class Slot {
   }
 
   setText(text) {
-    let textElementIndex = this.element.children.length - 1;
-    let textElement = this.element.children[textElementIndex];
-
-    this.setElementVisibility(textElementIndex, "visible");
+    let textElement = this.element.children[Slot.TEXT_ELEM_INDEX];
+    this.setElementVisibility(Slot.TEXT_ELEM_INDEX, "visible");
     textElement.innerHTML = text;
   }
 
@@ -302,19 +310,30 @@ function setTitle(date) {
 
 function showRound() {
   let round = battle.rounds[roundIndex - 1];
-  let [attacker, defender, date] = round;
 
-  updatePlayer(ATTACKER, attacker);
-  updatePlayer(DEFENDER, defender);
+  updatePlayer(ATTACKER, round.attacker);
+  updatePlayer(DEFENDER, round.defender);
 
-  setTitle(date);
+  setTitle(round.date);
 
   updateRoundNavButtons();
+}
+
+function populateField(playerSide) {
+  for (key of Object.keys(Layout.LAYOUTS)) {
+    let layout = battleField.getLayout(playerSide, key);
+    for (let slot of layout.getSlots()) {
+      slot.populate();
+    }
+  }
 }
 
 function handleBattleData(battleData) {
   battle = battleData;
   battleField = new BattleField(battle["battlefield"]);
+  for (let sideNumber of Object.keys(SIDES)) {
+    populateField(sideNumber);
+  }
   showRound();
 }
 

@@ -29,6 +29,14 @@ const UNITS = {
   28: "Wall",
 };
 
+const BACKGROUNDS = {
+  0: "battlefield_land_A_D",
+  1: "battlefield_sea_A_D",
+  2: "battlefield_city_A_D",
+  3: "battlefield_barb_A_D",
+  4: "battlefield_city_city",
+}
+
 const SIDES = { 1: "attacker", 2: "defender" };
 const ATTACKER = 1;
 const DEFENDER = 2;
@@ -86,6 +94,12 @@ function getUnitClassName(unitType) {
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function clearClassList(element) {
+  let classes = [];
+  element.classList.forEach((className) => classes.push(className));
+  classes.forEach((className) => element.classList.remove(className));
 }
 
 class Layout {
@@ -176,14 +190,14 @@ class Slot {
     for (let child of this.element.children) {
       child.style.visibility = "hidden";
     }
-    this.clearClassList();
+    clearClassList(this.element);
     this.element.classList.add("slot", "empty");
   }
 
   setData(slotData) {
     let [unitType, count, loss, healthPercent] = slotData;
 
-    this.clearClassList();
+    clearClassList(this.element);
     let unitClassName = getUnitClassName(unitType);
     this.element.classList.add("slot", "army_small", "normal", unitClassName);
 
@@ -212,12 +226,6 @@ class Slot {
   setElementVisibility(elementIndex, visibility) {
     let element = this.element.children[elementIndex];
     element.style.visibility = visibility;
-  }
-
-  clearClassList() {
-    let classes = [];
-    this.element.classList.forEach((className) => classes.push(className));
-    classes.forEach((className) => this.element.classList.remove(className));
   }
 }
 
@@ -327,6 +335,13 @@ function setPlayerName(side) {
   nameElement.innerHTML = `${capitalize(side)}:<br>${name}`
 }
 
+function updateBackground(backgroundNumber) {
+  let backgroundElement = document.getElementById("battlefield");
+  clearClassList(backgroundElement);
+  backgroundElement.classList.add(BACKGROUNDS[backgroundNumber]);
+
+}
+
 function showRound() {
   let round = battle.rounds[roundIndex - 1];
 
@@ -337,6 +352,8 @@ function showRound() {
 
   setPlayerName("attacker");
   setPlayerName("defender");
+
+  updateBackground(round.background);
 
   updateRoundNavButtons();
 }

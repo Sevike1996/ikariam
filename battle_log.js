@@ -318,7 +318,13 @@ function updateRoundNavButtons() {
 
 function setTitle(date) {
   title = document.getElementById("battleTitle");
-  title.innerHTML = `<span class="headline_big bold">Battle for WhatsForDinner Round<br>1 / 64</span><br>${date}`;
+  title.innerHTML = `<span class="headline_big bold">Battle for ${battle.town} Round<br>${roundIndex} / 64</span><br>${date}`;
+}
+
+function setPlayerName(side) {
+  let name = battle[side];
+  let nameElement = document.getElementById(side + "Name");
+  nameElement.innerHTML = `${capitalize(side)}:<br>${name}`
 }
 
 function showRound() {
@@ -328,6 +334,9 @@ function showRound() {
   updatePlayer(DEFENDER, round.defender);
 
   setTitle(round.date);
+
+  setPlayerName("attacker");
+  setPlayerName("defender");
 
   updateRoundNavButtons();
 }

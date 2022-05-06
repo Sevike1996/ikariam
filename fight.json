@@ -1,7 +1,7 @@
 {
   "attacker": "Foo",
   "defender": "Bar",
-  "town": "",
+  "town": "MyTownName",
   "upgrades": {},
   "battlefield": 4,
   "rounds": [

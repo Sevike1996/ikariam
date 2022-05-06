@@ -101,35 +101,40 @@ class Layout {
   constructor(playerSide, layoutName) {
     [this.displayNumber, this.hasAmmo] = Layout.LAYOUTS[layoutName];
     this.slotCount = battleField.getLayoutSizes()[layoutName];
-	this.playerSide = playerSide
+    this.playerSide = playerSide;
   }
 
   update(layoutData) {
-	let slot = null;
-	let slotData = null;
-  
-	for (let i = 0; i < this.slotCount; i++) {
-		let id = this.getSlotId(i);
-		let slotElement = document.getElementById(id);
-  
-		if (this.hasAmmo) {
-			slot = new RangedSlot(slotElement);
-		} else {
-			slot = new Slot(slotElement);
-		}
-	
-		slotData = layoutData[i];
-	
-		if (slotData != null) {
-			slot.setData(slotData);
-		} else {
-			slot.setEmpty();
-		}
-		}
-	}
+    let slot = null;
+    let slotData = null;
 
-  getSlotId(slotNumber) {
-	return `slot${this.playerSide}_${this.displayNumber}_${slotNumber}`;
+    for (let i = 0; i < this.slotCount; i++) {
+      slot = this.getSlot(i);
+
+      slotData = layoutData[i];
+
+      if (slotData != null) {
+        slot.setData(slotData);
+      } else {
+        slot.setEmpty();
+      }
+    }
+  }
+
+  getSlot(slotNumber) {
+    let id = `slot${this.playerSide}_${this.displayNumber}_${slotNumber}`;
+    let slotElement = document.getElementById(id);
+    if (this.hasAmmo) {
+      return new RangedSlot(slotElement);
+    } else {
+      return new Slot(slotElement);
+    }
+  }
+
+  *getSlots() {
+    for (let i = 0; i < this.slotCount; i++) {
+      yield this.getSlot(i);
+    }
   }
 }
 class BattleField {
@@ -248,24 +253,30 @@ function updateReserve(playerSide, reserve) {
       playerPages.appendChild(page);
     }
 
-    let container = document.createElement("li");
-    let image = document.createElement("div");
-    image.classList.add("army_small", "normal", getUnitClassName(unitType));
-    container.appendChild(image);
-    container.innerHTML += unitCount;
-    page.appendChild(container);
+    let unit = createReserveElement(unitType, unitCount);
+
+    page.appendChild(unit);
   }
 }
 
+function createReserveElement(unitType, unitCount) {
+  let container = document.createElement("li");
+  let image = document.createElement("div");
+
+  image.classList.add("army_small", "normal", getUnitClassName(unitType));
+  container.appendChild(image);
+  container.innerHTML += unitCount;
+
+  return container;
+}
+
 function updatePlayer(battleSide, playerData) {
-  for (const [key, value] of Object.entries(playerData)) {
-    if (key in Layout.LAYOUTS) {
-      let layout = battleField.getLayout(battleSide, key);
-      layout.update(value);
-    } else if (key == "reserve") {
-      updateReserve(battleSide, value);
-    }
+  for (const layoutName of Object.keys(Layout.LAYOUTS)) {
+    let layoutData = playerData[layoutName] ?? [];
+    let layout = battleField.getLayout(battleSide, layoutName);
+    layout.update(layoutData);
   }
+  updateReserve(battleSide, playerData.reserve);
 }
 
 function hideNavButtons(buttonNames) {

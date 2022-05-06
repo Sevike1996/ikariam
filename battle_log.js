@@ -299,19 +299,20 @@ function updatePlayer(battleSide, playerData) {
   updateReserve(battleSide, playerData.reserve);
 }
 
-function hideNavButtons(buttonNames) {
+function setNavButtonsVisibility(buttonNames, visibility) {
   for (const buttonName of buttonNames) {
     let button = document.getElementById("nav" + buttonName);
-    button.hidden = true;
+    button.style.visibility = visibility;
   }
 }
 
 function updateRoundNavButtons() {
+  setNavButtonsVisibility(["First", "Back", "Fore", "Last"], "visible");
   if (roundIndex == 1) {
-    hideNavButtons(["First", "Back"]);
+    setNavButtonsVisibility(["First", "Back"], "hidden");
   }
   if (roundIndex == battle.rounds.length) {
-    hideNavButtons(["Fore", "Last"]);
+    setNavButtonsVisibility(["Fore", "Last"], "hidden");
   }
 }
 
@@ -355,7 +356,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
     .then(handleBattleData);
 });
 
-function fist() {
+function first() {
   roundIndex = 1;
   showRound();
 }

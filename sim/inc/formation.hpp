@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <ostream>
 
 #include "unit.hpp"
 
@@ -48,4 +49,8 @@ private:
     std::vector<Slot> _slots;
     enum BattleFieldSize _battleSize;
     Type _type;
+
+    friend std::ostream &operator<<(std::ostream &os, Formation const &m);
 };
+
+std::ostream &operator<<(std::ostream &os, Formation const &m);

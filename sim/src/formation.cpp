@@ -143,3 +143,19 @@ void Formation::hit(Formation &other)
     // defending.first_health = UNITS_DATA[defending.type].health - (damage % UNITS_DATA[defending.type].health);
     // }
 }
+
+std::ostream &operator<<(std::ostream &os, Formation const &m) { 
+    os << "{";
+    for (const auto& slot : m._slots) {
+        const char* name = nullptr;
+        for (auto& i : UNIT_NAMES) {
+            if (i.second == slot.meta.type) {
+                name = i.first.c_str();
+            }
+        }
+        os << "(" << name << ", " << slot.count << ", " << slot.first_health << "/" << slot.meta.health << "), ";
+    }
+    os << "}" << std::endl;
+
+    return os;
+}

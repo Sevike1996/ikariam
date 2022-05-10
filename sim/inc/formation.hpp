@@ -14,11 +14,18 @@ enum BattleFieldSize {
 };
 
 struct Slot {
-    const UnitMeta& meta;
+    const UnitMeta* meta;
     int count;
     int first_health;
     int& ammo_pool;
 
+    Slot& operator=(const Slot& other) {
+        this->meta = other.meta;
+        this->count = other.count;
+        this->first_health = other.first_health;
+        this->ammo_pool = other.ammo_pool;
+        return *this;
+    }
 };
 
 class Formation
@@ -37,8 +44,9 @@ public:
     Formation(enum BattleFieldSize battleSize, Type formatinType);
 
     const std::vector<Unit> getAcceptableUnits() const;
+    const std::vector<Slot> getSlots() const;
 
-    void fill_slot(const UnitMeta& meta, int count, int first_health, int& ammo_pool);
+    void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
     
     Formation copy() const;
 
@@ -49,8 +57,8 @@ private:
     std::vector<Slot> _slots;
     enum BattleFieldSize _battleSize;
     Type _type;
-
-    friend std::ostream &operator<<(std::ostream &os, Formation const &m);
 };
+
+std::ostream& operator<<(std::ostream& os, Slot const& slot);
 
 std::ostream &operator<<(std::ostream &os, Formation const &m);

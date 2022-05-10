@@ -1,0 +1,12 @@
+# IDE
+.vscode/
+
+# Binaries
+bin/
+obj/
+
+# Generates files
+dep/
+
+# Debugging
+.gdb_history

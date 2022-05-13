@@ -1,5 +1,9 @@
 #include "sql.hpp"
 
+static std::any parse_int_field(const char* raw_value);
+
+static std::any parse_field(enum enum_field_types type, const char* raw_value);
+
 sql::Error::Error(const char* msg) : _msg(msg)
 {
     // MYSQL_ROW* r;
@@ -11,7 +15,7 @@ const char * sql::Error::what() const throw ()
     return _msg;
 }
 
-sql::Connection::Connection()
+sql::Connection::Connection(std::string socket, std::string db_name)
 {
     _conn = mysql_init(NULL);
 
@@ -22,7 +26,7 @@ sql::Connection::Connection()
 
     // TODO export to connect()
     if (mysql_real_connect(_conn, "localhost", "root", "",
-                           "ik_game", 3306, "../../MyIkariam/mysql/mysql.sock", 0) == NULL)
+                           db_name.c_str(), 3306, socket.c_str(), 0) == NULL)
     {
         mysql_close(_conn);
         throw sql::Error(mysql_error(_conn));
@@ -62,9 +66,9 @@ sql::Row sql::Result::operator[](int index)
     return sql::Row(*this, row);
 }
 
-const char* sql::Result::getColumnName(int index) const
+const MYSQL_FIELD& sql::Result::getColumnMeta(int index) const
 {
-    return _columns[index].name;
+    return _columns[index];
 }
 
 int sql::Result::getColumnCount() const
@@ -72,55 +76,30 @@ int sql::Result::getColumnCount() const
     return _columnCount;
 }
 
-sql::Row::Row(Result& result, MYSQL_ROW row) : _result(result), _row(row)
+sql::Row::Row(Result& result, MYSQL_ROW row)
 {
+    for (int i = 0; i < result.getColumnCount(); i++) {
+        const auto& column_meta = result.getColumnMeta(i);
+        auto value = parse_field(column_meta.type, row[i]);
+        auto pair = std::make_pair<std::string, std::any>(column_meta.name, std::move(value));
+        this->insert(pair);
+    }
 }
 
-const char* sql::Row::operator[](int index)
-{
-    return _row[index];
+static std::any parse_field(enum enum_field_types type, const char* raw_value) {
+    switch (type) {
+    case MYSQL_TYPE_LONG:
+        return parse_int_field(raw_value);
+    case MYSQL_TYPE_VARCHAR:
+        return std::make_any<std::string>(raw_value);
+    default:
+        throw sql::Error("Unknown field type");
+    }
 }
 
-bool sql::Row::operator==(Row& other) const
-{
-    return _row == other._row;
-}
-
-sql::Row::Iterator sql::Row::begin()
-{
-    return sql::Row::Iterator(_result, *this);
-}
-
-sql::Row::Iterator sql::Row::end()
-{
-    return sql::Row::Iterator(_result, *this, _result.getColumnCount());
-}
-
-sql::Row::Iterator::Iterator(sql::Result& result, sql::Row& row) : _result(result), _row(row), _index(0)
-{
-}
-
-sql::Row::Iterator::Iterator(sql::Result& result, sql::Row& row, std::size_t index) : _result(result), _row(row), _index(index)
-{
-}
-
-std::tuple<std::string, std::string> sql::Row::Iterator::operator*()
-{
-    return std::make_pair(_result.getColumnName(_index), _row[_index]);
-}
-
-bool sql::Row::Iterator::operator!=(Iterator& other) const
-{
-    return !(*this == other);
-}
-
-bool sql::Row::Iterator::operator==(Iterator& other) const
-{
-    return _row == other._row && _index == other._index;
-}
-
-sql::Row::Iterator& sql::Row::Iterator::operator++()
-{
-    _index++;
-    return *this;
+static std::any parse_int_field(const char* raw_value) {
+    if (raw_value == nullptr) {
+        return std::make_any<int>(0);
+    }
+    return std::make_any<int>(std::stoi(raw_value));
 }

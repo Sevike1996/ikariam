@@ -2,8 +2,11 @@
 
 #include <string>
 #include <tuple>
+#include <map>
+#include <any>
 #include <stdexcept>
 #include <mysql/mysql.h>
+
 
 namespace sql {
 
@@ -19,39 +22,9 @@ private:
 
 class Result;
 
-struct Row {
+class Row : public std::map<std::string, std::any> {
 public:
-    struct Iterator;
-
     Row(Result& result, MYSQL_ROW row);
-
-    const char* operator[](int index);
-
-    bool operator==(Row& other) const;
-
-    Iterator begin();
-
-    Iterator end();
-
-    struct Iterator {
-    public:
-        Iterator(Result& result, Row& row);
-        Iterator(Result& result, Row& row, std::size_t index);
-
-        std::tuple<std::string, std::string> operator*();
-        bool operator!=(Iterator& other) const;
-        bool operator==(Iterator& other) const;
-        Iterator& operator++();
-    
-    private:
-        Result& _result;
-        Row& _row;
-        std::size_t _index;
-    };
-
-private:
-    Result& _result;
-    MYSQL_ROW _row;
 };
 
 class Result {
@@ -60,7 +33,7 @@ public:
 
     Row operator[](int index);
 
-    const char* getColumnName(int index) const;
+    const MYSQL_FIELD& getColumnMeta(int index) const;
 
     int getColumnCount() const;
 
@@ -72,7 +45,7 @@ private:
 
 class Connection {
 public:
-    Connection();
+    Connection(std::string sock, std::string db_name);
 
     Result query(std::string query);
 private:

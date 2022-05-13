@@ -29,6 +29,8 @@ public:
 
 class Result {
 public:
+    struct Iterator;
+
     Result(MYSQL_RES* result);
 
     Row operator[](int index);
@@ -36,6 +38,26 @@ public:
     const MYSQL_FIELD& getColumnMeta(int index) const;
 
     int getColumnCount() const;
+    int getRowCount() const;
+
+    Iterator begin();
+
+    Iterator end();
+
+    struct Iterator {
+    public:
+        Iterator(Result& result, std::size_t index);
+
+        Row operator*();
+        bool operator!=(Iterator& other) const;
+        bool operator==(Iterator& other) const;
+        Iterator& operator++();
+    
+    private:
+        Result& _result;
+        std::size_t _index;
+    };
+
 
 private:
     MYSQL_RES* _result;

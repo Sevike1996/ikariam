@@ -76,6 +76,47 @@ int sql::Result::getColumnCount() const
     return _columnCount;
 }
 
+int sql::Result::getRowCount() const 
+{
+    return mysql_num_rows(_result);
+}
+
+sql::Result::Iterator sql::Result::begin()
+{
+    return sql::Result::Iterator(*this, 0);
+}
+
+sql::Result::Iterator sql::Result::end()
+{
+    return sql::Result::Iterator(*this, getRowCount());
+}
+
+sql::Result::Iterator::Iterator(Result& result, std::size_t index) : _result(result), _index(index)
+{
+}
+
+sql::Row sql::Result::Iterator::operator*()
+{
+    return std::move(_result[_index]);
+}
+
+bool sql::Result::Iterator::operator!=(Iterator& other) const
+{
+   return !(*this == other);
+}
+ 
+bool sql::Result::Iterator::operator==(Iterator& other) const
+{
+    return _index == other._index;
+}
+
+sql::Result::Iterator& sql::Result::Iterator::operator++()
+{
+    _index++;
+    return *this;
+}
+
+
 sql::Row::Row(Result& result, MYSQL_ROW row)
 {
     for (int i = 0; i < result.getColumnCount(); i++) {
@@ -96,6 +137,8 @@ static std::any parse_field(enum enum_field_types type, const char* raw_value) {
         throw sql::Error("Unknown field type");
     }
 }
+
+#include <iostream>
 
 static std::any parse_int_field(const char* raw_value) {
     if (raw_value == nullptr) {

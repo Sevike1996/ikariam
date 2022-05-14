@@ -1,18 +1,21 @@
 #include "sql.hpp"
+#include "nlohmann/json.hpp"
 
-static std::any parse_int_field(const char* raw_value);
+using json = nlohmann::json;
 
 static std::any parse_field(enum enum_field_types type, const char* raw_value);
 
-sql::Error::Error(const char* msg) : _msg(msg)
+static std::any parse_int_field(const char* raw_value);
+
+static std::any parse_json_field(const char* raw_value);
+
+sql::Error::Error(std::string msg) : _msg(msg)
 {
-    // MYSQL_ROW* r;
-    // r->
 }
 
 const char * sql::Error::what() const throw ()
 {
-    return _msg;
+    return _msg.c_str();
 }
 
 sql::Connection::Connection(std::string socket, std::string db_name)
@@ -127,22 +130,32 @@ sql::Row::Row(Result& result, MYSQL_ROW row)
     }
 }
 
-static std::any parse_field(enum enum_field_types type, const char* raw_value) {
+static std::any parse_field(enum enum_field_types type, const char* raw_value)
+{
     switch (type) {
     case MYSQL_TYPE_LONG:
         return parse_int_field(raw_value);
     case MYSQL_TYPE_VARCHAR:
+    case MYSQL_TYPE_VAR_STRING:
         return std::make_any<std::string>(raw_value);
+    case MYSQL_TYPE_JSON:
+        return parse_json_field(raw_value);
     default:
-        throw sql::Error("Unknown field type");
+        throw sql::Error("Unknown field type: " + std::to_string(type));
     }
 }
 
 #include <iostream>
 
-static std::any parse_int_field(const char* raw_value) {
+static std::any parse_int_field(const char* raw_value)
+{
     if (raw_value == nullptr) {
         return std::make_any<int>(0);
     }
     return std::make_any<int>(std::stoi(raw_value));
+}
+
+static std::any parse_json_field(const char* raw_value)
+{
+    return std::make_any<json>(json::parse(raw_value));
 }

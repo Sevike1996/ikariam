@@ -12,12 +12,12 @@ namespace sql {
 
 class Error : std::exception {
 public:
-    Error(const char* msg);
+    Error(std::string msg);
 
     const char * what () const throw ();
 
 private:
-    const char* _msg;
+    std::string _msg;
 };
 
 class Result;

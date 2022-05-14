@@ -6,7 +6,7 @@ enum Unit
 {
     hoplite,
     steam_giant,
-    spearmen,
+    spearman,
     swordsman,
     slinger,
     archer,

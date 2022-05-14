@@ -3,7 +3,7 @@
 const std::map<std::string, Unit> UNIT_NAMES = {
     {"hoplite", Unit::hoplite},
     {"steamgiant", Unit::steam_giant},
-    {"spearmen", Unit::spearmen},
+    {"spearman", Unit::spearman},
     {"swordsman", Unit::swordsman},
     {"slinger", Unit::slinger},
     {"archer", Unit::archer},

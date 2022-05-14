@@ -24,8 +24,8 @@ static const std::vector<Unit> acceptableUnits[] = {
     {Unit::bombardier},
     {Unit::mortar, Unit::ballista_ship, Unit::ram},
     {Unit::carbineer, Unit::archer, Unit::slinger},
-    {Unit::hoplite, Unit::steam_giant, Unit::spearmen, Unit::swordsman, Unit::slinger, Unit::carbineer, Unit::archer},
-    {Unit::swordsman, Unit::spearmen},
+    {Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer, Unit::archer},
+    {Unit::swordsman, Unit::spearman},
 };
 
 Formation::Formation(enum BattleFieldSize battleSize, Type formatinType) : _battleSize(battleSize), _type(formatinType)

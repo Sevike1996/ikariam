@@ -100,7 +100,7 @@ void Formation::hit(Formation &other)
 
 std::ostream& operator<<(std::ostream& os, Slot const& slot) {
     const char* name = nullptr;
-    for (auto& i : UNIT_NAMES) {
+    for (auto& i : UNIT_TYPES) {
         if (i.second == slot.meta->type) {
             name = i.first.c_str();
         }

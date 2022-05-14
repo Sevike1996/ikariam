@@ -1,6 +1,6 @@
 #include "unit.hpp"
 
-const std::map<std::string, Unit> UNIT_NAMES = {
+const std::map<std::string, Unit> UNIT_TYPES = {
     {"hoplite", Unit::hoplite},
     {"steamgiant", Unit::steam_giant},
     {"spearman", Unit::spearman},
@@ -30,10 +30,10 @@ const std::map<std::string, Unit> UNIT_NAMES = {
 };
 
 const UnitMeta UNITS_META[] = {
-    {Unit::hoplite, 56, 18, 0, 0, 1, 1, true},
-    {Unit::steam_giant, 184, 42, 0, 0, 3, 3, false},
-    {Unit::spearmen, 13, 4, 0, 0, 0, 1, true},
-    {Unit::swordsman, 18, 10, 0, 0, 0, 1, true},
+    {Unit::hoplite, 56, 18, 0, -1, 1, 1, true},
+    {Unit::steam_giant, 184, 42, 0, -1, 3, 3, false},
+    {Unit::spearman, 13, 4, 0, -1, 0, 1, true},
+    {Unit::swordsman, 18, 10, 0, -1, 0, 1, true},
     {Unit::slinger, 8, 2, 3, 5, 0, 1, true},
     {Unit::archer, 16, 5, 5, 3, 0, 1, true},
     {Unit::carbineer, 12, 3, 29, 3, 0, 4, true},
@@ -44,5 +44,9 @@ const UnitMeta UNITS_META[] = {
     {Unit::bombardier, 40, 0, 48, 2, 0, 2, false},
     {Unit::cook, 0, 0, 0, 0, 0, 0, true},
     {Unit::doctor, 0, 0, 0, 0, 0, 0, true},
-    {Unit::barbarian, 12, 7, 0, 0, 1, 1, true},
+    {Unit::barbarian, 12, 7, 0, -1, 1, 1, true},
 };
+
+bool is_ranged(Unit type) {
+    return UNITS_META[type].ammo == NO_AMMO;
+}

@@ -2,6 +2,8 @@
 
 #include <map>
 
+#define NO_AMMO (-1)
+
 enum Unit
 {
     hoplite,
@@ -45,6 +47,8 @@ struct UnitMeta {
     bool isHuman;
 };
 
-extern const std::map<std::string, Unit> UNIT_NAMES;
+extern const std::map<std::string, Unit> UNIT_TYPES;
 
 extern const UnitMeta UNITS_META[];
+
+bool is_ranged(Unit type);

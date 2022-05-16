@@ -28,6 +28,11 @@ int Army::get_squad(Unit unit, int slot_size)
     return count;
 }
 
+int& Army::get_ammo_pool(Unit unit)
+{
+    return _ammo_pools[unit];
+}
+
 Army::json Army::get_units_json()
 {
     return json(_units);

@@ -14,6 +14,7 @@ public:
     void reinforce(Unit unit, int count, int ammo);
 
     int get_squad(Unit unit, int slot_size);
+    int& get_ammo_pool(Unit unit);
 
     json get_units_json();
     json get_ammo_json();

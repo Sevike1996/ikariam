@@ -2,25 +2,20 @@
 
 #include <vector>
 #include <ostream>
+#include <nlohmann/json.hpp>
 
 #include "unit.hpp"
 
-enum BattleFieldSize {
-    mini,
-    small,
-    medium,
-    large,
-    big,
-};
-
 struct Slot {
     const UnitMeta* meta;
+    int orig_count;
     int count;
     int first_health;
     int& ammo_pool;
 
     Slot& operator=(const Slot& other) {
         this->meta = other.meta;
+        this->orig_count = other.orig_count;
         this->count = other.count;
         this->first_health = other.first_health;
         this->ammo_pool = other.ammo_pool;
@@ -30,6 +25,7 @@ struct Slot {
 
 class Formation
 {
+using json = nlohmann::json;
 public:
     enum Type {
         air_defense,
@@ -41,7 +37,7 @@ public:
         type_count,
     };
 
-    Formation(enum BattleFieldSize battleSize, Type formatinType);
+    Formation(Type formatinType);
 
     const std::vector<Unit> getAcceptableUnits() const;
     const std::vector<Slot> getSlots() const;
@@ -53,12 +49,15 @@ public:
     void hit(Formation& other);
     void shoot(Formation& other);
 
+    json to_json() const;
+
 private:
     std::vector<Slot> _slots;
-    enum BattleFieldSize _battleSize;
     Type _type;
 };
 
 std::ostream& operator<<(std::ostream& os, Slot const& slot);
 
 std::ostream &operator<<(std::ostream &os, Formation const &m);
+
+void to_json(nlohmann::json &serialized, const Slot &slot);

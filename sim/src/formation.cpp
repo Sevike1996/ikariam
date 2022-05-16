@@ -5,20 +5,6 @@
 
 #include "formation.hpp"
 
-struct SlotInfo
-{
-    int amount;
-    int size;
-};
-
-SlotInfo BATTLE_FIELD_SIZES[][Formation::Type::type_count] = {
-    {{3, 30}, {3, 30}, {0, 0}, {1, 30}, {1, 10}, {1, 10}},
-    {{5, 30}, {5, 30}, {2, 30}, {2, 30}, {1, 20}, {1, 20}},
-    {{7, 30}, {7, 30}, {4, 30}, {3, 30}, {1, 30}, {1, 30}},
-    {{7, 40}, {7, 40}, {6, 30}, {4, 30}, {2, 20}, {2, 20}},
-    {{7, 50}, {7, 50}, {6, 40}, {5, 30}, {2, 30}, {2, 30}},
-};
-
 static const std::vector<Unit> acceptableUnits[] = {
     {Unit::gyrocopter},
     {Unit::bombardier},
@@ -28,7 +14,7 @@ static const std::vector<Unit> acceptableUnits[] = {
     {Unit::swordsman, Unit::spearman},
 };
 
-Formation::Formation(enum BattleFieldSize battleSize, Type formatinType) : _battleSize(battleSize), _type(formatinType)
+Formation::Formation(Type formatinType) : _type(formatinType)
 {
 }
 
@@ -43,12 +29,12 @@ const std::vector<Slot> Formation::getSlots() const {
 
 void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool)
 {
-    _slots.push_back(Slot{meta, count, first_health, ammo_pool});
+    _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});
 }
 
 Formation Formation::copy() const
 {
-    Formation dup(_battleSize, _type);
+    Formation dup(_type);
     std::copy(_slots.begin(), _slots.end(), std::back_inserter(dup._slots));
     return dup;
 }
@@ -96,6 +82,28 @@ void Formation::hit(Formation &other)
             // std::cout << hit_slot_index << " died" << std::endl;
         }
     }
+}
+
+Formation::json Formation::to_json() const 
+{
+    json serialized = json::array();
+    for (const auto& slot : _slots) {
+        serialized.push_back(json(slot));
+    }
+
+    return serialized;
+}
+
+void to_json(nlohmann::json &serialized, const Slot &slot)
+{
+    int health_percentage = (static_cast<float>(slot.first_health) / slot.meta->health) * 100;
+
+    serialized = nlohmann::json({
+        static_cast<int>(slot.meta->type),
+        slot.count,
+        slot.orig_count - slot.count,
+        health_percentage / 100.0,
+    });
 }
 
 std::ostream& operator<<(std::ostream& os, Slot const& slot) {

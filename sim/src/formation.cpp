@@ -5,6 +5,15 @@
 
 #include "formation.hpp"
 
+const std::string Formation::FORMATION_NAMES[] = {
+    "air",
+    "bomber",
+    "artillery",
+    "range",
+    "front",
+    "flank",
+};
+
 static const std::vector<Unit> acceptableUnits[] = {
     {Unit::gyrocopter},
     {Unit::bombardier},

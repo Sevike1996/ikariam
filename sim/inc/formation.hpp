@@ -37,6 +37,8 @@ public:
         type_count,
     };
 
+    static const std::string FORMATION_NAMES[];
+
     Formation(Type formatinType);
 
     const std::vector<Unit> getAcceptableUnits() const;

@@ -48,5 +48,5 @@ const UnitMeta UNITS_META[] = {
 };
 
 bool is_ranged(Unit type) {
-    return UNITS_META[type].ammo == NO_AMMO;
+    return UNITS_META[type].ammo != NO_AMMO;
 }

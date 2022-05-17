@@ -58,6 +58,15 @@ int Formation::get_losses_count() const
     return count;
 }
 
+bool Formation::is_empty() const
+{
+    bool is_empty = true;
+    for (const auto& slot : _slots) {
+        is_empty &= slot.count < 1;
+    }
+    return is_empty;
+}
+
 void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool)
 {
     _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});

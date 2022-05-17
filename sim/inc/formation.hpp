@@ -47,6 +47,8 @@ public:
     int get_units_count() const;
     int get_losses_count() const;
 
+    bool is_empty() const;
+
     void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
 
     void hit(Formation& other);

@@ -48,14 +48,22 @@ int& Army::get_ammo_pool(Unit unit)
 
 Army::json Army::get_units_json() const
 {
-    return json(_units);
+    json serialized = json::array();
+    for (const auto& unit : _units) {
+        if (unit.second != 0) {
+            serialized.push_back({unit.first, unit.second});
+        }
+    }
+    return serialized;
 }
 
 Army::json Army::get_ammo_json() const
 {
     json serialized;
     for (std::size_t i = 0; i < _ammo_pools.size(); i++) {
-        serialized[std::to_string(i)] = _ammo_pools[i];
+        if (_ammo_pools[i] != 0) {
+            serialized[std::to_string(i)] = _ammo_pools[i];
+        }
     }
     return serialized;
 }

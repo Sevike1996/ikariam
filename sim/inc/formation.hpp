@@ -40,6 +40,7 @@ public:
     static const std::string FORMATION_NAMES[];
 
     Formation(Type formatinType);
+    Formation(const Formation& other);
 
     const std::vector<Unit> getAcceptableUnits() const;
     const std::vector<Slot> getSlots() const;
@@ -47,8 +48,6 @@ public:
     int get_loss_count() const;
 
     void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
-    
-    Formation copy() const;
 
     void hit(Formation& other);
     void shoot(Formation& other);

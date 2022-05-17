@@ -27,6 +27,10 @@ Formation::Formation(Type formatinType) : _type(formatinType)
 {
 }
 
+Formation::Formation(const Formation& other) : _slots(other._slots), _type(other._type)
+{
+}
+
 const std::vector<Unit> Formation::getAcceptableUnits() const
 {
     return acceptableUnits[_type];
@@ -57,13 +61,6 @@ int Formation::get_loss_count() const
 void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool)
 {
     _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});
-}
-
-Formation Formation::copy() const
-{
-    Formation dup(_type);
-    std::copy(_slots.begin(), _slots.end(), std::back_inserter(dup._slots));
-    return dup;
 }
 
 static bool compare_slot_count(const Slot& a, const Slot& b)

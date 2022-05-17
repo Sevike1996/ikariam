@@ -74,13 +74,15 @@ void Formation::hit(Formation &other)
         return;
     }
     int row_count = std::max_element(_slots.begin(), _slots.end(), compare_slot_count)->count;
-    int offset = 0;
+    int hit_slot_index = 0;
 
-    for (int row = 0; row < row_count && !other._slots.empty(); row++) {
+    for (int row = 0; row < row_count && !is_empty(); row++) {
         int row_damage = 0;
-        int hit_slot_index = (row - offset) % other._slots.size();
+        do {
+            hit_slot_index = (hit_slot_index + 1) % other._slots.size();
+        }
+        while (other._slots[hit_slot_index].count == 0);
         Slot& defending = other._slots[hit_slot_index];
-        // std::cout << row << " -> " << hit_slot_index << std::endl;
 
         for (std::size_t i = 0; i < _slots.size(); i++) {
             Slot& attacking = _slots[i];
@@ -93,17 +95,14 @@ void Formation::hit(Formation &other)
 
         // Did not kill anyone
         if (damage_left < 0) {
-            // std::cout << *this <<  " & " << other << std::endl;
             continue;
         }
 
         defending.count -= std::floor(damage_left / defending.meta->health) + 1;
         defending.first_health = defending.meta->health - (damage_left % defending.meta->health);
-        // std::cout << *this <<  " & " << other << std::endl;
         if (defending.count < 1) {
-            other._slots.erase(other._slots.begin() + hit_slot_index);
-            offset = row - hit_slot_index - 1;
-            // std::cout << hit_slot_index << " died" << std::endl;
+            defending.count = 0;
+            defending.first_health = 0;
         }
     }
 }

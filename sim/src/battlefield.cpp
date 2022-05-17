@@ -50,6 +50,8 @@ BattleField::json BattleField::to_json() const
     for (int type = 0; type < Formation::type_count; type++) {
         serialized[Formation::FORMATION_NAMES[type]] = _formations[type].to_json();
     }
+    serialized["ammo"] = _army.get_ammo_json();
+    serialized["reserve"] = _army.get_units_json();
 
     return serialized;
 }

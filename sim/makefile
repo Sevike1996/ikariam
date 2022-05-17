@@ -1,4 +1,4 @@
-LIBS := mysqlclient
+LIBS := mysqlclient nlohmann_json
 
 SRC_DIR := src
 INC_DIR := inc

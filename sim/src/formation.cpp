@@ -36,6 +36,24 @@ const std::vector<Slot> Formation::getSlots() const {
     return _slots;
 }
 
+int Formation::get_unit_count() const
+{
+    int count = 0;
+    for (const auto& slot : _slots) {
+        count += slot.count;
+    }
+    return count;
+}
+
+int Formation::get_loss_count() const
+{
+    int count = 0;
+    for (const auto& slot : _slots) {
+        count += slot.orig_count - slot.count;
+    }
+    return count;
+}
+
 void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool)
 {
     _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});

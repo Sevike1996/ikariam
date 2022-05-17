@@ -16,6 +16,8 @@ public:
     int get_squad(Unit unit, int slot_size);
     int& get_ammo_pool(Unit unit);
 
+    int get_unit_count() const;
+
     json get_units_json() const;
     json get_ammo_json() const;
 

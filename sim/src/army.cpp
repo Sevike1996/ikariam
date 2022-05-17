@@ -16,6 +16,16 @@ void Army::reinforce(Unit unit, int count, int ammo)
     _ammo_pools[unit] = ammo;
 }
 
+int Army::get_unit_count() const
+{
+    int count = 0;
+    for (const auto& reserve : _units) {
+        count += reserve.second;
+    }
+    return count;
+}
+
+
 int Army::get_squad(Unit unit, int slot_size)
 {
     int size = UNITS_META[unit].size;

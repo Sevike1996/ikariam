@@ -19,6 +19,9 @@ public:
 
     BattleField(Army army, BattleFieldSize size);
 
+    int get_unit_count() const;
+    int get_loss_count() const;
+
     json to_json() const;
 
 private:

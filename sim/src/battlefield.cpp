@@ -43,6 +43,25 @@ void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info
     }
 }
 
+int BattleField::get_unit_count() const
+{
+    int count = 0;
+    for (const auto& formation : _formations) {
+        count += formation.get_unit_count();
+    }
+    count += _army.get_unit_count();
+    return count;
+}
+
+int BattleField::get_loss_count() const
+{
+    int count = 0;
+    for (const auto& formation : _formations) {
+        count += formation.get_loss_count();
+    }
+    return count;
+}
+
 BattleField::json BattleField::to_json() const
 {
     json serialized = json::object();

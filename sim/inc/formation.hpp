@@ -43,6 +43,8 @@ public:
 
     const std::vector<Unit> getAcceptableUnits() const;
     const std::vector<Slot> getSlots() const;
+    int get_unit_count() const;
+    int get_loss_count() const;
 
     void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
     

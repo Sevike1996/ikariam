@@ -8,7 +8,8 @@ const BattleField::SlotInfo BattleField::BATTLE_FIELD_SIZES[][Formation::Type::t
     {{2, 30}, {2, 30}, {5, 30}, {7, 50}, {7, 50}, {6, 40}},
 };
 
-BattleField::BattleField(Army army, BattleFieldSize size) : _army(army), _size(size)
+BattleField::BattleField(Army army, BattleFieldSize size, std::string username, int morale): 
+    _army(army), _size(size), _username(username), _morale(morale), _reduced_morale(morale)
 {
     for (int type = 0; type < Formation::type_count; type++) {
         auto formation = create_formation(static_cast<Formation::Type>(type));
@@ -71,6 +72,7 @@ BattleField::json BattleField::to_json() const
     }
     serialized["ammo"] = _army.get_ammo_json();
     serialized["reserve"] = _army.get_units_json();
+    serialized["info"] = {_username, get_unit_count(), get_loss_count(), _morale, _reduced_morale};
 
     return serialized;
 }

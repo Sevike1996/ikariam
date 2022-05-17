@@ -42,7 +42,8 @@ public:
     Formation(Type formatinType);
     Formation(const Formation& other);
 
-    const std::vector<Unit> getAcceptableUnits() const;
+    const std::vector<Unit>& getAcceptableUnits() const;
+    const std::vector<Formation::Type>& get_attack_order() const;
     const std::vector<Slot> getSlots() const;
     int get_units_count() const;
     int get_losses_count() const;

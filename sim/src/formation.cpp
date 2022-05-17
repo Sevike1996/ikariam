@@ -23,6 +23,15 @@ static const std::vector<Unit> acceptableUnits[] = {
     {Unit::swordsman, Unit::spearman},
 };
 
+static const std::vector<Formation::Type> ATTACK_ORDER[] = {
+    {Formation::bomber, Formation::air_defense},
+    {Formation::artillery, Formation::long_range, Formation::front, Formation::flank},
+    {Formation::front, Formation::flank},
+    {Formation::front, Formation::flank, Formation::long_range},
+    {Formation::front, Formation::long_range, Formation::artillery, Formation::flank},
+    {Formation::flank, Formation::long_range, Formation::artillery, Formation::front},
+};
+
 Formation::Formation(Type formatinType) : _type(formatinType)
 {
 }
@@ -31,9 +40,14 @@ Formation::Formation(const Formation& other) : _slots(other._slots), _type(other
 {
 }
 
-const std::vector<Unit> Formation::getAcceptableUnits() const
+const std::vector<Unit>& Formation::getAcceptableUnits() const
 {
     return acceptableUnits[_type];
+}
+
+const std::vector<Formation::Type>& Formation::get_attack_order() const
+{
+    return ATTACK_ORDER[_type];
 }
 
 const std::vector<Slot> Formation::getSlots() const {

@@ -7,7 +7,11 @@ Army::Army() : _ammo_pools{0}
 void Army::reinforce(Unit unit, int count)
 {
     _units[unit] = count;
-    _ammo_pools[unit] = UNITS_META[unit].ammo * count;
+    if (is_ranged(unit)) {
+        _ammo_pools[unit] = UNITS_META[unit].ammo * count;
+    } else {
+        _ammo_pools[unit] = 0;
+    }
 }
 
 void Army::reinforce(Unit unit, int count, int ammo)

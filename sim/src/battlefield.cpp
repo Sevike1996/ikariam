@@ -72,7 +72,7 @@ BattleField::json BattleField::to_json() const
     }
     serialized["ammo"] = _army.get_ammo_json();
     serialized["reserve"] = _army.get_units_json();
-    serialized["info"] = {_username, get_units_count(), get_losses_count(), _morale, _reduced_morale};
+    serialized["info"] = {json::array({_username, get_units_count(), get_losses_count(), _morale, _morale - _reduced_morale}), };
 
     return serialized;
 }

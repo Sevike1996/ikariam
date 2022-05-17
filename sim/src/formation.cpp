@@ -40,7 +40,7 @@ const std::vector<Slot> Formation::getSlots() const {
     return _slots;
 }
 
-int Formation::get_unit_count() const
+int Formation::get_units_count() const
 {
     int count = 0;
     for (const auto& slot : _slots) {
@@ -49,7 +49,7 @@ int Formation::get_unit_count() const
     return count;
 }
 
-int Formation::get_loss_count() const
+int Formation::get_losses_count() const
 {
     int count = 0;
     for (const auto& slot : _slots) {

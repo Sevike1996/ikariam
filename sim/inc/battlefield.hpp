@@ -19,8 +19,8 @@ public:
 
     BattleField(Army army, BattleFieldSize size, std::string username, int morale);
 
-    int get_unit_count() const;
-    int get_loss_count() const;
+    int get_units_count() const;
+    int get_losses_count() const;
 
     json to_json() const;
 

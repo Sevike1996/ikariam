@@ -44,21 +44,21 @@ void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info
     }
 }
 
-int BattleField::get_unit_count() const
+int BattleField::get_units_count() const
 {
     int count = 0;
     for (const auto& formation : _formations) {
-        count += formation.get_unit_count();
+        count += formation.get_units_count();
     }
-    count += _army.get_unit_count();
+    count += _army.get_units_count();
     return count;
 }
 
-int BattleField::get_loss_count() const
+int BattleField::get_losses_count() const
 {
     int count = 0;
     for (const auto& formation : _formations) {
-        count += formation.get_loss_count();
+        count += formation.get_losses_count();
     }
     return count;
 }
@@ -72,7 +72,7 @@ BattleField::json BattleField::to_json() const
     }
     serialized["ammo"] = _army.get_ammo_json();
     serialized["reserve"] = _army.get_units_json();
-    serialized["info"] = {_username, get_unit_count(), get_loss_count(), _morale, _reduced_morale};
+    serialized["info"] = {_username, get_units_count(), get_losses_count(), _morale, _reduced_morale};
 
     return serialized;
 }

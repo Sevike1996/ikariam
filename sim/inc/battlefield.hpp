@@ -21,6 +21,9 @@ public:
 
     int get_units_count() const;
     int get_losses_count() const;
+    void reduce_morale(bool lost_more);
+
+    Formation& get_formation(Formation::Type type);
 
     json to_json() const;
 

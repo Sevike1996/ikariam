@@ -1,5 +1,9 @@
 #include "battlefield.hpp"
 
+#define MORALE_MAX (100)
+#define ROUND_MORALE_REDUCTION (10)
+#define MORE_LOSSES_MOREALE_REDUCTION (5)
+
 const BattleField::SlotInfo BattleField::BATTLE_FIELD_SIZES[][Formation::Type::type_count] = {
     {{1, 10}, {1, 10}, {1, 30}, {3, 30}, {3, 30}, {0, 0}},
     {{1, 20}, {1, 20}, {2, 30}, {5, 30}, {5, 30}, {2, 30}},
@@ -61,6 +65,22 @@ int BattleField::get_losses_count() const
         count += formation.get_losses_count();
     }
     return count;
+}
+
+void BattleField::reduce_morale(bool lost_more)
+{
+    int cooks = _army.get_unit_count(Unit::cook);
+    _morale -= ROUND_MORALE_REDUCTION;
+    if (lost_more) {
+        _morale -= MORE_LOSSES_MOREALE_REDUCTION;
+    }
+    _morale += cooks;
+    _morale = std::min(_morale, MORALE_MAX);
+}
+
+Formation& BattleField::get_formation(Formation::Type type)
+{
+    return _formations[type];
 }
 
 BattleField::json BattleField::to_json() const

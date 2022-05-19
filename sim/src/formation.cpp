@@ -93,13 +93,13 @@ static bool compare_slot_count(const Slot& a, const Slot& b)
 
 void Formation::hit(Formation &other)
 {
-    if (_slots.size() == 0) {
+    if (is_empty()) {
         return;
     }
     int row_count = std::max_element(_slots.begin(), _slots.end(), compare_slot_count)->count;
     int hit_slot_index = 0;
 
-    for (int row = 0; row < row_count && !is_empty(); row++) {
+    for (int row = 0; row < row_count && !is_empty() && !other.is_empty(); row++) {
         int row_damage = 0;
         do {
             hit_slot_index = (hit_slot_index + 1) % other._slots.size();

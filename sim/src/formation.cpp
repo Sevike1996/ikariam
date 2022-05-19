@@ -99,12 +99,12 @@ void Formation::hit(Formation &other)
     int row_count = std::max_element(_slots.begin(), _slots.end(), compare_slot_count)->count;
     int hit_slot_index = 0;
 
-    for (int row = 0; row < row_count && !is_empty() && !other.is_empty(); row++) {
+    for (int row = 0; row < row_count && !is_empty() && !other.is_empty(); row++, hit_slot_index++) {
         int row_damage = 0;
-        do {
+        while (other._slots[hit_slot_index].count == 0)
+        {
             hit_slot_index = (hit_slot_index + 1) % other._slots.size();
         }
-        while (other._slots[hit_slot_index].count == 0);
         Slot& defending = other._slots[hit_slot_index];
 
         for (std::size_t i = 0; i < _slots.size(); i++) {

@@ -109,8 +109,10 @@ void Formation::hit(Formation &other)
 
         for (std::size_t i = 0; i < _slots.size(); i++) {
             Slot& attacking = _slots[i];
-            row_damage += std::max(attacking.meta->attack - defending.meta->armor, 0);
-            attacking.count--; // mark when unit is hit, remove from attack formation.
+            if (attacking.count > 0) {
+                row_damage += std::max(attacking.meta->attack - defending.meta->armor, 0);
+                attacking.count--; // mark when unit is hit, remove from attack formation.
+            }
         }
 
         int damage_left = row_damage - defending.first_health;

@@ -29,6 +29,11 @@ int Army::get_units_count() const
     return count;
 }
 
+int Army::get_unit_count(Unit type)
+{
+    return _units[type];
+}
+
 int Army::get_squad(Unit unit, int slot_size)
 {
     int size = UNITS_META[unit].size;

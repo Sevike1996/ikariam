@@ -17,6 +17,7 @@ public:
     int& get_ammo_pool(Unit unit);
 
     int get_units_count() const;
+    int get_unit_count(Unit type);
 
     json get_units_json() const;
     json get_ammo_json() const;

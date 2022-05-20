@@ -36,7 +36,7 @@ Formation BattleField::create_formation(Formation::Type type)
 void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info, Unit type)
 {
     auto [slot_count, slot_size] = slot_info;
-    while (formation.getSlots().size() < slot_count) {
+    while (formation.size() < slot_count) {
         int slot_allowance = _army.get_squad(type, slot_size);
         if (slot_allowance == 0 ) {
             return;

@@ -5,23 +5,7 @@
 #include <nlohmann/json.hpp>
 
 #include "unit.hpp"
-
-struct Slot {
-    const UnitMeta* meta;
-    int orig_count;
-    int count;
-    int first_health;
-    int& ammo_pool;
-
-    Slot& operator=(const Slot& other) {
-        this->meta = other.meta;
-        this->orig_count = other.orig_count;
-        this->count = other.count;
-        this->first_health = other.first_health;
-        this->ammo_pool = other.ammo_pool;
-        return *this;
-    }
-};
+#include "slot.hpp"
 
 class Formation
 {

@@ -28,16 +28,18 @@ public:
 
     const std::vector<Unit>& getAcceptableUnits() const;
     const std::vector<Formation::Type>& get_attack_order() const;
-    const std::vector<Slot> getSlots() const;
+
+    std::size_t get_biggest_slot_size() const;
+    std::size_t size() const;
     int get_units_count() const;
     int get_losses_count() const;
+
+    int get_next_occupied_index(int current);
+    Slot& operator[](std::size_t index);
 
     bool is_empty() const;
 
     void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
-
-    void hit(Formation& other);
-    void shoot(Formation& other);
 
     json to_json() const;
 

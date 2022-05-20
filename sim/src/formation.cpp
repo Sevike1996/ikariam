@@ -32,6 +32,8 @@ static const std::vector<Formation::Type> ATTACK_ORDER[] = {
     {Formation::flank, Formation::long_range, Formation::artillery, Formation::front},
 };
 
+static bool compare_slot_count(const Slot& a, const Slot& b);
+
 Formation::Formation(Type formatinType) : _type(formatinType)
 {
 }
@@ -50,8 +52,22 @@ const std::vector<Formation::Type>& Formation::get_attack_order() const
     return ATTACK_ORDER[_type];
 }
 
-const std::vector<Slot> Formation::getSlots() const {
-    return _slots;
+std::size_t Formation::get_biggest_slot_size() const
+{
+    auto found = std::max_element(_slots.begin(), _slots.end(), compare_slot_count);
+    if (found == _slots.end()) {
+        return 0;
+    }
+    return found->count;
+}
+
+static bool compare_slot_count(const Slot& a, const Slot& b)
+{
+    return a.count < b.count;
+}
+
+std::size_t Formation::size() const {
+    return _slots.size();
 }
 
 int Formation::get_units_count() const
@@ -72,6 +88,27 @@ int Formation::get_losses_count() const
     return count;
 }
 
+int Formation::get_next_occupied_index(int current)
+{
+    if (is_empty()) {
+        throw std::runtime_error("empty formation");
+    }
+
+    int hit_slot_index = current;
+    int size = _slots.size();
+    do
+    {
+        hit_slot_index = (hit_slot_index + 1) % size;
+    }
+    while (_slots[hit_slot_index].count == 0);
+    return hit_slot_index;
+}
+
+Slot& Formation::operator[](std::size_t index)
+{
+    return _slots[index];
+}
+
 bool Formation::is_empty() const
 {
     bool is_empty = true;
@@ -84,52 +121,6 @@ bool Formation::is_empty() const
 void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool)
 {
     _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});
-}
-
-static bool compare_slot_count(const Slot& a, const Slot& b)
-{
-    return a.count < b.count;
-}
-
-void Formation::hit(Formation &other)
-{
-    if (is_empty()) {
-        return;
-    }
-    int row_count = std::max_element(_slots.begin(), _slots.end(), compare_slot_count)->count;
-    int hit_slot_index = 0;
-
-    for (int row = 0; row < row_count && !is_empty() && !other.is_empty(); row++, hit_slot_index++) {
-        int row_damage = 0;
-        while (other._slots[hit_slot_index].count == 0)
-        {
-            hit_slot_index = (hit_slot_index + 1) % other._slots.size();
-        }
-        Slot& defending = other._slots[hit_slot_index];
-
-        for (std::size_t i = 0; i < _slots.size(); i++) {
-            Slot& attacking = _slots[i];
-            if (attacking.count > 0) {
-                row_damage += std::max(attacking.meta->attack - defending.meta->armor, 0);
-                attacking.count--; // mark when unit is hit, remove from attack formation.
-            }
-        }
-
-        int damage_left = row_damage - defending.first_health;
-        defending.first_health -= row_damage;
-
-        // Did not kill anyone
-        if (damage_left < 0) {
-            continue;
-        }
-
-        defending.count -= std::floor(damage_left / defending.meta->health) + 1;
-        defending.first_health = defending.meta->health - (damage_left % defending.meta->health);
-        if (defending.count < 1) {
-            defending.count = 0;
-            defending.first_health = 0;
-        }
-    }
 }
 
 Formation::json Formation::to_json() const 

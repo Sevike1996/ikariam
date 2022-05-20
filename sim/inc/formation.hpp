@@ -46,8 +46,4 @@ private:
     Type _type;
 };
 
-std::ostream& operator<<(std::ostream& os, Slot const& slot);
-
-std::ostream &operator<<(std::ostream &os, Formation const &m);
-
 void to_json(nlohmann::json &serialized, const Slot &slot);

@@ -153,24 +153,3 @@ void to_json(nlohmann::json &serialized, const Slot &slot)
         health_percentage / 100.0,
     });
 }
-
-std::ostream& operator<<(std::ostream& os, Slot const& slot) {
-    const char* name = nullptr;
-    for (auto& i : UNIT_TYPES) {
-        if (i.second == slot.meta->type) {
-            name = i.first.c_str();
-        }
-    }
-    os << "(" << name << ", " << slot.count << ", " << slot.first_health << "/" << slot.meta->health << ")";
-
-    return os;
-}
-
-std::ostream& operator<<(std::ostream &os, Formation const &formation) { 
-    os << "{ ";
-    const auto& slots = formation.getSlots();
-    std::copy(slots.begin(), slots.end(), std::ostream_iterator<Slot>(std::cout, ", "));
-    os << " }";
-
-    return os;
-}

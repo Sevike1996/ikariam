@@ -11,6 +11,12 @@ Slot& Slot::operator=(const Slot& other) {
     return *this;
 }
 
+bool Slot::operator==(const Slot& other) const
+{
+    return meta == other.meta && orig_count == other.orig_count && \
+        count == other.count && first_health == other.first_health;
+}
+
 void Slot::apply_damage(AttackInfo& info) {
     int damage = info.damage - (info.unit_count * meta->armor);
     int damage_left = damage - first_health;

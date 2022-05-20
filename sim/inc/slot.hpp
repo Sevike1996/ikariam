@@ -15,5 +15,7 @@ struct Slot {
     int& ammo_pool;
 
     Slot& operator=(const Slot& other);
+    bool operator==(const Slot& other) const;
+
     void apply_damage(AttackInfo& info);
 };

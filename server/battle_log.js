@@ -55,7 +55,7 @@ var battle = null;
 var battleField = null;
 
 function getUnitClassName(unitType) {
-  return "s3" + String(unitType).padStart(2, "0");
+  return "s3" + String(unitType + 1).padStart(2, "0");
 }
 
 function capitalize(str) {

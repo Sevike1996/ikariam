@@ -4,7 +4,21 @@ AttackMatrix::AttackMatrix(Formation &formation) : _formation(formation), _row(0
 {
 }
 
-AttackInfo AttackMatrix::calc_row_damage() const
+void AttackMatrix::advance()
+{
+    _row++;
+}
+
+bool AttackMatrix::is_done()
+{
+    return _row >= _row_count;
+}
+
+MeleeAttackMatrix::MeleeAttackMatrix(Formation& formation) : AttackMatrix(formation)
+{
+}
+    
+AttackInfo MeleeAttackMatrix::calc_row_damage() const
 {
     AttackInfo info = {0, 0};
     for (std::size_t i = 0; i < _formation.size(); i++)
@@ -17,14 +31,4 @@ AttackInfo AttackMatrix::calc_row_damage() const
         }
     }
     return info;
-}
-
-void AttackMatrix::advance()
-{
-    _row++;
-}
-
-bool AttackMatrix::is_done()
-{
-    return _row >= _row_count;
 }

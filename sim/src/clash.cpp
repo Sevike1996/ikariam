@@ -19,7 +19,7 @@ void clash(BattleField& top, BattleField& bottom)
 
 void clash_formation(Formation& attacking, BattleField& defending)
 {
-    AttackMatrix am(attacking);
+    MeleeAttackMatrix am(attacking);
     SlotChain slot_chain(defending, attacking.get_attack_order());
     while (!am.is_done() && !slot_chain.is_done()) {
         auto damage = am.calc_row_damage();

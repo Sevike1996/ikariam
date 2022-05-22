@@ -8,8 +8,8 @@ void clash(BattleField& top, BattleField& bottom)
         Formation& top_attacking = top.get_formation(static_cast<Formation::Type>(type));
         Formation& bottom_attacking = bottom.get_formation(static_cast<Formation::Type>(type));
 
-        clash_formation(top_attacking, bottom);
-        clash_formation(bottom_attacking, top);
+        clash_formation<NativeAttackMatrix>(top_attacking, bottom);
+        clash_formation<NativeAttackMatrix>(bottom_attacking, top);
     }
 
     bool top_lost_more = top.get_losses_count() < bottom.get_losses_count();
@@ -17,15 +17,13 @@ void clash(BattleField& top, BattleField& bottom)
     bottom.reduce_morale(!top_lost_more);
 }
 
-void clash_formation(Formation& attacking, BattleField& defending)
+void clash_matrix(AttackMatrix* matrix, SlotChain& slots)
 {
-    MeleeAttackMatrix am(attacking);
-    SlotChain slot_chain(defending, attacking.get_attack_order());
-    while (!am.is_done() && !slot_chain.is_done()) {
-        auto damage = am.calc_row_damage();
-        slot_chain->apply_damage(damage);
+    while (!matrix->is_done() && !slots.is_done()) {
+        auto damage = matrix->calc_row_damage();
+        slots->apply_damage(damage);
 
-        am.advance();
-        slot_chain.advance();
+        matrix->advance();
+        slots.advance();
     }
 }

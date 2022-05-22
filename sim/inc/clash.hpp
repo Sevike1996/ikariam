@@ -2,7 +2,17 @@
 
 #include "formation.hpp"
 #include "battlefield.hpp"
+#include "attack_matrix.hpp"
+#include "slot_chain.hpp"
 
 void clash(BattleField& top, BattleField& bottom);
 
-void clash_formation(Formation& attacking, BattleField& defending); 
+template<typename MatrixT>
+void clash_formation(Formation& attacking, BattleField& defending)
+{
+    MatrixT matrix(attacking);
+    SlotChain slot_chain(defending, attacking.get_attack_order());
+    clash_matrix(&matrix, slot_chain);
+}
+
+void clash_matrix(AttackMatrix* matrix, SlotChain& slots);

@@ -32,3 +32,27 @@ AttackInfo MeleeAttackMatrix::calc_row_damage() const
     }
     return info;
 }
+
+NativeAttackMatrix::NativeAttackMatrix(Formation& formation) : AttackMatrix(formation)
+{
+}
+    
+AttackInfo NativeAttackMatrix::calc_row_damage() const
+{
+    AttackInfo info = {0, 0};
+    for (std::size_t i = 0; i < _formation.size(); i++)
+    {
+        Slot &attacking = _formation[i];
+        if (attacking.count > static_cast<int>(_row))
+        {
+            if (is_ranged(attacking.meta->type)) {
+                info.damage += attacking.meta->ranged_attack;
+                attacking.ammo_pool--;
+            } else {
+                info.damage += attacking.meta->attack;
+            }
+            info.unit_count++;  
+        }
+    }
+    return info;
+}

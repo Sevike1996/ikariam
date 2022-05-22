@@ -1,3 +1,5 @@
+#pragma once
+
 #include <tuple>
 
 #include "formation.hpp"
@@ -22,6 +24,13 @@ private:
 class MeleeAttackMatrix : public AttackMatrix {
 public:
     MeleeAttackMatrix(Formation& formation);
+
+    AttackInfo calc_row_damage() const override;
+};
+
+class NativeAttackMatrix : public AttackMatrix {
+public:
+    NativeAttackMatrix(Formation& formation);
 
     AttackInfo calc_row_damage() const override;
 };

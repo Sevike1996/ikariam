@@ -64,7 +64,7 @@ Army::json Army::get_units_json() const
 
 Army::json Army::get_ammo_json() const
 {
-    json serialized;
+    json serialized = json::object();
     for (std::size_t i = 0; i < _ammo_pools.size(); i++) {
         if (_ammo_pools[i] != 0) {
             serialized[std::to_string(i)] = _ammo_pools[i];

@@ -8,8 +8,14 @@ void clash(BattleField& top, BattleField& bottom)
         Formation& top_attacking = top.get_formation(static_cast<Formation::Type>(type));
         Formation& bottom_attacking = bottom.get_formation(static_cast<Formation::Type>(type));
 
-        clash_formation<NativeAttackMatrix>(top_attacking, bottom);
-        clash_formation<NativeAttackMatrix>(bottom_attacking, top);
+        NativeAttackMatrix top_matrix(top_attacking);
+        NativeAttackMatrix bottom_matrix(bottom_attacking);
+
+        BattleSlotIterator top_chain(top, top_attacking.get_attack_order());
+        BattleSlotIterator bottom_chain(bottom, bottom_attacking.get_attack_order());
+        
+        clash_matrix(top_matrix, bottom_chain);
+        clash_matrix(bottom_matrix, top_chain);
     }
 
     bool top_lost_more = top.get_losses_count() < bottom.get_losses_count();

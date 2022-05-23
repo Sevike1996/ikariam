@@ -1,6 +1,6 @@
 #include "attack_matrix.hpp"
 
-AttackMatrix::AttackMatrix(Formation &formation) : _formation(formation), _row(0), _row_count(_formation.get_biggest_slot_size())
+AttackMatrix::AttackMatrix(Formation& formation) : _formation(formation), _row(0), _row_count(_formation.get_biggest_slot_size())
 {
 }
 
@@ -18,7 +18,7 @@ MeleeAttackMatrix::MeleeAttackMatrix(Formation& formation) : AttackMatrix(format
 {
 }
     
-AttackInfo MeleeAttackMatrix::calc_row_damage() const
+AttackInfo MeleeAttackMatrix::calc_row_damage()
 {
     AttackInfo info = {0, 0};
     for (std::size_t i = 0; i < _formation.size(); i++)
@@ -37,7 +37,7 @@ NativeAttackMatrix::NativeAttackMatrix(Formation& formation) : AttackMatrix(form
 {
 }
     
-AttackInfo NativeAttackMatrix::calc_row_damage() const
+AttackInfo NativeAttackMatrix::calc_row_damage()
 {
     AttackInfo info = {0, 0};
     for (std::size_t i = 0; i < _formation.size(); i++)

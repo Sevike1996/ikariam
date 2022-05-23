@@ -1,6 +1,6 @@
 #include "clash.hpp"
 #include "attack_matrix.hpp"
-#include "slot_chain.hpp"
+#include "slot_iterator.hpp"
 
 void clash(BattleField& top, BattleField& bottom)
 {
@@ -17,13 +17,13 @@ void clash(BattleField& top, BattleField& bottom)
     bottom.reduce_morale(!top_lost_more);
 }
 
-void clash_matrix(AttackMatrix* matrix, SlotChain& slots)
+void clash_matrix(AttackMatrix& matrix, SlotIterator& slots)
 {
-    while (!matrix->is_done() && !slots.is_done()) {
-        auto damage = matrix->calc_row_damage();
+    while (!matrix.is_done() && !slots.is_done()) {
+        auto damage = matrix.calc_row_damage();
         slots->apply_damage(damage);
 
-        matrix->advance();
+        matrix.advance();
         slots.advance();
     }
 }

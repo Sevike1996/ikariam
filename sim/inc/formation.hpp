@@ -36,6 +36,7 @@ public:
 
     int get_next_occupied_index(int current);
     Slot& operator[](std::size_t index);
+    const Slot& operator[](std::size_t index) const;
     bool operator==(const Formation& other) const;
 
     bool is_empty() const;

@@ -109,6 +109,11 @@ Slot& Formation::operator[](std::size_t index)
     return _slots[index];
 }
 
+const Slot& Formation::operator[](std::size_t index) const
+{
+    return _slots[index];
+}
+
 bool Formation::operator==(const Formation& other) const
 {
     return _slots == other._slots;

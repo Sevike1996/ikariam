@@ -2,8 +2,7 @@
 
 #include "battlefield.hpp"
 #include "army.hpp"
-
-#define DUMMY_MORALE (100)
+#include "utils.hpp"
 
 TEST(Basic, FrontFill) {
     int pool;

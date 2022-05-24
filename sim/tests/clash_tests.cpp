@@ -104,3 +104,30 @@ TEST(Clash, DoubleSlotDoubleKill) {
 
     ASSERT_EQ(defense.get_losses_count(), 2);
 }
+
+TEST(Clash, RangedMelee) {
+    int pool;
+    auto spearman_meta = &UNITS_META[Unit::spearman];
+    auto archer_meta = &UNITS_META[Unit::archer];
+
+    Army top_army;
+    top_army.reinforce(Unit::spearman, 1);
+    BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
+    
+    Army bottom_army;
+    bottom_army.reinforce(Unit::archer, 1);
+    BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);
+
+    clash(top, bottom);
+
+    Formation top_expected(Formation::front);
+    int remaining_health = spearman_meta->health - archer_meta->attack - archer_meta->ranged_attack;
+    top_expected.fill_slot(spearman_meta, 1, remaining_health, pool);
+
+    Formation bottom_expected(Formation::long_range);
+    remaining_health = archer_meta->health - spearman_meta->attack;
+    bottom_expected.fill_slot(archer_meta, 1, remaining_health, pool);
+
+    ASSERT_EQ(top.get_formation(Formation::front), top_expected);
+    ASSERT_EQ(bottom.get_formation(Formation::long_range), bottom_expected);
+}

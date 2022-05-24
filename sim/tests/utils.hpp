@@ -4,8 +4,8 @@
 #include "formation.hpp"
 #include "slot_iterator.hpp"
 
-std::ostream& operator<<(std::ostream& os, const Slot& slot);
+#define DUMMY_MORALE (100)
 
-std::ostream& operator<<(std::ostream& os, const Formation& formation);
+std::ostream& operator<<(std::ostream& os, const Slot& slot);
 
 std::ostream& operator<<(std::ostream& os, const Formation& formation);

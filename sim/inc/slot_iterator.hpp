@@ -31,3 +31,17 @@ private:
     std::vector<Formation::Type>::iterator _current;
     int _hit_slot_index;
 };
+
+
+class FormationSlotIterator : public SlotIterator {
+public:
+    FormationSlotIterator(Formation& formation);
+    
+    Slot* operator->() override;
+
+    void advance() override;
+    bool is_done() override;
+private:
+    Formation& _formation;
+    int _hit_slot_index;
+};

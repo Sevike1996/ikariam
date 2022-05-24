@@ -36,3 +36,25 @@ bool BattleSlotIterator::is_done()
 {
     return _current == _types.end();
 }
+
+FormationSlotIterator::FormationSlotIterator(Formation& formation) : _formation(formation), _hit_slot_index(0)
+{
+}
+
+Slot* FormationSlotIterator::operator->()
+{
+    return &(_formation[_hit_slot_index]);
+}
+
+void FormationSlotIterator::advance()
+{
+    if (is_done()) {
+        return;
+    }
+    _hit_slot_index = _formation.get_next_occupied_index(_hit_slot_index);
+}
+
+bool FormationSlotIterator::is_done()
+{
+    return _formation.is_empty();
+}

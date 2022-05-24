@@ -2,6 +2,8 @@
 #include "attack_matrix.hpp"
 #include "slot_iterator.hpp"
 
+void ranged_melee_hit(BattleField& defending, Formation& attacking);
+
 void clash(BattleField& top, BattleField& bottom)
 {
     for (int type = 0; type < Formation::type_count; type++) {
@@ -10,6 +12,11 @@ void clash(BattleField& top, BattleField& bottom)
 
         NativeAttackMatrix top_matrix(top_attacking);
         NativeAttackMatrix bottom_matrix(bottom_attacking);
+
+        if (type == Formation::front) {
+            ranged_melee_hit(top, bottom_attacking);
+            ranged_melee_hit(bottom, top_attacking);
+        }
 
         BattleSlotIterator top_chain(top, top_attacking.get_attack_order());
         BattleSlotIterator bottom_chain(bottom, bottom_attacking.get_attack_order());
@@ -31,5 +38,13 @@ void clash_matrix(AttackMatrix& matrix, SlotIterator& slots)
 
         matrix.advance();
         slots.advance();
+    }
+}
+
+void ranged_melee_hit(BattleField& defending, Formation& attacking)
+{
+    if (defending.get_formation(Formation::front).is_empty()) {
+        clash_formation<MeleeAttackMatrix>(defending.get_formation(Formation::long_range), attacking);
+        clash_formation<MeleeAttackMatrix>(defending.get_formation(Formation::artillery), attacking);   
     }
 }

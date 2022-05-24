@@ -8,3 +8,11 @@
 void clash(BattleField& top, BattleField& bottom);
 
 void clash_matrix(AttackMatrix& matrix, SlotIterator& slots);
+
+template<typename MatrixT>
+void clash_formation(Formation& attacking, Formation& defending)
+{
+    MatrixT matrix(attacking);
+    FormationSlotIterator slot_chain(defending);
+    clash_matrix(matrix, slot_chain);
+}

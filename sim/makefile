@@ -33,6 +33,7 @@ $(BIN_DIR)/simulator: $(OBJS) | $(BIN_DIR)
 	$(LINK.o)
 
 $(BIN_DIR)/tests: LDLIBS += $(shell pkg-config gtest --libs)
+$(BIN_DIR)/tests: CPPFLAGS += -Itests
 $(BIN_DIR)/tests: $(TEST_OBJS) $(OBJS) | $(BIN_DIR)
 	$(LINK.o)
 

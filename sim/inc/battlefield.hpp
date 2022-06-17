@@ -19,8 +19,10 @@ public:
 
     BattleField(Army army, BattleFieldSize size, std::string username, int morale);
 
+    bool can_defend() const;
     int get_units_count() const;
     int get_losses_count() const;
+    int get_morale() const;
     void reduce_morale(bool lost_more);
 
     Formation& get_formation(Formation::Type type);
@@ -38,6 +40,7 @@ private:
 
     Formation create_formation(Formation::Type type);
     void fill_formation(Formation& formation, const SlotInfo& slot_info, Unit type);
+    bool has_spare(Formation::Type type) const;
 
     std::vector<Formation> _formations;
     Army _army;

@@ -48,6 +48,31 @@ void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info
     }
 }
 
+bool BattleField::can_defend() const
+{
+    Formation::Type DEFENDING_FROMATION_TYPES[] = {Formation::front, Formation::flank, Formation::long_range};
+    for (auto type : DEFENDING_FROMATION_TYPES) {
+        if (!_formations[type].is_empty()) {
+            return true;
+        }
+        if (has_spare(type)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool BattleField::has_spare(Formation::Type type) const
+{
+    for (auto unit_type : Formation::ACCEPTABLE_UNITS[type]) {
+        if (_army.get_unit_count(unit_type) != 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int BattleField::get_units_count() const
 {
     int count = 0;
@@ -65,6 +90,11 @@ int BattleField::get_losses_count() const
         count += formation.get_losses_count();
     }
     return count;
+}
+
+int BattleField::get_morale() const
+{
+    return _morale;
 }
 
 void BattleField::reduce_morale(bool lost_more)

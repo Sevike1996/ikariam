@@ -22,6 +22,7 @@ public:
     };
 
     static const std::string FORMATION_NAMES[];
+    static const std::vector<Unit> ACCEPTABLE_UNITS[];
 
     Formation(Type formatinType);
     Formation(const Formation& other);

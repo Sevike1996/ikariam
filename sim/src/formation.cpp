@@ -14,7 +14,7 @@ const std::string Formation::FORMATION_NAMES[] = {
     "flank",
 };
 
-static const std::vector<Unit> acceptableUnits[] = {
+const std::vector<Unit> Formation::ACCEPTABLE_UNITS[] = {
     {Unit::gyrocopter},
     {Unit::bombardier},
     {Unit::mortar, Unit::ballista_ship, Unit::ram},
@@ -44,7 +44,7 @@ Formation::Formation(const Formation& other) : _slots(other._slots), _type(other
 
 const std::vector<Unit>& Formation::getAcceptableUnits() const
 {
-    return acceptableUnits[_type];
+    return ACCEPTABLE_UNITS[_type];
 }
 
 const std::vector<Formation::Type>& Formation::get_attack_order() const

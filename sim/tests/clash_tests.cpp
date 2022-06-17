@@ -131,3 +131,29 @@ TEST(Clash, RangedMelee) {
     ASSERT_EQ(top.get_formation(Formation::front), top_expected);
     ASSERT_EQ(bottom.get_formation(Formation::long_range), bottom_expected);
 }
+
+TEST(Clash, NoDefendingUnits) {
+    Army top_army;
+    top_army.reinforce(Unit::spearman, 1);
+    BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
+    
+    Army bottom_army;
+    bottom_army.reinforce(Unit::ram, 1);
+    BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);   
+
+    auto* winner = getWinner(bottom, top);
+    ASSERT_EQ(winner, &top);
+}
+
+TEST(Clash, Draw) {
+    Army top_army;
+    top_army.reinforce(Unit::spearman, 1);
+    BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
+    
+    Army bottom_army;
+    bottom_army.reinforce(Unit::steam_giant, 1);
+    BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);   
+
+    auto* winner = getWinner(bottom, top);
+    ASSERT_EQ(winner, nullptr);
+}

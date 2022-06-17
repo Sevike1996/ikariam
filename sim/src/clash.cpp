@@ -48,3 +48,18 @@ void ranged_melee_hit(BattleField& defending, Formation& attacking)
         clash_formation<MeleeAttackMatrix>(defending.get_formation(Formation::artillery), attacking);   
     }
 }
+
+BattleField* getWinner(BattleField& top, BattleField& bottom)
+{
+    if (!top.can_defend()) {
+        return &bottom;
+    } else if (!bottom.can_defend()) {
+        return &top;
+    }
+    if (top.get_morale() == 0) {
+        return &bottom;
+    } else if (bottom.get_morale() == 0) {
+        return &top;
+    }
+    return nullptr;
+}

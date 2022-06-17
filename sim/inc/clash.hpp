@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "formation.hpp"
 #include "battlefield.hpp"
 #include "attack_matrix.hpp"
@@ -16,3 +18,5 @@ void clash_formation(Formation& attacking, Formation& defending)
     FormationSlotIterator slot_chain(defending);
     clash_matrix(matrix, slot_chain);
 }
+
+BattleField* getWinner(BattleField& top, BattleField& bottom);

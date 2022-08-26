@@ -16,6 +16,13 @@ public:
         large,
         big,
     };
+    
+    struct SlotInfo
+    {
+        std::size_t amount;
+        int size;
+    };
+
 
     BattleField(Army& army, BattleFieldSize size, std::string username, int morale);
 
@@ -29,14 +36,9 @@ public:
 
     json to_json() const;
 
-private:
-    struct SlotInfo
-    {
-        std::size_t amount;
-        int size;
-    };
-
     static const SlotInfo BATTLE_FIELD_SIZES[][Formation::Type::type_count];
+
+private:
 
     Formation create_formation(Formation::Type type);
     void fill_formation(Formation& formation, const SlotInfo& slot_info, Unit type);

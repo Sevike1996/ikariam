@@ -47,6 +47,23 @@ const UnitMeta UNITS_META[] = {
     {Unit::barbarian, 12, 7, 0, NO_AMMO, 1, 1, true},
 };
 
+UnitMeta get_wall_meta(int level)
+{
+    // Biggest slot is 50, so 2 will never fit.
+    UnitMeta base = {Unit::wall, 0, 0, 0, NO_AMMO, 0, 30, false};
+    base.health = 100 + (50 * level);
+    base.armor = 4 * level;
+    if (level < 10) {
+        base.attack = 10 + (2 * level);
+        
+    } else if (level < 20) {
+        base.attack = 80 + (5 * (level - 10));
+    } else {
+        base.attack = 250 + (10 * (level - 20)); 
+    }
+    return base;
+}
+
 bool is_ranged(Unit type) {
     return UNITS_META[type].ammo != NO_AMMO;
 }

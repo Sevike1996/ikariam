@@ -8,7 +8,7 @@ TEST(Basic, FrontFill) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    Army army;
+    Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::spearman, 10);
     BattleField battlefield(army, BattleField::mini, "user", DUMMY_MORALE);
 
@@ -21,7 +21,7 @@ TEST(Basic, FrontFlood) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    Army army;
+    Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::spearman, 100);
     BattleField battlefield(army, BattleField::mini, "user", DUMMY_MORALE);
 
@@ -36,7 +36,7 @@ TEST(Basic, FrontFlankOverflow) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    Army army;
+    Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::spearman, 170);
     BattleField battlefield(army, BattleField::small, "user", DUMMY_MORALE);
 
@@ -50,7 +50,7 @@ TEST(Basic, ArtilleryPrio) {
     int pool;
     const UnitMeta* mortar_meta = &(UNITS_META[Unit::mortar]);
 
-    Army army;
+    Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::mortar, 7);
     army.reinforce(Unit::ram, 6);
     BattleField battlefield(army, BattleField::small, "user", DUMMY_MORALE);

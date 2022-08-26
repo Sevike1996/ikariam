@@ -110,11 +110,11 @@ TEST(Clash, RangedMelee) {
     auto spearman_meta = &UNITS_META[Unit::spearman];
     auto archer_meta = &UNITS_META[Unit::archer];
 
-    Army top_army;
+    Army top_army(std::move(std::make_unique<StatLoader>()));
     top_army.reinforce(Unit::spearman, 1);
     BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
     
-    Army bottom_army;
+    Army bottom_army(std::move(std::make_unique<StatLoader>()));
     bottom_army.reinforce(Unit::archer, 1);
     BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);
 
@@ -133,11 +133,11 @@ TEST(Clash, RangedMelee) {
 }
 
 TEST(Clash, NoDefendingUnits) {
-    Army top_army;
+    Army top_army(std::move(std::make_unique<StatLoader>()));
     top_army.reinforce(Unit::spearman, 1);
     BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
     
-    Army bottom_army;
+    Army bottom_army(std::move(std::make_unique<StatLoader>()));
     bottom_army.reinforce(Unit::ram, 1);
     BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);   
 
@@ -146,11 +146,11 @@ TEST(Clash, NoDefendingUnits) {
 }
 
 TEST(Clash, Draw) {
-    Army top_army;
+    Army top_army(std::move(std::make_unique<StatLoader>()));
     top_army.reinforce(Unit::spearman, 1);
     BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
     
-    Army bottom_army;
+    Army bottom_army(std::move(std::make_unique<StatLoader>()));
     bottom_army.reinforce(Unit::steam_giant, 1);
     BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);   
 

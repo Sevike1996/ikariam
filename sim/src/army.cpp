@@ -1,12 +1,13 @@
 #include "army.hpp"
 
-Army::Army() : _ammo_pools{0}
+Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(stat_loader)), _ammo_pools{0}
 {
 }
 
 void Army::reinforce(Unit unit, int count)
 {
-    _units[unit] = count;
+    UnitMeta stats = _stat_loader->load_stats(unit);
+    _units.emplace(unit, UnitPool{count, stats});
     if (is_ranged(unit)) {
         _ammo_pools[unit] = UNITS_META[unit].ammo * count;
     } else {
@@ -16,15 +17,16 @@ void Army::reinforce(Unit unit, int count)
 
 void Army::reinforce(Unit unit, int count, int ammo)
 {
-    _units[unit] = count;
+    UnitMeta stats = _stat_loader->load_stats(unit);
+    _units[unit] = {count, stats};
     _ammo_pools[unit] = ammo;
 }
 
 int Army::get_units_count() const
 {
     int count = 0;
-    for (const auto& reserve : _units) {
-        count += reserve.second;
+    for (const auto& [unit, pool] : _units) {
+        count += pool.count;
     }
     return count;
 }
@@ -35,19 +37,26 @@ int Army::get_unit_count(Unit type) const
     if (found == _units.end()) {
         return 0;
     }
-    return found->second;
+    return found->second.count;
 }
 
-int Army::get_squad(Unit unit, int slot_size)
+Army::Squad Army::get_squad(Unit unit, int slot_size)
 {
-    int size = UNITS_META[unit].size;
-    int count = std::min(_units[unit], slot_size / size);
+    auto found = _units.find(unit);
+    if (found == _units.end()) {
+        return Squad{0, nullptr};
+    }
+
+    UnitPool& pool = found->second;
+    int size = pool.stats.size;
+    int count = std::min(pool.count, slot_size / size);
     if (is_ranged(unit)) {
         count = std::min(count, _ammo_pools[unit]);
     }
 
-    _units[unit] -= count;
-    return count;
+    pool.count -= count;
+
+    return Squad{count, &pool.stats};
 }
 
 int& Army::get_ammo_pool(Unit unit)
@@ -58,9 +67,9 @@ int& Army::get_ammo_pool(Unit unit)
 Army::json Army::get_units_json() const
 {
     json serialized = json::array();
-    for (const auto& unit : _units) {
-        if (unit.second != 0) {
-            serialized.push_back({unit.first, unit.second});
+    for (const auto& [type, pool] : _units) {
+        if (pool.count != 0) {
+            serialized.push_back({type, pool.count});
         }
     }
     return serialized;

@@ -12,7 +12,7 @@ const BattleField::SlotInfo BattleField::BATTLE_FIELD_SIZES[][Formation::Type::t
     {{2, 30}, {2, 30}, {5, 30}, {7, 50}, {7, 50}, {6, 40}},
 };
 
-BattleField::BattleField(Army army, BattleFieldSize size, std::string username, int morale): 
+BattleField::BattleField(Army& army, BattleFieldSize size, std::string username, int morale): 
     _army(army), _size(size), _username(username), _morale(morale), _reduced_morale(morale)
 {
     for (int type = 0; type < Formation::type_count; type++) {
@@ -37,11 +37,10 @@ void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info
 {
     auto [slot_count, slot_size] = slot_info;
     while (formation.size() < slot_count) {
-        int slot_allowance = _army.get_squad(type, slot_size);
+        auto [slot_allowance, meta] = _army.get_squad(type, slot_size);
         if (slot_allowance == 0 ) {
             return;
         }
-        const UnitMeta* meta = &UNITS_META[type];
         int& ammo_pool = _army.get_ammo_pool(type);
 
         formation.fill_slot(meta, slot_allowance, meta->health, ammo_pool);

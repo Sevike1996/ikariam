@@ -13,7 +13,7 @@ Slot& Slot::operator=(const Slot& other) {
 
 bool Slot::operator==(const Slot& other) const
 {
-    return meta == other.meta && orig_count == other.orig_count && \
+    return meta->type == other.meta->type && orig_count == other.orig_count && \
         count == other.count && first_health == other.first_health;
 }
 

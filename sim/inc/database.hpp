@@ -5,10 +5,17 @@
 #include "battlefield.hpp"
 
 struct Mission {
+    enum State {
+        DEPARTING,
+        CLASHING,
+        LOADING,
+        RETURNING,
+        DISPERSED,
+    };
     int id;
     int from;
     int to;
-    int state;
+    State state;
     int next_stage_time;
 };
 

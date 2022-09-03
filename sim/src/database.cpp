@@ -56,7 +56,7 @@ Mission Database::load_mission(int mission_id)
     mission.id = std::any_cast<int>(row["id"]);
     mission.from = std::any_cast<int>(row["from"]);
     mission.to = std::any_cast<int>(row["to"]);
-    mission.state = std::any_cast<int>(row["state"]);
+    mission.state = static_cast<Mission::State>(std::any_cast<int>(row["state"]));
     mission.next_stage_time = std::any_cast<int>(row["next_stage_time"]);
 
     return mission;

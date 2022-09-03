@@ -24,13 +24,11 @@ public:
     };
 
 
-    BattleField(Army& army, BattleFieldSize size, std::string username, int morale);
+    BattleField(Army& army, BattleFieldSize size, std::string username);
 
     bool can_defend() const;
     int get_units_count() const;
     int get_losses_count() const;
-    int get_morale() const;
-    void reduce_morale(bool lost_more);
 
     Formation& get_formation(Formation::Type type);
 
@@ -48,6 +46,4 @@ private:
     Army& _army;
     BattleFieldSize _size;
     std::string _username;
-    int _morale;
-    int _reduced_morale;
 };

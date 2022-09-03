@@ -10,7 +10,7 @@ TEST(Basic, FrontFill) {
 
     Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::spearman, 10);
-    BattleField battlefield(army, BattleField::mini, "user", DUMMY_MORALE);
+    BattleField battlefield(army, BattleField::mini, "user");
 
     Formation expected(Formation::front);
     expected.fill_slot(spearman_meta, 10, spearman_meta->health, pool);
@@ -23,7 +23,7 @@ TEST(Basic, FrontFlood) {
 
     Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::spearman, 100);
-    BattleField battlefield(army, BattleField::mini, "user", DUMMY_MORALE);
+    BattleField battlefield(army, BattleField::mini, "user");
 
     Formation expected(Formation::front);
     for (int i = 0; i < 3; i++) {
@@ -38,7 +38,7 @@ TEST(Basic, FrontFlankOverflow) {
 
     Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::spearman, 170);
-    BattleField battlefield(army, BattleField::small, "user", DUMMY_MORALE);
+    BattleField battlefield(army, BattleField::small, "user");
 
     Formation expected(Formation::flank);
     expected.fill_slot(spearman_meta, 20, spearman_meta->health, pool);
@@ -53,7 +53,7 @@ TEST(Basic, ArtilleryPrio) {
     Army army(std::move(std::make_unique<StatLoader>()));
     army.reinforce(Unit::mortar, 7);
     army.reinforce(Unit::ram, 6);
-    BattleField battlefield(army, BattleField::small, "user", DUMMY_MORALE);
+    BattleField battlefield(army, BattleField::small, "user");
 
     Formation expected(Formation::artillery);
     expected.fill_slot(mortar_meta, 6, mortar_meta->health, pool);

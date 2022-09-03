@@ -24,10 +24,6 @@ void clash(BattleField& top, BattleField& bottom)
         clash_matrix(top_matrix, bottom_chain);
         clash_matrix(bottom_matrix, top_chain);
     }
-
-    bool top_lost_more = top.get_losses_count() < bottom.get_losses_count();
-    top.reduce_morale(top_lost_more);
-    bottom.reduce_morale(!top_lost_more);
 }
 
 void clash_matrix(AttackMatrix& matrix, SlotIterator& slots)
@@ -54,11 +50,6 @@ BattleField* getWinner(BattleField& top, BattleField& bottom)
     if (!top.can_defend()) {
         return &bottom;
     } else if (!bottom.can_defend()) {
-        return &top;
-    }
-    if (top.get_morale() == 0) {
-        return &bottom;
-    } else if (bottom.get_morale() == 0) {
         return &top;
     }
     return nullptr;

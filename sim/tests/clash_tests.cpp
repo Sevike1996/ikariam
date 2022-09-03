@@ -112,11 +112,11 @@ TEST(Clash, RangedMelee) {
 
     Army top_army(std::move(std::make_unique<StatLoader>()));
     top_army.reinforce(Unit::spearman, 1);
-    BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
+    BattleField top(top_army, BattleField::small, "user");
     
     Army bottom_army(std::move(std::make_unique<StatLoader>()));
     bottom_army.reinforce(Unit::archer, 1);
-    BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);
+    BattleField bottom(bottom_army, BattleField::small, "user");
 
     clash(top, bottom);
 
@@ -135,11 +135,11 @@ TEST(Clash, RangedMelee) {
 TEST(Clash, NoDefendingUnits) {
     Army top_army(std::move(std::make_unique<StatLoader>()));
     top_army.reinforce(Unit::spearman, 1);
-    BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
+    BattleField top(top_army, BattleField::small, "user");
     
     Army bottom_army(std::move(std::make_unique<StatLoader>()));
     bottom_army.reinforce(Unit::ram, 1);
-    BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);   
+    BattleField bottom(bottom_army, BattleField::small, "user");   
 
     auto* winner = getWinner(bottom, top);
     ASSERT_EQ(winner, &top);
@@ -148,11 +148,11 @@ TEST(Clash, NoDefendingUnits) {
 TEST(Clash, Draw) {
     Army top_army(std::move(std::make_unique<StatLoader>()));
     top_army.reinforce(Unit::spearman, 1);
-    BattleField top(top_army, BattleField::small, "user", DUMMY_MORALE);
+    BattleField top(top_army, BattleField::small, "user");
     
     Army bottom_army(std::move(std::make_unique<StatLoader>()));
     bottom_army.reinforce(Unit::steam_giant, 1);
-    BattleField bottom(bottom_army, BattleField::small, "user", DUMMY_MORALE);   
+    BattleField bottom(bottom_army, BattleField::small, "user");   
 
     auto* winner = getWinner(bottom, top);
     ASSERT_EQ(winner, nullptr);

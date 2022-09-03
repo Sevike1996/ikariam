@@ -6,12 +6,16 @@
 class StatLoader
 {
 public:
+    virtual ~StatLoader() = default;
+
     virtual UnitMeta load_stats(Unit unit) const;
 };
 
 class DefensiveStatLoader : public StatLoader
 {
 public:
+    virtual ~DefensiveStatLoader() = default;
+
     DefensiveStatLoader(sql::Connection& conn, int town_id);
 
     UnitMeta load_stats(Unit unit) const override;

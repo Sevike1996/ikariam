@@ -100,7 +100,7 @@ sql::Result::Iterator::Iterator(Result& result, std::size_t index) : _result(res
 
 sql::Row sql::Result::Iterator::operator*()
 {
-    return std::move(_result[_index]);
+    return _result[_index];
 }
 
 bool sql::Result::Iterator::operator!=(Iterator& other) const

@@ -1,4 +1,5 @@
 LIBS := mysqlclient nlohmann_json
+CXX := clang++
 
 SRC_DIR := src
 INC_DIR := inc

@@ -83,3 +83,14 @@ BattleField::BattleFieldSize Database::getBattlefieldSize(const Mission& mission
         return BattleField::big;
     }
 }
+
+std::string Database::getTownsUsername(int town_id)
+{
+    std::stringstream query;
+    query << "select login from alpha_users where id = (select user_id from alpha_towns where id = " << town_id << ")";
+
+    sql::Result res = _conn.query(query.str());
+
+    auto row = res[0];
+    return std::any_cast<std::string>(row["login"]);
+}

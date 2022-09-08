@@ -26,6 +26,8 @@ public:
     Army load_defensive_army(const Mission& mission);
     Army load_attacking_army(const Mission& mission);
 
+    std::string getTownsUsername(int town_id);
+
     BattleField::BattleFieldSize getBattlefieldSize(const Mission& mission);
 
     Mission load_mission(int mission_id);

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <list>
+#include <ctime>
+
 #include "sql.hpp"
 #include "army.hpp"
 #include "battlefield.hpp"
@@ -16,7 +19,7 @@ struct Mission {
     int from;
     int to;
     State state;
-    int next_stage_time;
+    std::time_t next_stage_time;
 };
 
 class Database {
@@ -29,6 +32,8 @@ public:
     std::string getTownsUsername(int town_id);
 
     BattleField::BattleFieldSize getBattlefieldSize(const Mission& mission);
+
+    std::list<int> getMissionsNeedingUpdate();
 
     Mission load_mission(int mission_id);
 

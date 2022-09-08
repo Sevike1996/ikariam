@@ -1,6 +1,7 @@
 #include "database.hpp"
 
 #include <sstream>
+#include <ctime>
 
 
 Database::Database() : _conn("/tmp/mysqld/mysqld.sock", "ik_game")
@@ -57,7 +58,7 @@ Mission Database::load_mission(int mission_id)
     mission.from = std::any_cast<int>(row["from"]);
     mission.to = std::any_cast<int>(row["to"]);
     mission.state = static_cast<Mission::State>(std::any_cast<int>(row["state"]));
-    mission.next_stage_time = std::any_cast<int>(row["next_stage_time"]);
+    mission.next_stage_time = std::any_cast<std::time_t>(row["next_stage_time"]);
 
     return mission;
 }
@@ -93,4 +94,20 @@ std::string Database::getTownsUsername(int town_id)
 
     auto row = res[0];
     return std::any_cast<std::string>(row["login"]);
+}
+
+std::list<int> Database::getMissionsNeedingUpdate()
+{
+    std::time_t now = time(nullptr);
+    std::list<int> missions;
+    std::stringstream query;
+    query << "select id from alpha_missions where next_stage_time < " << now;
+
+    sql::Result result = _conn.query(query.str());
+    for (auto row : result) {
+        int id = std::any_cast<int>(row["id"]);
+        missions.push_back(id);
+    }
+
+    return missions;
 }

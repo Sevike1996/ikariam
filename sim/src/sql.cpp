@@ -7,6 +7,8 @@ static std::any parse_field(enum enum_field_types type, const char* raw_value);
 
 static std::any parse_int_field(const char* raw_value);
 
+static std::any parse_long_int_field(const char* raw_value);
+
 static std::any parse_json_field(const char* raw_value);
 
 sql::Error::Error(std::string msg) : _msg(msg)
@@ -133,6 +135,8 @@ sql::Row::Row(Result& result, MYSQL_ROW row)
 static std::any parse_field(enum enum_field_types type, const char* raw_value)
 {
     switch (type) {
+    case MYSQL_TYPE_LONGLONG:
+        return parse_long_int_field(raw_value);
     case MYSQL_TYPE_LONG:
         return parse_int_field(raw_value);
     case MYSQL_TYPE_VARCHAR:
@@ -153,6 +157,14 @@ static std::any parse_int_field(const char* raw_value)
         return std::make_any<int>(0);
     }
     return std::make_any<int>(std::stoi(raw_value));
+}
+
+static std::any parse_long_int_field(const char* raw_value)
+{
+    if (raw_value == nullptr) {
+        return std::make_any<long>(0);
+    }
+    return std::make_any<long>(std::stol(raw_value));
 }
 
 static std::any parse_json_field(const char* raw_value)

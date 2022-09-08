@@ -61,6 +61,11 @@ sql::Result::Result(MYSQL_RES* result) : _result(result)
     _columns = mysql_fetch_fields(result);
 }
 
+sql::Result::~Result()
+{
+    mysql_free_result(_result);
+}
+
 sql::Row sql::Result::operator[](int index)
 {
     mysql_data_seek(_result, index);

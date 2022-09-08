@@ -32,6 +32,7 @@ public:
     struct Iterator;
 
     Result(MYSQL_RES* result);
+    ~Result();
 
     Row operator[](int index);
 

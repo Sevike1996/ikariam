@@ -4,8 +4,9 @@
 #include <ctime>
 
 
-Database::Database() : _conn("/tmp/mysqld/mysqld.sock", "ik_game")
+Database::Database()
 {
+    _conn.connect("/tmp/mysqld/mysqld.sock", "ik_game");
 }
 
 Army Database::load_defensive_army(const Mission& mission) 
@@ -15,7 +16,9 @@ Army Database::load_defensive_army(const Mission& mission)
     query << "SELECT * FROM alpha_town_units where town_id = " << mission.to << ";";
     sql::Result result = _conn.query(query.str());
 
-    for (auto row : result) {
+    auto count = result.row_count();
+    for (int i = 0; i < count; i++) {
+        auto row = result[i];
         auto unit = std::any_cast<int>(row["type"]);
         auto count = std::any_cast<int>(row["count"]);
         army.reinforce(static_cast<Unit>(unit), count);
@@ -35,7 +38,9 @@ Army Database::load_attacking_army(const Mission& mission)
     query << "SELECT type,count FROM alpha_mission_units where mission_id = " << mission.id << ";";
     sql::Result result = _conn.query(query.str());
     
-    for (auto row : result) {
+    auto count = result.row_count();
+    for (int i = 0; i < count; i++) {
+        auto row = result[i];
         auto unit = std::any_cast<int>(row["type"]);
         auto count = std::any_cast<int>(row["count"]);
         army.reinforce(static_cast<Unit>(unit), count);
@@ -58,7 +63,7 @@ Mission Database::load_mission(int mission_id)
     mission.from = std::any_cast<int>(row["from"]);
     mission.to = std::any_cast<int>(row["to"]);
     mission.state = static_cast<Mission::State>(std::any_cast<int>(row["state"]));
-    mission.next_stage_time = std::any_cast<std::time_t>(row["next_stage_time"]);
+    mission.next_stage_time = std::any_cast<long long>(row["next_stage_time"]);
 
     return mission;
 }
@@ -104,10 +109,20 @@ std::list<int> Database::getMissionsNeedingUpdate()
     query << "select id from alpha_missions where next_stage_time < " << now;
 
     sql::Result result = _conn.query(query.str());
-    for (auto row : result) {
+    auto count = result.row_count();
+    for (int i = 0; i < count; i++) {
+        auto row = result[i];
         int id = std::any_cast<int>(row["id"]);
         missions.push_back(id);
     }
 
     return missions;
+}
+
+void Database::store_round(const Mission& mission, const std::string& round)
+{
+    int round_id = 2; // TODO select round from alpha_battle_rounds where  battle_id = 0 order by round desc limit 1;
+    // TODO bind round to query
+    auto statement = _conn.create_statement();
+    auto result = statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", mission.id)
 }

@@ -8,9 +8,13 @@ DEP_DIR := dep
 BIN_DIR := bin
 TEST_DIR := tests
 
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+SRCS := $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/*/*.cpp)
 OBJS := $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%.o,$(basename $(SRCS)))
 DEPS := $(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%.d,$(basename $(SRCS)))
+
+SRC_DIRS := $(sort $(dir $(SRCS)))
+OBJ_DIRS := $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(SRC_DIRS))
+DEP_DIRS := $(patsubst $(SRC_DIR)/%,$(DEP_DIR)/%,$(SRC_DIRS))
 
 TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%.o,$(basename $(TEST_SRCS)))
@@ -24,7 +28,7 @@ LDLIBS := $(shell pkg-config $(LIBS) --libs)
 COMPILE.cpp = $(CXX) -c $(CPPFLAGS) $(CXXFLAGS) -o $@ $<
 LINK.o = $(CXX) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-vpath %.cpp $(SRC_DIR) $(TEST_DIR)
+vpath %.cpp $(SRC_DIR) $(TEST_DIR) $(SRC_DIR)/*
 
 .PHONY: clean check
 
@@ -44,13 +48,13 @@ check: $(BIN_DIR)/tests
 clean:
 	$(RM) $(OBJS) $(DEPS) $(wildcard $(BIN_DIR)/*)
 
-$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIRS)
 	$(COMPILE.cpp)
 
-$(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp | $(DEP_DIR)
+$(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp | $(DEP_DIRS)
 	$(CXX) $(CPPFLAGS) $(DEPFLAGS) -MF $@ -MT '$(OBJ_DIR)/$(basename $(<F)).o' $<
 
 include $(DEPS)
 
-$(OBJ_DIR) $(DEP_DIR) $(BIN_DIR):
+$(OBJ_DIRS) $(DEP_DIRS) $(BIN_DIR) :
 	@mkdir -p $@

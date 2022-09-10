@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sql.hpp"
+#include "sql/connection.hpp"
 #include "unit.hpp"
 
 class StatLoader

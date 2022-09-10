@@ -3,7 +3,7 @@
 #include <list>
 #include <ctime>
 
-#include "sql.hpp"
+#include "sql/connection.hpp"
 #include "army.hpp"
 #include "battlefield.hpp"
 
@@ -36,6 +36,8 @@ public:
     std::list<int> getMissionsNeedingUpdate();
 
     Mission load_mission(int mission_id);
+
+    void store_round(const Mission& mission, const std::string& round);
 
 private:
     sql::Connection _conn;

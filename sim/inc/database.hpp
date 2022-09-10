@@ -20,6 +20,7 @@ struct Mission {
     int to;
     State state;
     std::time_t next_stage_time;
+    int battle_id;
 };
 
 class Database {

@@ -64,6 +64,7 @@ Mission Database::load_mission(int mission_id)
     mission.to = std::any_cast<int>(row["to"]);
     mission.state = static_cast<Mission::State>(std::any_cast<int>(row["state"]));
     mission.next_stage_time = std::any_cast<long long>(row["next_stage_time"]);
+    mission.battle_id = std::any_cast<int>(row["battle_id"]);
 
     return mission;
 }
@@ -121,8 +122,13 @@ std::list<int> Database::getMissionsNeedingUpdate()
 
 void Database::store_round(const Mission& mission, const std::string& round)
 {
-    int round_id = 2; // TODO select round from alpha_battle_rounds where  battle_id = 0 order by round desc limit 1;
-    // TODO bind round to query
+    int round_id;
+
     auto statement = _conn.create_statement();
-    auto result = statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", mission.id)
+    statement.execute("select count(battle_id) as count from alpha_battle_rounds where battle_id = ?", mission.battle_id);
+    auto result = statement.result();
+    round_id = std::any_cast<long long>(result[0]["count"]) + 1;
+
+    statement = _conn.create_statement();
+    statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", mission.battle_id, round_id, round);
 }

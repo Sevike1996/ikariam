@@ -25,13 +25,13 @@ CREATE TABLE `alpha_battles` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `town_id` int(11) NOT NULL,
     `start_time` bigint NOT NULL,
-    `winner` int(11) DEFAULT "-1",
+    `winner` int(11),
     PRIMARY KEY (`id`, `town_id`),
     FOREIGN KEY (id) REFERENCES alpha_users(id),
     FOREIGN KEY (winner) REFERENCES alpha_users(id)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
-INSERT INTO alpha_battles(town_id, start_time) VALUES(0, 0);
+INSERT INTO alpha_battles(town_id, start_time) VALUES(1, 2);
 
 CREATE TABLE `alpha_battle_rounds` (
     `battle_id` int(11) NOT NULL,
@@ -41,8 +41,8 @@ CREATE TABLE `alpha_battle_rounds` (
     FOREIGN KEY (battle_id) REFERENCES alpha_battles(id)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
-INSERT INTO  alpha_battle_rounds values(0, 0, "{}");
-INSERT INTO  alpha_battle_rounds values(0, 1, "{}");
+INSERT INTO  alpha_battle_rounds values(1, 1, "{}");
+INSERT INTO  alpha_battle_rounds values(1, 2, "{}");
 
 -- CREATE TABLE `alpha_round_units`(
 --     `round` int(11) NOT NULL,
@@ -64,12 +64,14 @@ CREATE TABLE `alpha_missions` (
     `to` int(11) NOT NULL,
     `state` int(11) NOT NULL,
     `next_stage_time` bigint NOT NULL,
+    `battle_id` int,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`from`) REFERENCES alpha_towns(id),
-    FOREIGN KEY (`to`) REFERENCES alpha_towns(id)
+    FOREIGN KEY (`to`) REFERENCES alpha_towns(id),
+    FOREIGN KEY (`battle_id`) REFERENCES alpha_battles(id)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
-INSERT INTO alpha_missions VALUES(0, 1, 2, 0, 1000);
+INSERT INTO alpha_missions VALUES(0, 1, 2, 0, 1000, NULL);
 
 CREATE TABLE `alpha_mission_units` (
     `mission_id` int(11) NOT NULL,

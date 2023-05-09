@@ -1,11 +1,12 @@
 #pragma once
 
-#include <list>
 #include <ctime>
+#include <list>
+#include <optional>
 
-#include "sql/connection.hpp"
 #include "army.hpp"
 #include "battlefield.hpp"
+#include "sql/connection.hpp"
 
 struct Mission {
     enum State {
@@ -15,15 +16,28 @@ struct Mission {
         RETURNING,
         DISPERSED,
     };
+    enum Type {
+        TRANSPORT,
+        STATION,
+        STATION_FLEET,
+        DEFEND,
+        DEFEND_PORT,
+        PLUNDER,
+        OCCUPY_TOWN,
+        OCCUPY_PORT,
+        CAPTURING_PORT,
+    };
     int id;
     int from;
     int to;
     State state;
+    Type type;
     std::time_t next_stage_time;
-    int battle_id;
+    std::optional<int> battle_id;
 };
 
-class Database {
+class Database
+{
 public:
     Database();
 
@@ -34,12 +48,18 @@ public:
 
     BattleField::BattleFieldSize getBattlefieldSize(const Mission& mission);
 
-    std::list<int> getMissionsNeedingUpdate();
+    std::list<int> get_missions_needing_update(Mission::State state);
 
     Mission load_mission(int mission_id);
 
-    void store_round(const Mission& mission, const std::string& round);
+    int get_mission_battle(const Mission& mission);
+
+    void store_round(int battle_id, const std::string& round);
+
+    void update_arrived(const Mission& mission);
 
 private:
+    void _create_battle(const Mission& mission);
+
     sql::Connection _conn;
 };

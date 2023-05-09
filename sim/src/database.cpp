@@ -1,15 +1,14 @@
 #include "database.hpp"
 
-#include <sstream>
 #include <ctime>
-
+#include <sstream>
 
 Database::Database()
 {
     _conn.connect("/tmp/mysqld/mysqld.sock", "ik_game");
 }
 
-Army Database::load_defensive_army(const Mission& mission) 
+Army Database::load_defensive_army(const Mission& mission)
 {
     Army army(std::make_unique<DefensiveStatLoader>(_conn, mission.to));
     std::stringstream query;
@@ -37,7 +36,7 @@ Army Database::load_attacking_army(const Mission& mission)
     std::stringstream query;
     query << "SELECT type,count FROM alpha_mission_units where mission_id = " << mission.id << ";";
     sql::Result result = _conn.query(query.str());
-    
+
     auto count = result.row_count();
     for (int i = 0; i < count; i++) {
         auto row = result[i];
@@ -53,38 +52,44 @@ Mission Database::load_mission(int mission_id)
 {
     Mission mission;
 
-    std::stringstream query;
-    query << "SELECT * FROM alpha_missions where id = " << mission_id << ";";
-    sql::Result result = _conn.query(query.str());
+    auto statement = _conn.create_statement();
+    statement.execute("SELECT * FROM alpha_missions where id = ?", mission_id);
+    auto result = statement.result();
 
     auto row = result[0];
-    
     mission.id = std::any_cast<int>(row["id"]);
     mission.from = std::any_cast<int>(row["from"]);
     mission.to = std::any_cast<int>(row["to"]);
     mission.state = static_cast<Mission::State>(std::any_cast<int>(row["state"]));
     mission.next_stage_time = std::any_cast<long long>(row["next_stage_time"]);
-    mission.battle_id = std::any_cast<int>(row["battle_id"]);
 
     return mission;
+}
+
+int Database::get_mission_battle(const Mission& mission)
+{
+    auto statement = _conn.create_statement();
+    statement.execute("SELECT id FROM alpha_battles where mission_id = ?", mission.id);
+    auto result = statement.result();
+    return std::any_cast<int>(result[0]["id"]);
 }
 
 BattleField::BattleFieldSize Database::getBattlefieldSize(const Mission& mission)
 {
     std::stringstream query;
-    query << "SELECT pos0_level FROM alpha_towns where id = " << mission.to << + ";";
+    query << "SELECT pos0_level FROM alpha_towns where id = " << mission.to << +";";
     sql::Result res = _conn.query(query.str());
-    
+
     auto row = res[0];
-    int town_level = std::any_cast<int>(row["pos0_level"]);   
-        
+    int town_level = std::any_cast<int>(row["pos0_level"]);
+
     if (town_level <= 4) {
         return BattleField::mini;
-    } else if (town_level <= 9){
-    return BattleField::small;
-    } else if (town_level <= 16){
+    } else if (town_level <= 9) {
+        return BattleField::small;
+    } else if (town_level <= 16) {
         return BattleField::medium;
-    } else if (town_level <= 24){
+    } else if (town_level <= 24) {
         return BattleField::large;
     } else {
         return BattleField::big;
@@ -94,7 +99,9 @@ BattleField::BattleFieldSize Database::getBattlefieldSize(const Mission& mission
 std::string Database::getTownsUsername(int town_id)
 {
     std::stringstream query;
-    query << "select login from alpha_users where id = (select user_id from alpha_towns where id = " << town_id << ")";
+    query << "select login from alpha_users where id = (select user_id from "
+             "alpha_towns where id = "
+          << town_id << ")";
 
     sql::Result res = _conn.query(query.str());
 
@@ -102,14 +109,17 @@ std::string Database::getTownsUsername(int town_id)
     return std::any_cast<std::string>(row["login"]);
 }
 
-std::list<int> Database::getMissionsNeedingUpdate()
+std::list<int> Database::get_missions_needing_update(Mission::State state)
 {
     std::time_t now = time(nullptr);
     std::list<int> missions;
-    std::stringstream query;
-    query << "select id from alpha_missions where next_stage_time < " << now;
+    auto statement = _conn.create_statement();
+    statement.execute(
+        "select id from alpha_missions where next_stage_time < ? and \
+        state = ? and type between ? and ?",
+        now, state, Mission::Type::PLUNDER, Mission::Type::CAPTURING_PORT);
+    auto result = statement.result();
 
-    sql::Result result = _conn.query(query.str());
     auto count = result.row_count();
     for (int i = 0; i < count; i++) {
         auto row = result[i];
@@ -120,15 +130,32 @@ std::list<int> Database::getMissionsNeedingUpdate()
     return missions;
 }
 
-void Database::store_round(const Mission& mission, const std::string& round)
+void Database::update_arrived(const Mission& mission)
+{
+    auto statement = _conn.create_statement();
+    statement.execute("update alpha_missions set state = ?", Mission::State::CLASHING);
+    _create_battle(mission);
+}
+
+void Database::_create_battle(const Mission& mission)
+{
+    auto statement = _conn.create_statement();
+    statement.execute("INSERT INTO alpha_battles(mission_id, start_time) VALUES(?, ?)", mission.id,
+                      mission.next_stage_time);
+}
+
+void Database::store_round(int battle_id, const std::string& round)
 {
     int round_id;
 
     auto statement = _conn.create_statement();
-    statement.execute("select count(battle_id) as count from alpha_battle_rounds where battle_id = ?", mission.battle_id);
+    statement.execute(
+        "select count(battle_id) as count from alpha_battle_rounds where "
+        "battle_id = ?",
+        battle_id);
     auto result = statement.result();
     round_id = std::any_cast<long long>(result[0]["count"]) + 1;
 
     statement = _conn.create_statement();
-    statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", mission.battle_id, round_id, round);
+    statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", battle_id, round_id, round);
 }

@@ -15,6 +15,7 @@ namespace sql
 
 void bind_one(MYSQL_BIND* binders, std::size_t index, const std::string& element);
 void bind_one(MYSQL_BIND* binders, std::size_t index, const int& element);
+void bind_one(MYSQL_BIND* binders, std::size_t index, const long& element);
 
 template<std::size_t i = 0, typename CurrentT, typename... Elements>
 void bind_helper(MYSQL_BIND* binders, const CurrentT&& current, const Elements&&... elements)

@@ -23,6 +23,12 @@ void sql::bind_one(MYSQL_BIND* binder, std::size_t index, const int& element)
     binder[index].buffer_length = sizeof(element);
 }
 
+void sql::bind_one(MYSQL_BIND* binder, std::size_t index, const long& element)
+{
+    binder[index].buffer = const_cast<long*>(&element);
+    binder[index].buffer_type = MYSQL_TYPE_LONGLONG;
+    binder[index].buffer_length = sizeof(element);
+}
 
 void Statement::_execute(const std::string& statement, MYSQL_BIND* binders)
 {

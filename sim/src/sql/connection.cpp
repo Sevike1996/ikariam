@@ -10,7 +10,8 @@ using namespace sql;
 Result Connection::query(std::string query)
 {
     Statement statement(*this);
-    return statement.execute(query);
+    statement.execute(query);
+    return statement.result();
 }
 
 Statement Connection::create_statement()

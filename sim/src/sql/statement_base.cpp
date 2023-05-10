@@ -1,13 +1,11 @@
-#include "sql/statement_base.hpp"
 #include "sql/error.hpp"
+#include "sql/statement_base.hpp"
 
 #include <mysql/mysql.h>
 
 using namespace sql;
 
-__StatementBase::__StatementBase(std::shared_ptr<MYSQL_STMT> statement) : _statement(statement)
-{
-}
+__StatementBase::__StatementBase(std::shared_ptr<MYSQL_STMT> statement) : _statement(statement) {}
 
 std::shared_ptr<MYSQL_RES> __StatementBase::result_metadata()
 {
@@ -74,7 +72,7 @@ void __StatementBase::fetch()
 void __StatementBase::fetch_column(MYSQL_BIND& binder, uint column, std::size_t offset)
 {
     int retval = mysql_stmt_fetch_column(_statement.get(), &binder, column, offset);
-    if(retval != 0) {
+    if (retval != 0) {
         throw error("statement column fetching failed");
     }
 }

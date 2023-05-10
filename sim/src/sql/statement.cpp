@@ -1,13 +1,9 @@
-#include "sql/statement.hpp"
 #include "sql/error.hpp"
+#include "sql/statement.hpp"
 
 using namespace sql;
 
-Statement::Statement(__ConnectionBase& conn) : __StatementBase(conn.alloc_statement())
-{
-    
-}
-
+Statement::Statement(__ConnectionBase& conn) : __StatementBase(conn.alloc_statement()) {}
 
 void sql::bind_one(MYSQL_BIND* binder, std::size_t index, const std::string& element)
 {

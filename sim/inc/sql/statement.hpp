@@ -32,12 +32,18 @@ public:
     Statement(__ConnectionBase& conn);
 
     template<typename... Elements>
-    void execute(std::string statement, const Elements... elements)
+    void execute(std::string statement, Elements... elements)
+    {
+        execute_impl(statement, std::index_sequence_for<Elements...>{}, std::forward<Elements>(elements)...);
+    }
+
+    template<typename... Elements, std::size_t... Indices>
+    void execute_impl(std::string statement, std::index_sequence<Indices...>, Elements... elements)
     {
         constexpr std::size_t ARG_COUNT = std::tuple_size<std::tuple<Elements...>>::value;
         MYSQL_BIND binders[ARG_COUNT] = {{0}};
 
-        bind_helper(binders, std::forward<const Elements>(elements)...);
+        (bind_one(binders, Indices, elements),...);
 
         _execute(statement, binders);
     }

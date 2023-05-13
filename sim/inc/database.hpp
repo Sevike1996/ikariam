@@ -5,36 +5,9 @@
 #include <optional>
 
 #include "army.hpp"
+#include "mission.hpp"
 #include "battlefield.hpp"
 #include "sql/connection.hpp"
-
-struct Mission {
-    enum State {
-        DEPARTING,
-        CLASHING,
-        LOADING,
-        RETURNING,
-        DISPERSED,
-    };
-    enum Type {
-        TRANSPORT,
-        STATION,
-        STATION_FLEET,
-        DEFEND,
-        DEFEND_PORT,
-        PLUNDER,
-        OCCUPY_TOWN,
-        OCCUPY_PORT,
-        CAPTURING_PORT,
-    };
-    int id;
-    int from;
-    int to;
-    State state;
-    Type type;
-    std::time_t next_stage_time;
-    std::optional<int> battle_id;
-};
 
 class Database
 {

@@ -19,4 +19,4 @@ void clash_formation(Formation& attacking, Formation& defending)
     clash_matrix(matrix, slot_chain);
 }
 
-BattleField* getWinner(BattleField& top, BattleField& bottom);
+BattleField* get_winner(BattleField& top, BattleField& bottom);

@@ -45,7 +45,7 @@ void ranged_melee_hit(BattleField& defending, Formation& attacking)
     }
 }
 
-BattleField* getWinner(BattleField& top, BattleField& bottom)
+BattleField* get_winner(BattleField& top, BattleField& bottom)
 {
     if (!top.can_defend()) {
         return &bottom;

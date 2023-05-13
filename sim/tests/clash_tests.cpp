@@ -141,7 +141,7 @@ TEST(Clash, NoDefendingUnits) {
     bottom_army.reinforce(Unit::ram, 1);
     BattleField bottom(bottom_army, BattleField::small, "user");   
 
-    auto* winner = getWinner(bottom, top);
+    auto* winner = get_winner(bottom, top);
     ASSERT_EQ(winner, &top);
 }
 
@@ -154,6 +154,6 @@ TEST(Clash, Draw) {
     bottom_army.reinforce(Unit::steam_giant, 1);
     BattleField bottom(bottom_army, BattleField::small, "user");   
 
-    auto* winner = getWinner(bottom, top);
+    auto* winner = get_winner(bottom, top);
     ASSERT_EQ(winner, nullptr);
 }

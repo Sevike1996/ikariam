@@ -1,9 +1,14 @@
 #include "database.hpp"
+#include "blobfs/blobfs.hpp"
 
 #include <ctime>
 #include <sstream>
 
-Database::Database()
+#ifdef RELEASE
+Database::Database() : _blobs("/var/ikariam/rounds")
+#else
+Database::Database() : _blobs("/tmp/ikariam/rounds")
+#endif
 {
     _conn.connect("/tmp/mysqld/mysqld.sock", "ik_game");
 }
@@ -144,9 +149,10 @@ void Database::_create_battle(const Mission& mission)
                       mission.next_stage_time);
 }
 
-void Database::store_round(int battle_id, const std::string& round)
+void Database::store_round(int battle_id, const std::string& round_data)
 {
     int round_id;
+    std::string blob_id = _blobs.put(round_data);
 
     auto statement = _conn.create_statement();
     statement.execute(
@@ -157,5 +163,5 @@ void Database::store_round(int battle_id, const std::string& round)
     round_id = std::any_cast<long long>(result[0]["count"]) + 1;
 
     statement = _conn.create_statement();
-    statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", battle_id, round_id, round);
+    statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", battle_id, round_id, blob_id);
 }

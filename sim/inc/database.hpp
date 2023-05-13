@@ -7,6 +7,7 @@
 #include "army.hpp"
 #include "mission.hpp"
 #include "battlefield.hpp"
+#include "blobfs/blobfs.hpp"
 #include "sql/connection.hpp"
 
 class Database
@@ -35,4 +36,5 @@ private:
     void _create_battle(const Mission& mission);
 
     sql::Connection _conn;
+    BlobFS _blobs;
 };

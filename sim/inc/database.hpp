@@ -22,7 +22,7 @@ public:
 
     BattleField::BattleFieldSize getBattlefieldSize(const Mission& mission);
 
-    std::list<int> get_missions_needing_update(Mission::State state);
+    std::list<Mission> get_missions_needing_update(Mission::State state);
 
     Mission load_mission(int mission_id);
 

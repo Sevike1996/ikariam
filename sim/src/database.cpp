@@ -114,22 +114,20 @@ std::string Database::getTownsUsername(int town_id)
     return std::any_cast<std::string>(row["login"]);
 }
 
-std::list<int> Database::get_missions_needing_update(Mission::State state)
+std::list<Mission> Database::get_missions_needing_update(Mission::State state)
 {
-    std::time_t now = time(nullptr);
-    std::list<int> missions;
+    std::list<Mission> missions;
     auto statement = _conn.create_statement();
     statement.execute(
-        "select id from alpha_missions where next_stage_time < ? and \
-        state = ? and type between ? and ?",
-        now, state, Mission::Type::PLUNDER, Mission::Type::CAPTURING_PORT);
+        "select id from alpha_missions where next_stage_time < now() and state = ? and type between ? and ?", state,
+        Mission::Type::PLUNDER, Mission::Type::CAPTURING_PORT);
     auto result = statement.result();
 
     auto count = result.row_count();
     for (int i = 0; i < count; i++) {
         auto row = result[i];
         int id = std::any_cast<int>(row["id"]);
-        missions.push_back(id);
+        missions.push_back(this->load_mission(id));
     }
 
     return missions;
@@ -138,7 +136,8 @@ std::list<int> Database::get_missions_needing_update(Mission::State state)
 void Database::update_arrived(const Mission& mission)
 {
     auto statement = _conn.create_statement();
-    statement.execute("update alpha_missions set state = ?", Mission::State::CLASHING);
+    statement.execute("update alpha_missions set state = ?, next_stage_time = ? where id = ?",
+                      Mission::State::IN_BATTLE, mission.next_stage_time + Mission::STAGE_INTERVAL, mission.id);
     _create_battle(mission);
 }
 

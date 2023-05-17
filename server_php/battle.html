@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8" />
+    <meta name="language" content="en_US" />
+    <meta http-equiv="expires" content="Mon, 26 Jul 1997 05:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <script src="constants.js"></script>
+    <script src="battle_log.js"></script>
+  </head>
+  <body>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="battle_files/bundle.css"
+      media="screen"
+    />
+    <section>
+      <div id="content" class="body">
+        <div>
+          <div class="inner version_760">
+            <div id="IkariamReportFull" class="show_morale show_events">
+              <div id="militaryAdvisorDetailedReportView">
+                <table class="round_nav">
+                  <colgroup>
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                    <col />
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td id="navFirst" class="navArrow"><a class="arrow invisible" onclick="first()"><img src="../img/ikariam/arrow_first.png"> </a></td>
+                      <td id="navBack" class="navArrow"><a class="arrow invisible" onclick="backward()"><img src="../img/ikariam/arrow_back.png"> </a></td>
+                      <td id="battleTitle" style="text-align: center">
+                        <span class="headline_big bold"
+                          >Battle for WhatsForDinner Round<br />1 / 64</span
+                        ><br />
+                        (12.01.2017 7:13:13)
+                      </td>
+                      <td id="navFore" class="navArrow"><a class="arrow invisible" onclick="forward()"><img src="../img/ikariam/arrow_fore.png"> </a></td>
+                      <td id="navLast" class="navArrow"><a class="arrow invisible" onclick="last()"><img src="../img/ikariam/arrow_last.png"> </a></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div id="attackerName" class="container_attacker clearfloat"></div>
+                <div id="battlefield" class="battlefield_land_A_D">
+                  <div id="resAttacker">
+                    <div class="nav">
+                      <ul>
+                        <li style="visibility: hidden">&lt;&lt;</li>
+                        <li class="res">Reserve</li>
+                        <li style="visibility: hidden">&gt;&gt;</li>
+                      </ul>
+                    </div>
+                    <div id="resAttackerPages" class="units">
+                    </div>
+                  </div>
+                  <div class="field" id="fieldAttacker">
+                    <div class="location large airfighter">
+                      <div id="slot1_26_0" class="slot empty"></div>
+                      <div id="slot1_26_1" class="slot empty"></div>
+                      <div style="width: 37px"></div>
+                    </div>
+                    <div class="location large air">
+                      <div id="slot1_25_0" class="slot empty"></div>
+                      <div id="slot1_25_1" class="slot empty"></div>
+                      <div style="width: 37px"></div>
+                    </div>
+                    <div class="location large flankLeft">
+                      <div id="slot1_22_5" class="slot empty"></div>
+                      <div id="slot1_22_3" class="slot empty"></div>
+                      <div id="slot1_22_1" class="slot empty"></div>
+                    </div>
+                    <div class="location large flankRight">
+                      <div id="slot1_22_0" class="slot empty"></div>
+                      <div id="slot1_22_2" class="slot empty"></div>
+                      <div id="slot1_22_4" class="slot empty"></div>
+                    </div>
+                    <div class="location large main">
+                      <div id="slot1_21_5" class="slot empty"></div>
+                      <div id="slot1_21_3" class="slot empty"></div>
+                      <div id="slot1_21_1" class="slot empty"></div>
+                      <div id="slot1_21_0" class="slot empty"></div>
+                      <div id="slot1_21_2" class="slot empty"></div>
+                      <div id="slot1_21_4" class="slot empty"></div>
+                      <div id="slot1_21_6" class="slot empty"></div>
+                    </div>
+                    <div class="location large longRange">
+                      <div id="slot1_23_5" class="slot empty"></div>
+                      <div id="slot1_23_3" class="slot empty"></div>
+                      <div id="slot1_23_1" class="slot empty"></div>
+                      <div id="slot1_23_0" class="slot empty"></div>
+                      <div id="slot1_23_2" class="slot empty"></div>
+                      <div id="slot1_23_4" class="slot empty"></div>
+                      <div id="slot1_23_6" class="slot empty"></div>
+                    </div>
+                    <div class="location large artillery">
+                      <div id="slot1_24_4" class="slot empty"></div>
+                      <div id="slot1_24_2" class="slot empty"></div>
+                      <div id="slot1_24_0" class="slot empty"></div>
+                      <div id="slot1_24_1" class="slot empty"></div>
+                      <div id="slot1_24_3" class="slot empty"></div>
+                    </div>
+                  </div>
+                  <div id="resDefender">
+                    <div class="nav">
+                      <ul>
+                        <li style="visibility: hidden">&lt;&lt;</li>
+                        <li class="res">Reserve</li>
+                        <li style="visibility: hidden">&gt;&gt;</li>
+                      </ul>
+                    </div>
+                    <div id="resDefenderPages" class="units">
+                    </div>
+                  </div>
+                  <div class="field" id="fieldDefender">
+                    <div class="location large artillery">
+                      <div id="slot2_24_4" class="slot empty"></div>
+                      <div id="slot2_24_2" class="slot empty"></div>
+                      <div id="slot2_24_0" class="slot empty"></div>
+                      <div id="slot2_24_1" class="slot empty"></div>
+                      <div id="slot2_24_3" class="slot empty"></div>
+                    </div>
+                    <div class="location large longRange">
+                      <div id="slot2_23_5" class="slot empty"></div>
+                      <div id="slot2_23_3" class="slot empty"></div>
+                      <div id="slot2_23_1" class="slot empty"></div>
+                      <div id="slot2_23_0" class="slot empty"></div>
+                      <div id="slot2_23_2" class="slot empty"></div>
+                      <div id="slot2_23_4" class="slot empty"></div>
+                      <div id="slot2_23_6" class="slot empty"></div>
+                    </div>
+                    <div class="location large main">
+                      <div id="slot2_21_5" class="slot empty"></div>
+                      <div id="slot2_21_3" class="slot empty"></div>
+                      <div id="slot2_21_1" class="slot empty"></div>
+                      <div id="slot2_21_0" class="slot empty"></div>
+                      <div id="slot2_21_2" class="slot empty"></div>
+                      <div id="slot2_21_4" class="slot empty"></div>
+                      <div id="slot2_21_6" class="slot empty"></div>
+                    </div>
+                    <div class="location large flankRight">
+                      <div id="slot2_22_0" class="slot empty"></div>
+                      <div id="slot2_22_2" class="slot empty"></div>
+                      <div id="slot2_22_4" class="slot empty"></div>
+                    </div>
+                    <div class="location large flankLeft">
+                      <div id="slot2_22_5" class="slot empty"></div>
+                      <div id="slot2_22_3" class="slot empty"></div>
+                      <div id="slot2_22_1" class="slot empty"></div>
+                    </div>
+                    <div class="location large air">
+                      <div id="slot2_25_0" class="slot empty"></div>
+                      <div id="slot2_25_1" class="slot empty"></div>
+                      <div style="width: 37px"></div>
+                    </div>
+                    <div class="location large airfighter">
+                      <div id="slot2_26_0" class="slot empty"></div>
+                      <div id="slot2_26_1" class="slot empty"></div>
+                      <div style="width: 37px"></div>
+                    </div>
+                  </div>
+                </div>
+                <div id="defenderName" class="container_defender"></div>
+                <div id="roundInfo" style="clear: both">
+                </div>
+              </div>
+              <div id="infoBoxes">
+                <div class="infoBox slot1_25_0">
+                  <h2>
+                    <span><span>Balloon-Bombardier (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Inferno-Bomb</p>
+                  <p>Upgrade: Leather Basket</p>
+                  <p>Munition: 68%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_25_1">
+                  <h2>
+                    <span><span>Balloon-Bombardier (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Inferno-Bomb</p>
+                  <p>Upgrade: Leather Basket</p>
+                  <p>Munition: 68%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_22_5">
+                  <h2>
+                    <span><span>Swordsman (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 12</p>
+                </div>
+                <div class="infoBox slot1_22_3">
+                  <h2>
+                    <span><span>Swordsman (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 95%</p>
+                  <p>Losses: 17</p>
+                </div>
+                <div class="infoBox slot1_22_1">
+                  <h2>
+                    <span><span>Swordsman (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 95%</p>
+                  <p>Losses: 17</p>
+                </div>
+                <div class="infoBox slot1_22_0">
+                  <h2>
+                    <span><span>Swordsman (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 95%</p>
+                  <p>Losses: 17</p>
+                </div>
+                <div class="infoBox slot1_22_2">
+                  <h2>
+                    <span><span>Swordsman (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 95%</p>
+                  <p>Losses: 17</p>
+                </div>
+                <div class="infoBox slot1_22_4">
+                  <h2>
+                    <span><span>Swordsman (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 12</p>
+                </div>
+                <div class="infoBox slot1_21_5">
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 89%</p>
+                  <p>Losses: 9</p>
+                </div>
+                <div class="infoBox slot1_21_3">
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 97%</p>
+                  <p>Losses: 14</p>
+                </div>
+                <div class="infoBox slot1_21_1">
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 97%</p>
+                  <p>Losses: 15</p>
+                </div>
+                <div class="infoBox slot1_21_0">
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 97%</p>
+                  <p>Losses: 15</p>
+                </div>
+                <div
+                  class="infoBox slot1_21_2"
+                  style="top: 221px; left: 519px; display: none"
+                >
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 97%</p>
+                  <p>Losses: 14</p>
+                </div>
+                <div
+                  class="infoBox slot1_21_4"
+                  style="top: 221px; left: 565px; display: none"
+                >
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 89%</p>
+                  <p>Losses: 9</p>
+                </div>
+                <div
+                  class="infoBox slot1_21_6"
+                  style="top: 221px; left: 611px; display: none"
+                >
+                  <h2>
+                    <span><span>Hoplite (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 89%</p>
+                  <p>Losses: 9</p>
+                </div>
+                <div class="infoBox slot1_23_5">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_23_3">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_23_1">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_23_0">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div
+                  class="infoBox slot1_23_2"
+                  style="top: 168px; left: 519px; display: none"
+                >
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_23_4">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div
+                  class="infoBox slot1_23_6"
+                  style="top: 168px; left: 611px; display: none"
+                >
+                  <h2>
+                    <span><span>Sulfur Carabineer (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 83%</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_24_4">
+                  <h2>
+                    <span><span>Ram (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Head</p>
+                  <p>Upgrade: Steel Roof</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_24_2">
+                  <h2>
+                    <span><span>Ram (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Head</p>
+                  <p>Upgrade: Steel Roof</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot1_24_0">
+                  <h2>
+                    <span><span>Ram (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Head</p>
+                  <p>Upgrade: Steel Roof</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div
+                  class="infoBox slot1_24_3"
+                  style="top: 113px; left: 575px; display: none"
+                >
+                  <h2>
+                    <span><span>Ram (Starman)</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Head</p>
+                  <p>Upgrade: Steel Roof</p>
+                  <p>Hit points: 100%</p>
+                </div>
+                <div class="infoBox slot2_24_0">
+                  <h2>
+                    <span><span>Ram (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Head</p>
+                  <p>Upgrade: Steel Roof</p>
+                  <p>Hit points: 0%</p>
+                  <p>Losses: 2</p>
+                </div>
+                <div class="infoBox slot2_23_5">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 3</p>
+                </div>
+                <div class="infoBox slot2_23_3">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 4</p>
+                </div>
+                <div class="infoBox slot2_23_1">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 4</p>
+                </div>
+                <div class="infoBox slot2_23_0">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 5</p>
+                </div>
+                <div class="infoBox slot2_23_2">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 4</p>
+                </div>
+                <div class="infoBox slot2_23_4">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 3</p>
+                </div>
+                <div class="infoBox slot2_23_6">
+                  <h2>
+                    <span><span>Sulfur Carabineer (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Musket</p>
+                  <p>Upgrade: Studded Leather Armor</p>
+                  <p>Munition: 98%</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 3</p>
+                </div>
+                <div class="infoBox slot2_21_5">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 26</p>
+                </div>
+                <div class="infoBox slot2_21_3">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 96%</p>
+                  <p>Losses: 28</p>
+                </div>
+                <div class="infoBox slot2_21_1">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 96%</p>
+                  <p>Losses: 28</p>
+                </div>
+                <div class="infoBox slot2_21_0">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 97%</p>
+                  <p>Losses: 29</p>
+                </div>
+                <div class="infoBox slot2_21_2">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 96%</p>
+                  <p>Losses: 28</p>
+                </div>
+                <div class="infoBox slot2_21_4">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 98%</p>
+                  <p>Losses: 28</p>
+                </div>
+                <div class="infoBox slot2_21_6">
+                  <h2>
+                    <span><span>Hoplite (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Spear</p>
+                  <p>Upgrade: Steel Shield</p>
+                  <p>Hit points: 96%</p>
+                  <p>Losses: 23</p>
+                </div>
+                <div class="infoBox slot2_22_0">
+                  <h2>
+                    <span><span>Swordsman (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 99%</p>
+                  <p>Losses: 24</p>
+                </div>
+                <div class="infoBox slot2_22_2">
+                  <h2>
+                    <span><span>Swordsman (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 99%</p>
+                  <p>Losses: 24</p>
+                </div>
+                <div class="infoBox slot2_22_4">
+                  <h2>
+                    <span><span>Swordsman (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 18</p>
+                </div>
+                <div class="infoBox slot2_22_5">
+                  <h2>
+                    <span><span>Swordsman (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 100%</p>
+                  <p>Losses: 18</p>
+                </div>
+                <div class="infoBox slot2_22_3">
+                  <h2>
+                    <span><span>Swordsman (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 99%</p>
+                  <p>Losses: 24</p>
+                </div>
+                <div class="infoBox slot2_22_1">
+                  <h2>
+                    <span><span>Swordsman (Ita[WLS])</span></span>
+                  </h2>
+                  <p>Upgrade: Steel Sword</p>
+                  <p>Upgrade: Steel helmet</p>
+                  <p>Hit points: 99%</p>
+                  <p>Losses: 24</p>
+                </div>
+                <div class="infoBox slotmorale607097">
+                  <h2>
+                    <span><span> Morale changes</span></span>
+                  </h2>
+                  <p>
+                    Both sides are exhausted. Their morale has been reduced by
+                    10%.
+                  </p>
+                  <p>
+                    The morale of the attacking side has decreased by 5%, as the
+                    opponent seems superior in every way.
+                  </p>
+                  <p>
+                    The meals made by player Starman's chefs, has increased his
+                    units' morale by 100%.
+                  </p>
+                </div>
+                <div class="infoBox slotmorale26786">
+                  <h2>
+                    <span><span>Morale changes</span></span>
+                  </h2>
+                  <p>
+                    Both sides are exhausted. Their morale has been reduced by
+                    10%.
+                  </p>
+                  <p>
+                    The morale of the defending side has decreased by 5%, as it
+                    has suffered more damage than its opponent.
+                  </p>
+                  <p>
+                    The morale of the defending side has decreased by 5%, as it
+                    has suffered more losses than its opponent.
+                  </p>
+                  <p>
+                    The morale of the defending side has been reduced by 5%, as
+                    it has been bombed by opponents.
+                  </p>
+                  <p>
+                    The meals made by player Ita[WLS]'s chefs, has increased his
+                    units' morale by 100%.
+                  </p>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+            <div class="separator"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    </div>
+  </body>
+</html>

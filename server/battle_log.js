@@ -55,7 +55,7 @@ var battle = null;
 var battleField = null;
 
 function getUnitClassName(unitType) {
-  return "s3" + String(unitType + 1).padStart(2, "0");
+  return "s3" + String(unitType).padStart(2, "0");
 }
 
 function capitalize(str) {
@@ -68,6 +68,13 @@ function clearClassList(element) {
   classes.forEach((className) => element.classList.remove(className));
 }
 
+class LayoutMeta {
+  constructor(name, num, hasAmmo) {
+    this.name = name;
+    this.num = num;
+    this.hasAmmo = hasAmmo;
+  }
+}
 class Layout {
   static LAYOUTS = {
     front: [21, false],
@@ -77,6 +84,11 @@ class Layout {
     bomber: [25, true],
     air: [26, true],
   };
+
+  static getMetaByNum(num) {
+    let found = Object.entries(Layout.LAYOUTS).find(x => x[1][0] == num)
+    return new LayoutMeta(found[0], ...found[1]);
+  }
 
   constructor(playerSide, layoutName) {
     [this.displayNumber, this.hasAmmo] = Layout.LAYOUTS[layoutName];
@@ -148,8 +160,6 @@ class PlayerInfo {
 
     row.appendChild(this.createNameElement());
     row.appendChild(this.createMilitaryCount());
-    row.appendChild(this.createMoralBar());
-    row.appendChild(this.createMoralText());
 
     return row;
   }
@@ -331,7 +341,6 @@ function updateRoundInfo(battleSide, roundInfo) {
   <tr>
     <th class="${sideName}">${capitalize(sideName)}</th>
     <th>Units</th>
-    <th colspan="2">Morale</th>
   </tr>`;
   infoTable.appendChild(tableBody);
   
@@ -405,7 +414,7 @@ function showRound() {
   updateBattleSide(DEFENDER, round.defender);
 
   setTitle(round.date);
-
+ 
   setPlayerNames("attacker", round.attacker.info);
   setPlayerNames("defender", round.defender.info);
 
@@ -432,11 +441,65 @@ function handleBattleData(battleData) {
   showRound();
 }
 
-window.addEventListener("DOMContentLoaded", (event) => {
-  fetch("fight.json")
-    .then((response) => response.json())
-    .then(handleBattleData);
-});
+function displayInfoBox(infoBox, dims) {
+  infoBox.style.position = "absolute";
+  infoBox.style.top = dims.top + "px";
+  infoBox.style.left = dims.left + "px";
+  infoBox.style.display = "block";
+}
+
+function getSlotInfo(playerSide, layoutNum, slotNumber) {
+  const side = SIDES[playerSide];
+  const layout = Layout.getMetaByNum(layoutNum);
+  const battleSide = battle.rounds[roundIndex - 1][side];
+  slotInfo = battleSide[layout.name][slotNumber];
+  return slotInfo;
+}
+
+function updateInfoBox(infoBox) {
+  data = infoBox.id.replace('info_', '').split('_');
+  slotData = getSlotInfo(...data);
+  let [unitType, _, loss, healthPercent, ammo] = slotData;
+  
+  let newHtml = `<h2><span><span>${UNITS[unitType]}</span></span></h2>`;
+  if (typeof ammo !== 'undefined') {
+    newHtml += `<p>Ammunition: ${ammo * 100}%</p>`;
+  }
+  newHtml += `<p>Hit points: ${healthPercent * 100}%</p>`;
+  if (loss) {
+    newHtml += `<p>Losses: ${loss}</p>`;
+  }
+  infoBox.innerHTML = newHtml;
+}
+
+function on_mouse_enter(event) {
+  var id = event.target.id;
+  if (id) {
+    const dims = event.target.getBoundingClientRect();
+
+    const infoId = event.target.id.replace("slot", "info_");
+    let infoBox = document.getElementById(infoId);
+
+    updateInfoBox(infoBox);
+    displayInfoBox(infoBox, dims);
+  }
+}
+
+function on_mouse_leave(event) {
+  if (!event.target.id) {
+    return;
+  }
+  const infoId = event.target.id.replace("slot", "info_");
+  let infoBox = document.getElementById(infoId);
+  infoBox.style.display = 'none';
+}
+
+function setup_hover_handlers() {
+  for (let slotElement of document.getElementsByClassName("slot")) {
+    slotElement.addEventListener("mouseover", on_mouse_enter);
+    slotElement.addEventListener("mouseout", on_mouse_leave);
+  }
+}
 
 function first() {
   roundIndex = 1;
@@ -457,3 +520,14 @@ function last() {
   roundIndex = battle.rounds.length;
   showRound();
 }
+
+function main(battleData) {
+  handleBattleData(battleData);
+  setup_hover_handlers();
+}
+
+window.addEventListener("DOMContentLoaded", (event) => {
+  fetch("fight1.json")
+    .then((response) => response.json())
+    .then(main);
+});

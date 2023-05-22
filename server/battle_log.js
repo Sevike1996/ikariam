@@ -50,7 +50,7 @@ const BATTLE_FIELDS = [
   },
 ];
 
-var roundIndex = 1;
+
 var battle = null;
 var battleField = null;
 
@@ -375,21 +375,6 @@ function setNavButtonsVisibility(buttonNames, visibility) {
   }
 }
 
-function updateRoundNavButtons() {
-  setNavButtonsVisibility(["First", "Back", "Fore", "Last"], "visible");
-  if (roundIndex == 1) {
-    setNavButtonsVisibility(["First", "Back"], "hidden");
-  }
-  if (roundIndex == battle.rounds.length) {
-    setNavButtonsVisibility(["Fore", "Last"], "hidden");
-  }
-}
-
-function setTitle(date) {
-  title = document.getElementById("battleTitle");
-  title.innerHTML = `<span class="headline_big bold">Battle for ${battle.town} Round<br>${roundIndex} / ${battle.rounds.length}</span><br>${date}`;
-}
-
 function setPlayerNames(side, info) {
   let names = [];
   info.forEach((playerInfo) => names.push(playerInfo[0]));
@@ -404,24 +389,102 @@ function updateBackground(backgroundNumber) {
 
 }
 
-function showRound() {
-  let round = battle.rounds[roundIndex - 1];
+class RoundDisplay {
+  static RESERVED_UNIT_PER_PAGE = 9;
+  constructor(battle) {
+    this.battle = battle;
+    this.reservePagesIndex = Array(Object.keys(SIDES).length).fill(0);
+    this.roundIndex = 0;
+  }
 
-  let roundInfoElement = document.getElementById("roundInfo");
-  roundInfoElement.innerHTML = ''
+  getReservedUnits(playerSide) {
+    let reservePageIndex = this.reservePagesIndex[playerSide - 1];
+    let pageMin = reservePageIndex * RESERVED_UNIT_PER_PAGE;
+    let pageMax = (reservePageIndex + 1) * RESERVED_UNIT_PER_PAGE;
 
-  updateBattleSide(ATTACKER, round.attacker);
-  updateBattleSide(DEFENDER, round.defender);
+    let sideName = SIDES[playerSide];
+    let sideReserved = this.getRound()[sideName].reserve;
+    return Object.entries(sideReserved).slice(pageMin, pageMax);
+  }
 
-  setTitle(round.date);
- 
-  setPlayerNames("attacker", round.attacker.info);
-  setPlayerNames("defender", round.defender.info);
+  getRound() {
+    return this.battle.rounds[this.roundIndex];
+  }
 
-  updateBackground(round.background);
+  hasNextRound() {
+    return this.roundIndex < this.battle.rounds.length - 1;
+  }
 
-  updateRoundNavButtons();
+  hasPrevRound() {
+    return this.roundIndex > 0;
+  }
+
+  showRound() {
+    let round = this.getRound();
+  
+    let roundInfoElement = document.getElementById("roundInfo");
+    roundInfoElement.innerHTML = ''
+  
+    updateBattleSide(ATTACKER, round.attacker);
+    updateBattleSide(DEFENDER, round.defender);
+  
+    this.updateTitle();
+   
+    setPlayerNames("attacker", round.attacker.info);
+    setPlayerNames("defender", round.defender.info);
+  
+    updateBackground(round.background);
+  
+    this.updateRoundNavButtons();
+  }
+
+  updateTitle() {
+    let round = this.getRound();
+    let title = document.getElementById("battleTitle");
+    title.innerHTML = `<span class="headline_big bold">Battle for ${this.battle.town} Round<br>\
+      ${this.roundIndex + 1} / ${this.battle.rounds.length}</span><br>${round.date}`;
+  }
+
+  updateRoundNavButtons() {
+    setNavButtonsVisibility(["First", "Back", "Fore", "Last"], "hidden");
+    if (this.hasPrevRound()) {
+      setNavButtonsVisibility(["First", "Back"], "visible");
+    }
+    if (this.hasNextRound()) {
+      setNavButtonsVisibility(["Fore", "Last"], "visible");
+    }
+  }
+
+  nextRound() {
+    if (this.hasNextRound()) {
+      this.roundIndex += 1;
+      this.showRound();
+    }
+  }
+
+  lastRound() {
+    if (this.hasNextRound()) {
+      this.roundIndex = this.battle.rounds.length - 1;
+      this.showRound();
+    }
+  }
+
+  prevRound() {
+    if (this.hasPrevRound()) {
+      this.roundIndex -= 1;
+      this.showRound();
+    }
+  }
+
+  firstRound() {
+    if (this.hasPrevRound()) {
+      this.roundIndex = 0;
+      this.showRound();
+    }
+  }
 }
+
+var display = null;
 
 function populateField(playerSide) {
   for (key of Object.keys(Layout.LAYOUTS)) {
@@ -438,7 +501,7 @@ function handleBattleData(battleData) {
   for (let sideNumber of Object.keys(SIDES)) {
     populateField(sideNumber);
   }
-  showRound();
+  display.showRound();
 }
 
 function displayInfoBox(infoBox, dims) {
@@ -451,7 +514,7 @@ function displayInfoBox(infoBox, dims) {
 function getSlotInfo(playerSide, layoutNum, slotNumber) {
   const side = SIDES[playerSide];
   const layout = Layout.getMetaByNum(layoutNum);
-  const battleSide = battle.rounds[roundIndex - 1][side];
+  const battleSide = display.getRound()[side];
   slotInfo = battleSide[layout.name][slotNumber];
   return slotInfo;
 }
@@ -459,6 +522,9 @@ function getSlotInfo(playerSide, layoutNum, slotNumber) {
 function updateInfoBox(infoBox) {
   data = infoBox.id.replace('info_', '').split('_');
   slotData = getSlotInfo(...data);
+  if (typeof slotData === 'undefined') {
+    return;
+  }
   let [unitType, _, loss, healthPercent, ammo] = slotData;
   
   let newHtml = `<h2><span><span>${UNITS[unitType]}</span></span></h2>`;
@@ -502,26 +568,24 @@ function setup_hover_handlers() {
 }
 
 function first() {
-  roundIndex = 1;
-  showRound();
+  display.firstRound();
 }
 
 function backward() {
-  roundIndex -= 1;
-  showRound();
+  display.prevRound();
 }
 
 function forward() {
-  roundIndex += 1;
-  showRound();
+  display.nextRound();
 }
 
 function last() {
-  roundIndex = battle.rounds.length;
-  showRound();
+  display.lastRound();
 }
 
 function main(battleData) {
+  display = new RoundDisplay(battleData)
+  // TODO add battleData class
   handleBattleData(battleData);
   setup_hover_handlers();
 }

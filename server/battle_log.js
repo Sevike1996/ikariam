@@ -466,12 +466,13 @@ class ReservedDisplay {
 class RoundDisplay {
   constructor(battle) {
     this.battle = battle;
+    this.rounds = Array(battle.rounds.length);
     this.reservedDisplays = Array.from(Object.keys(SIDES), (side) => new ReservedDisplay(side, this));
     this.roundIndex = 0;
   }
 
   getRound() {
-    return this.battle.rounds[this.roundIndex];
+    return this.rounds[this.roundIndex];
   }
 
   hasNextRound() {
@@ -482,7 +483,8 @@ class RoundDisplay {
     return this.roundIndex > 0;
   }
 
-  showRound() {
+  async showRound() {
+    await this.fetchRound();
     let round = this.getRound();
   
     let roundInfoElement = document.getElementById("roundInfo");
@@ -503,6 +505,14 @@ class RoundDisplay {
     updateBackground(round.background);
   
     this.updateRoundNavButtons();
+  }
+
+  async fetchRound() {
+    if (typeof this.rounds[this.roundIndex] !== 'undefined') {
+      return;
+    }
+    let response = await fetch(`/rounds?id=${this.battle.rounds[this.roundIndex]}`)
+    this.rounds[this.roundIndex] = await response.json();
   }
 
   updateTitle() {
@@ -596,9 +606,9 @@ function updateInfoBox(infoBox) {
   
   let newHtml = `<h2><span><span>${UNITS[unitType]}</span></span></h2>`;
   if (typeof ammo !== 'undefined') {
-    newHtml += `<p>Ammunition: ${ammo * 100}%</p>`;
+    newHtml += `<p>Ammunition: ${Math.floor(ammo * 100)}%</p>`;
   }
-  newHtml += `<p>Hit points: ${healthPercent * 100}%</p>`;
+  newHtml += `<p>Hit points: ${Math.floor(healthPercent * 100)}%</p>`;
   if (loss) {
     newHtml += `<p>Losses: ${loss}</p>`;
   }
@@ -658,7 +668,8 @@ function main(battleData) {
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {
-  fetch("fight1.json")
+  params = new URLSearchParams(location.search);
+  fetch(`fight?id=${params.id}`)
     .then((response) => response.json())
     .then(main);
 });

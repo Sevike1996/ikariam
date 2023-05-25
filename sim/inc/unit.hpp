@@ -6,7 +6,7 @@
 
 enum Unit
 {
-    hoplite = 1,
+    hoplite,
     steam_giant,
     spearman,
     swordsman,

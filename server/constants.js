@@ -21,12 +21,11 @@ const UNITS = {
   19: "Catapult Ship",
   20: "Mortar Ship",
   21: "Diving Boat",
-  22: "Merchant Ship",
-  23: "Steam Ram",
-  24: "Rocket Ship",
-  25: "Balloon Carrier",
-  26: "Tender",
-  27: "Wall",
+  22: "Steam Ram",
+  23: "Rocket Ship",
+  24: "Balloon Carrier",
+  25: "Tender",
+  26: "Wall",
 };
 
 const BACKGROUNDS = {

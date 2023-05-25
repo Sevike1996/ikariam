@@ -101,7 +101,9 @@ BattleField::json BattleField::to_json() const
     }
     serialized["ammo"] = _army.get_ammo_json();
     serialized["reserve"] = _army.get_units_json();
-    serialized["info"] = {json::array({_username, get_units_count(), get_losses_count()}), };
+    auto round_info = json::array();
+    round_info.push_back(json::array({_username, get_units_count(), get_losses_count()}));
+    serialized["info"] = round_info;
 
     return serialized;
 }

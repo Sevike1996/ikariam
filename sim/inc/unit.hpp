@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 #define NO_AMMO (-1)
 
@@ -53,4 +54,6 @@ extern const UnitMeta UNITS_META[];
 
 UnitMeta get_wall_meta(int level);
 
-bool is_ranged(Unit type);
+bool is_ranged(const UnitMeta& unit);
+
+bool can_reserve(Unit type);

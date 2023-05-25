@@ -45,7 +45,7 @@ AttackInfo NativeAttackMatrix::calc_row_damage()
         Slot &attacking = _formation[i];
         if (attacking.count > static_cast<int>(_row))
         {
-            if (is_ranged(attacking.meta->type)) {
+            if (is_ranged(*attacking.meta)) {
                 info.damage += attacking.meta->ranged_attack;
                 attacking.ammo_pool--;
             } else {

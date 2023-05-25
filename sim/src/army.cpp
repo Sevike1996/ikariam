@@ -8,7 +8,7 @@ void Army::reinforce(Unit unit, int count)
 {
     UnitMeta stats = _stat_loader->load_stats(unit);
     _units.emplace(unit, UnitPool{count, stats});
-    if (is_ranged(unit)) {
+    if (is_ranged(stats)) {
         _ammo_pools[unit] = UNITS_META[unit].ammo * count;
     } else {
         _ammo_pools[unit] = 0;
@@ -50,7 +50,7 @@ Army::Squad Army::get_squad(Unit unit, int slot_size)
     UnitPool& pool = found->second;
     int size = pool.stats.size;
     int count = std::min(pool.count, slot_size / size);
-    if (is_ranged(unit)) {
+    if (is_ranged(pool.stats)) {
         count = std::min(count, _ammo_pools[unit]);
     }
 
@@ -68,7 +68,7 @@ Army::json Army::get_units_json() const
 {
     json serialized = json::array();
     for (const auto& [type, pool] : _units) {
-        if (pool.count != 0) {
+        if (pool.count != 0 && can_reserve(type)) {
             serialized.push_back({type, pool.count});
         }
     }

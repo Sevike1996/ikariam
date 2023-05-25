@@ -27,6 +27,7 @@ const std::map<std::string, Unit> UNIT_TYPES = {
     {"rocket_ship", Unit::rocket_ship},
     {"balloon_carrier", Unit::balloon_carrier},
     {"tender", Unit::tender},
+    {"wall", Unit::wall},
 };
 
 const UnitMeta UNITS_META[] = {
@@ -49,7 +50,7 @@ const UnitMeta UNITS_META[] = {
 
 UnitMeta get_wall_meta(int level)
 {
-    // Biggest slot is 50, so 2 will never fit.
+    // Biggest slot is 50, so 2 will never fit with size=30.
     UnitMeta base = {Unit::wall, 0, 0, 0, NO_AMMO, 0, 30, false};
     base.health = 100 + (50 * level);
     base.armor = 4 * level;
@@ -64,6 +65,16 @@ UnitMeta get_wall_meta(int level)
     return base;
 }
 
-bool is_ranged(Unit type) {
-    return UNITS_META[type].ammo != NO_AMMO;
+bool is_ranged(const UnitMeta& unit) {
+    return unit.ammo != NO_AMMO;
+}
+
+bool can_reserve(Unit type) {
+    switch (type)
+    {
+    case Unit::wall:
+        return false;
+    default:
+        return true;
+    }
 }

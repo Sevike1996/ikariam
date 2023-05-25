@@ -71,14 +71,6 @@ Mission Database::load_mission(int mission_id)
     return mission;
 }
 
-int Database::get_mission_battle(const Mission& mission)
-{
-    auto statement = _conn.create_statement();
-    statement.execute("SELECT id FROM alpha_battles where mission_id = ?", mission.id);
-    auto result = statement.result();
-    return std::any_cast<int>(result[0]["id"]);
-}
-
 BattleField::BattleFieldSize Database::getBattlefieldSize(const Mission& mission)
 {
     std::stringstream query;
@@ -143,24 +135,27 @@ void Database::update_arrived(const Mission& mission)
 
 void Database::_create_battle(const Mission& mission)
 {
+    auto battlefield_size = getBattlefieldSize(mission);
     auto statement = _conn.create_statement();
-    statement.execute("INSERT INTO alpha_battles(mission_id, start_time) VALUES(?, ?)", mission.id,
-                      mission.next_stage_time);
+    statement.execute("INSERT INTO alpha_battles(mission_id, start_time, battlefield_size) VALUES(?, ?, ?)", mission.id,
+                      mission.next_stage_time, battlefield_size);
 }
 
-void Database::store_round(int battle_id, const std::string& round_data)
+#include <iostream>
+void Database::store_round(const Mission& mission, const std::string& round_data)
 {
     int round_id;
     std::string blob_id = _blobs.put(round_data);
 
     auto statement = _conn.create_statement();
     statement.execute(
-        "select count(battle_id) as count from alpha_battle_rounds where "
-        "battle_id = ?",
-        battle_id);
+        "select count(mission_id) as count from alpha_rounds where "
+        "mission_id = ?",
+        mission.id);
     auto result = statement.result();
     round_id = std::any_cast<long long>(result[0]["count"]) + 1;
 
     statement = _conn.create_statement();
-    statement.execute("INSERT INTO alpha_battle_rounds values (?,?,?)", battle_id, round_id, blob_id);
+    std::cout << mission.id << "," << round_id << "," << blob_id << std::endl;
+    statement.execute("INSERT INTO alpha_rounds values (?,?,?)", mission.id, round_id, blob_id);
 }

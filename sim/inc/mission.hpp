@@ -13,6 +13,7 @@ struct Mission {
         IN_BATTLE,
         RETURNING,
         DISPERSED,
+        ZOMBIE,
     };
 
     enum Type {
@@ -33,7 +34,6 @@ struct Mission {
     State state;
     Type type;
     std::time_t next_stage_time;
-    std::optional<int> battle_id;
 
     static constexpr int STAGE_INTERVAL = duration_cast<seconds>(15min).count();
 };

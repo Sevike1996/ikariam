@@ -26,9 +26,7 @@ public:
 
     Mission load_mission(int mission_id);
 
-    int get_mission_battle(const Mission& mission);
-
-    void store_round(int battle_id, const std::string& round);
+    void store_round(const Mission& mission, const std::string& round);
 
     void update_arrived(const Mission& mission);
 

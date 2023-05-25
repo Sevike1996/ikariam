@@ -16,7 +16,7 @@ mysqli_free_result($result);
 $fight_data = array(
     "town" => $row["name"],
     "upgrades" => (object)[],
-    "battlefield" => $row["battlefield_size"],
+    "size" => $row["battlefield_size"],
     "rounds" => array()
 );
 

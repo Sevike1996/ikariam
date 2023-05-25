@@ -135,8 +135,8 @@ class Layout {
   }
 }
 class BattleField {
-  constructor(battleFieldNumber) {
-    this.battleFieldNumber = battleFieldNumber;
+  constructor(battlefieldSize) {
+    this.battlefieldSize = battlefieldSize;
   }
 
   getLayout(playerSide, layoutName) {
@@ -144,7 +144,7 @@ class BattleField {
   }
 
   getLayoutSizes() {
-    return BATTLE_FIELDS[this.battleFieldNumber];
+    return BATTLE_FIELDS[this.battlefieldSize];
   }
 }
 
@@ -572,9 +572,26 @@ function populateField(playerSide) {
   }
 }
 
+function hideUnusedSlots(battlefieldSize) {
+  let currentSize = BATTLE_FIELDS[battlefieldSize];
+  let maxSize = BATTLE_FIELDS[BATTLE_FIELDS.length - 1];
+  for (let playerSide in SIDES) {
+    for (let [name,[displayNumber, _]] of Object.entries(Layout.LAYOUTS)) {
+      for(let i = currentSize[name]; i < maxSize[name]; i++) {
+        let id = `slot${playerSide}_${displayNumber}_${i}`;
+        let slotElement = document.getElementById(id);
+        slotElement.style.visibility = 'hidden';
+      }
+    }
+  }
+}
+
 function handleBattleData(battleData) {
   battle = battleData;
-  battleField = new BattleField(battle["battlefield"]);
+
+  hideUnusedSlots(battle.size);
+
+  battleField = new BattleField(battle.size);
   for (let sideNumber of Object.keys(SIDES)) {
     populateField(sideNumber);
   }

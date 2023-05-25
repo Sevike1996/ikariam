@@ -32,7 +32,12 @@ void Statement::_execute(const std::string& statement, MYSQL_BIND* binders)
     if (binders != nullptr) {
         bind_param(binders);
     }
-    __StatementBase::execute();
+
+    try {
+        __StatementBase::execute();
+    } catch (sql::error& e) {
+        throw sql::error("Statement execution failed: \"" + statement + "\"");
+    }
 }
 
 Result Statement::result()

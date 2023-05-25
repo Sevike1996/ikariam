@@ -2,7 +2,6 @@ const UPGRADES = {
 
 }
 
-
 const SIDES = { 1: "attacker", 2: "defender" };
 const ATTACKER = 1;
 const DEFENDER = 2;
@@ -50,6 +49,9 @@ const BATTLE_FIELDS = [
   },
 ];
 
+function zip(a, b) {
+  return a.map((k, i) => [k, b[i]]);
+} 
 
 var battle = null;
 var battleField = null;
@@ -298,37 +300,6 @@ class RangedSlot extends Slot {
   }
 }
 
-function updateReserve(playerSide, reserve) {
-  let sideName = SIDES[playerSide];
-  let playerPages = document.getElementById(
-    "res" + capitalize(sideName) + "Pages"
-  );
-  playerPages.innerHTML = "";
-  let page = null;
-
-  for (let [i, [unitType, unitCount]] of Object.entries(reserve)) {
-    if (i % 9 == 0) {
-      page = document.createElement("ul");
-      playerPages.appendChild(page);
-    }
-
-    let unit = createReserveElement(unitType, unitCount);
-
-    page.appendChild(unit);
-  }
-}
-
-function createReserveElement(unitType, unitCount) {
-  let container = document.createElement("li");
-  let image = document.createElement("div");
-
-  image.classList.add("army_small", "normal", getUnitClassName(unitType));
-  container.appendChild(image);
-  container.innerHTML += unitCount;
-
-  return container;
-}
-
 function updateRoundInfo(battleSide, roundInfo) {
   let sideName = SIDES[battleSide];
   let roundInfoElement = document.getElementById("roundInfo");
@@ -363,7 +334,6 @@ function updateBattleSide(battleSide, formationData) {
     let layout = battleField.getLayout(battleSide, layoutName);
     layout.update(layoutData, formationData.ammo);
   }
-  updateReserve(battleSide, formationData.reserve);
 
   updateRoundInfo(battleSide, formationData.info);
 }
@@ -389,22 +359,115 @@ function updateBackground(backgroundNumber) {
 
 }
 
-class RoundDisplay {
+class ReservedDisplay {
   static RESERVED_UNIT_PER_PAGE = 9;
-  constructor(battle) {
-    this.battle = battle;
-    this.reservePagesIndex = Array(Object.keys(SIDES).length).fill(0);
-    this.roundIndex = 0;
+
+  constructor(playerSide, display) {
+    this.display = display;
+    this.playerSide = playerSide;
+    this.pageIndex = 0;
+
+    let [prevButton, nextButton] = this.getButtons();
+    prevButton.addEventListener('click', (e) => this.prevPage());
+    nextButton.addEventListener('click', (e) => this.nextPage());
   }
 
-  getReservedUnits(playerSide) {
-    let reservePageIndex = this.reservePagesIndex[playerSide - 1];
-    let pageMin = reservePageIndex * RESERVED_UNIT_PER_PAGE;
-    let pageMax = (reservePageIndex + 1) * RESERVED_UNIT_PER_PAGE;
+  nextPage() {
+    if (this.hasNextPage()) {
+      this.pageIndex += 1;
+      this.refresh();
+    }
+  }
 
-    let sideName = SIDES[playerSide];
-    let sideReserved = this.getRound()[sideName].reserve;
-    return Object.entries(sideReserved).slice(pageMin, pageMax);
+  prevPage() {
+    if (this.hasPrevPage()) {
+      this.pageIndex -= 1;
+      this.refresh();
+    }
+  }
+
+  hasNextPage() {
+    let unitCountRequired = (this.pageIndex + 1) * ReservedDisplay.RESERVED_UNIT_PER_PAGE;
+    return this.getReservedUnits().length > unitCountRequired;
+  }
+
+  hasPrevPage() {
+    return this.pageIndex > 0;
+  }
+
+  reset() {
+    this.pageIndex = 0;
+    this.refresh();
+  }
+
+  refresh() {
+    this.refreshUnits();
+    this.refreshButtons();
+  }
+
+  refreshButtons() {
+    let buttons = this.getButtons();
+    let conditions = [this.hasPrevPage, this.hasNextPage]
+    for (let [button, condition] of zip(buttons, conditions)) {
+      button.style.visibility = condition.bind(this)() ? 'visible' : 'hidden';
+    }
+  }
+
+  getDiv() {
+    let sideName = SIDES[this.playerSide];
+    return document.getElementById("res" + capitalize(sideName));
+  }
+
+  getUnitPage() {
+    return this.getDiv().lastElementChild.firstElementChild;
+  }
+
+  getButtons() {
+    let buttonList = this.getDiv().firstElementChild.firstElementChild;
+    return [buttonList.firstElementChild, buttonList.lastElementChild]
+  }
+
+  refreshUnits() {
+    let reserves = this.getPageUnits();
+    let page = this.getUnitPage();
+    page.innerHTML = "";
+  
+    for (let [unitType, unitCount] of reserves) {
+      let unit = ReservedDisplay.createReserveElement(unitType, unitCount);
+      page.appendChild(unit);
+    }
+  }
+
+  getPageUnits() {
+    let sideReserved = this.getReservedUnits();
+    let pageMin = this.pageIndex * ReservedDisplay.RESERVED_UNIT_PER_PAGE;
+    let pageMax = (this.pageIndex + 1) * ReservedDisplay.RESERVED_UNIT_PER_PAGE;
+
+    return sideReserved.slice(pageMin, pageMax);
+  }
+
+  getReservedUnits() {
+    let sideName = SIDES[this.playerSide];
+    return this.display.getRound()[sideName].reserve;
+  }
+
+  static createReserveElement(unitType, unitCount) {
+    let container = document.createElement("li");
+    let image = document.createElement("div");
+  
+    image.classList.add("army_small", "normal", getUnitClassName(unitType));
+    container.appendChild(image);
+    container.innerHTML += unitCount;
+  
+    return container;
+  }
+}
+
+class RoundDisplay {
+  constructor(battle) {
+    this.battle = battle;
+    this.reservedDisplays = Array.from(Object.keys(SIDES), (side) => new ReservedDisplay(side, this));
+    this.roundIndex = 0;
   }
 
   getRound() {
@@ -427,6 +490,10 @@ class RoundDisplay {
   
     updateBattleSide(ATTACKER, round.attacker);
     updateBattleSide(DEFENDER, round.defender);
+
+    for (let reservedDisplay of this.reservedDisplays) {
+      reservedDisplay.reset();
+    }
   
     this.updateTitle();
    

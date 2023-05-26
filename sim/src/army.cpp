@@ -40,14 +40,18 @@ int Army::get_unit_count(Unit type) const
     return found->second.count;
 }
 
-Army::Squad Army::get_squad(Unit unit, int slot_size)
+std::optional<Army::Squad> Army::get_squad(Unit unit, int slot_size)
 {
     auto found = _units.find(unit);
     if (found == _units.end()) {
-        return Squad{0, nullptr};
+        return {};
     }
 
     UnitPool& pool = found->second;
+    if (pool.count == 0) {
+        return {};
+    }
+
     int size = pool.stats.size;
     int count = std::min(pool.count, slot_size / size);
     if (is_ranged(pool.stats)) {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <nlohmann/json.hpp>
 
 #include "stat_loader.hpp"
@@ -20,7 +21,7 @@ public:
     void reinforce(Unit unit, int count);
     void reinforce(Unit unit, int count, int ammo);
 
-    Squad get_squad(Unit unit, int slot_size);
+    std::optional<Squad> get_squad(Unit unit, int slot_size);
     int& get_ammo_pool(Unit unit);
 
     int get_units_count() const;

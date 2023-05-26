@@ -33,10 +33,11 @@ void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info
 {
     auto [slot_count, slot_size] = slot_info;
     while (formation.size() < slot_count) {
-        auto [slot_allowance, meta] = _army->get_squad(type, slot_size);
-        if (slot_allowance == 0 ) {
+        auto squad = _army->get_squad(type, slot_size);
+        if (!squad.has_value()) {
             return;
         }
+        auto [slot_allowance, meta] = squad.value();
         int& ammo_pool = _army->get_ammo_pool(type);
 
         formation.fill_slot(meta, slot_allowance, meta->health, ammo_pool);

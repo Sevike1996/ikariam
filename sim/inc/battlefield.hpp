@@ -24,13 +24,17 @@ public:
     };
 
 
-    BattleField(std::shared_ptr<Army> army, BattleFieldSize size, std::string username);
+    BattleField(std::shared_ptr<Army> army, BattleFieldSize size);
 
     bool can_defend() const;
     int get_units_count() const;
     int get_losses_count() const;
 
+    void set_army(std::shared_ptr<Army> army);
+    const std::shared_ptr<Army> get_army() const;
+
     Formation& get_formation(Formation::Type type);
+    const Formation& get_formation(Formation::Type type) const;
 
     json to_json() const;
 
@@ -45,5 +49,4 @@ private:
     std::vector<Formation> _formations;
     std::shared_ptr<Army> _army;
     BattleFieldSize _size;
-    std::string _username;
 };

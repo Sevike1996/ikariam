@@ -8,8 +8,8 @@ const BattleField::SlotInfo BattleField::BATTLE_FIELD_SIZES[][Formation::Type::t
     {{2, 30}, {2, 30}, {5, 30}, {7, 50}, {7, 50}, {6, 40}},
 };
 
-BattleField::BattleField(std::shared_ptr<Army> army, BattleFieldSize size, std::string username):
-    _army(army), _size(size), _username(username)
+BattleField::BattleField(std::shared_ptr<Army> army, BattleFieldSize size):
+    _army(army), _size(size)
 {
     for (int type = 0; type < Formation::type_count; type++) {
         auto formation = create_formation(static_cast<Formation::Type>(type));
@@ -92,18 +92,17 @@ Formation& BattleField::get_formation(Formation::Type type)
     return _formations[type];
 }
 
-BattleField::json BattleField::to_json() const
+const Formation& BattleField::get_formation(Formation::Type type) const
 {
-    json serialized = json::object();
+    return _formations[type];
+}
 
-    for (int type = 0; type < Formation::type_count; type++) {
-        serialized[Formation::FORMATION_NAMES[type]] = _formations[type].to_json();
-    }
-    serialized["ammo"] = _army->get_ammo_json();
-    serialized["reserve"] = _army->get_units_json();
-    auto round_info = json::array();
-    round_info.push_back(json::array({_username, get_units_count(), get_losses_count()}));
-    serialized["info"] = round_info;
+void BattleField::set_army(std::shared_ptr<Army> army)
+{
+    _army = army;
+}
 
-    return serialized;
+const std::shared_ptr<Army> BattleField::get_army() const
+{
+    return _army;
 }

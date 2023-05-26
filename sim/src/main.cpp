@@ -1,95 +1,83 @@
 #include <mysql/mysql.h>
 #include <stdio.h>
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
 
 #include "database.hpp"
-
-// #include <nlohmann/json.hpp>
-
-// using json = nlohmann::json;
-
-// void fetch_json() {
-//     sql::Connection conn("/tmp/mysqld/mysqld.sock", "ik_game");
-//     sql::Result res = conn.query("SELECT * FROM foo;");
-//     auto row = res[0];
-//     std::cout << "id=" << std::any_cast<int>(row["id"]) << std::endl;
-//     auto data = std::any_cast<json>(row["data"]);
-//     std::cout << "data=" << data << std::endl;
-//     std::cout << "data[key1]=" << data["key1"].get<std::string>() << std::endl;
-// }
-
-// void store_json() {
-//     sql::Connection conn("/tmp/mysqld/mysqld.sock", "ik_game");
-//     std::map<std::string, int> m = {{"a", 1}, {"b", 2}};
-//     json j(m);
-//     std::stringstream s;
-//     s << "INSERT INTO foo(data) VALUES('" << j << "');";
-//     conn.query(s.str());
-// }
-
-#include <sstream>
-
+#include "date.hpp"
 #include "battlefield.hpp"
 #include "clash.hpp"
+#include "sql/error.hpp"
 
-#if 0
-void old() {
-    try {
-        // Database db;
-        // auto army = db.load_city_army(2);
-        // std::cout << army.get_units_json() << std::endl; 
-        // auto army = db.load_city_army(2);
-        // std::cout << army.get_units_json() << std::endl; 
-        Army army;
-        army.reinforce(Unit::spearman, 100);
-        // army.reinforce(Unit::spearman, 5);
-        // army.reinforce(Unit::slinger, 100);
+#include <nlohmann/json.hpp>
 
-        // TODO create bottom, create top, if bottom.hasWalls() top.withdrawFlanks();
+using json = nlohmann::json;
 
-        Army army2;
-        army2.reinforce(Unit::spearman, 5);
-        army2.reinforce(Unit::mortar, 7);
-        // army2.reinforce(Unit::ram, 5); // TODO displayed as carabineer in reserve
-        // army2.reinforce(Unit::hoplite, 30);
+json to_json(const BattleField& battlefield, std::string username)
+{
+    json serialized = json::object();
 
-
-        BattleField top(army, BattleField::small, "foo", 100);
-        BattleField bottom(army2, BattleField::small, "bar", 100);
-        clash(top, bottom);
-
-        json round2 = json::object();
-        round2["attacker"] = top.to_json();
-        round2["defender"] = bottom.to_json();
-        round2["date"] = "(12.01.2017 7:28:13)";
-        round2["background"] = 2;
-
-        json j = json::object();
-        j["town"] = "MyTownName",
-        j["upgrades"] = json::object(),
-        j["battlefield"] = BattleField::small,
-        j["rounds"] = {round2, };
-        std::cout << j << std::endl;
-    } catch (sql::Error& e) {
-        std::cerr << e.what() << std::endl;
+    for (auto type = 0; type < Formation::type_count; type++) {
+        serialized[Formation::FORMATION_NAMES[type]] = battlefield.get_formation((Formation::Type)type).to_json();
     }
-}
-#elif 1
+    serialized["ammo"] = battlefield.get_army()->get_ammo_json();
+    serialized["reserve"] = battlefield.get_army()->get_units_json();
+    auto round_info = json::array();
+    round_info.push_back(json::array({username, battlefield.get_units_count(), battlefield.get_losses_count()}));
+    serialized["info"] = round_info;
 
-__attribute__((weak)) int main() {
+    return serialized;
+}
+
+void update_mission(Database& db, const Mission& m)
+{
+    auto a = db.load_attacking_army(m);
+    auto d = db.load_defensive_army(m);
+    
+    auto size = db.getBattlefieldSize(m);
+    BattleField top(a, size);
+    BattleField bottom(d, size);
+
+    clash(top, bottom);
+
+    json round = json::object();
+    round["attacker"] = to_json(top, db.getTownsUsername(m.from));
+    round["defender"] = to_json(bottom, db.getTownsUsername(m.to));
+    round["date"] = datetime::to_string(m.next_stage_time);
+    round["background"] = 2;  // TODO decide this better
+    std::cout << round.dump() << std::endl;
+
+    db.store_round(m, round.dump());
+
+    // TODO load stored armies
+
+    // TODO while (!winner and !next_time > current_time)
+    // TODO store armies
+}
+
+__attribute__((weak)) int main()
+{
     try {
         Database db;
 
-        Mission m = db.load_mission(1);
-        auto a = db.load_attacking_army(m);
-        auto d = db.load_defensive_army(m);
-        std::cout << d.get_units_json() << std::endl; 
+        std::cout << "En route" << std::endl;
+        auto missions = db.get_missions_needing_update(Mission::State::EN_ROUTE);
+        for (auto mission : missions) {
+            std::cout << mission.id << std::endl;
+            db.update_arrived(mission);
+        }
 
-    } catch (sql::Error& e) {
+        // TODO remove old rounds from db
+
+        std::cout << "In battle" << std::endl;
+        missions = db.get_missions_needing_update(Mission::State::IN_BATTLE);
+        for (auto mission : missions) {
+            std::cout << mission.id << std::endl;
+            update_mission(db, mission);
+        }
+    } catch (sql::error& e) {
         std::cerr << e.what() << std::endl;
     }
     return 0;
 }
-#endif

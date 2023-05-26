@@ -20,7 +20,7 @@ TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
 TEST_OBJS := $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%.o,$(basename $(TEST_SRCS)))
 TEST_DEPS := $(patsubst $(TEST_DIR)/%,$(DEP_DIR)/%.d,$(basename $(TEST_SRCS)))
 
-CXXFLAGS := -Wall -Werror -std=c++17 -g
+CXXFLAGS := -Wall -Werror -std=c++2a -g
 CPPFLAGS := -I$(INC_DIR) $(shell pkg-config $(LIBS) --cflags-only-I)
 DEPFLAGS = -MM -MP
 LDLIBS := $(shell pkg-config $(LIBS) --libs)

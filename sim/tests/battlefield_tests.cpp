@@ -8,8 +8,8 @@ TEST(Basic, FrontFill) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    Army army(std::move(std::make_unique<StatLoader>()));
-    army.reinforce(Unit::spearman, 10);
+    auto army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    army->reinforce(Unit::spearman, 10);
     BattleField battlefield(army, BattleField::mini, "user");
 
     Formation expected(Formation::front);
@@ -21,8 +21,8 @@ TEST(Basic, FrontFlood) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    Army army(std::move(std::make_unique<StatLoader>()));
-    army.reinforce(Unit::spearman, 100);
+    auto army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    army->reinforce(Unit::spearman, 100);
     BattleField battlefield(army, BattleField::mini, "user");
 
     Formation expected(Formation::front);
@@ -36,8 +36,8 @@ TEST(Basic, FrontFlankOverflow) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    Army army(std::move(std::make_unique<StatLoader>()));
-    army.reinforce(Unit::spearman, 170);
+    auto army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    army->reinforce(Unit::spearman, 170);
     BattleField battlefield(army, BattleField::small, "user");
 
     Formation expected(Formation::flank);
@@ -50,9 +50,9 @@ TEST(Basic, ArtilleryPrio) {
     int pool;
     const UnitMeta* mortar_meta = &(UNITS_META[Unit::mortar]);
 
-    Army army(std::move(std::make_unique<StatLoader>()));
-    army.reinforce(Unit::mortar, 7);
-    army.reinforce(Unit::ram, 6);
+    auto army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    army->reinforce(Unit::mortar, 7);
+    army->reinforce(Unit::ram, 6);
     BattleField battlefield(army, BattleField::small, "user");
 
     Formation expected(Formation::artillery);

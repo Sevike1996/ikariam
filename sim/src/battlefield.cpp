@@ -8,7 +8,7 @@ const BattleField::SlotInfo BattleField::BATTLE_FIELD_SIZES[][Formation::Type::t
     {{2, 30}, {2, 30}, {5, 30}, {7, 50}, {7, 50}, {6, 40}},
 };
 
-BattleField::BattleField(Army& army, BattleFieldSize size, std::string username):
+BattleField::BattleField(std::shared_ptr<Army> army, BattleFieldSize size, std::string username):
     _army(army), _size(size), _username(username)
 {
     for (int type = 0; type < Formation::type_count; type++) {
@@ -33,11 +33,11 @@ void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info
 {
     auto [slot_count, slot_size] = slot_info;
     while (formation.size() < slot_count) {
-        auto [slot_allowance, meta] = _army.get_squad(type, slot_size);
+        auto [slot_allowance, meta] = _army->get_squad(type, slot_size);
         if (slot_allowance == 0 ) {
             return;
         }
-        int& ammo_pool = _army.get_ammo_pool(type);
+        int& ammo_pool = _army->get_ammo_pool(type);
 
         formation.fill_slot(meta, slot_allowance, meta->health, ammo_pool);
     }
@@ -61,7 +61,7 @@ bool BattleField::can_defend() const
 bool BattleField::has_spare(Formation::Type type) const
 {
     for (auto unit_type : Formation::ACCEPTABLE_UNITS[type]) {
-        if (_army.get_unit_count(unit_type) != 0) {
+        if (_army->get_unit_count(unit_type) != 0) {
             return true;
         }
     }
@@ -74,7 +74,7 @@ int BattleField::get_units_count() const
     for (const auto& formation : _formations) {
         count += formation.get_units_count();
     }
-    count += _army.get_units_count();
+    count += _army->get_units_count();
     return count;
 }
 
@@ -99,8 +99,8 @@ BattleField::json BattleField::to_json() const
     for (int type = 0; type < Formation::type_count; type++) {
         serialized[Formation::FORMATION_NAMES[type]] = _formations[type].to_json();
     }
-    serialized["ammo"] = _army.get_ammo_json();
-    serialized["reserve"] = _army.get_units_json();
+    serialized["ammo"] = _army->get_ammo_json();
+    serialized["reserve"] = _army->get_units_json();
     auto round_info = json::array();
     round_info.push_back(json::array({_username, get_units_count(), get_losses_count()}));
     serialized["info"] = round_info;

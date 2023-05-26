@@ -13,9 +13,9 @@ Database::Database() : _blobs("/tmp/ikariam/rounds")
     _conn.connect("/tmp/mysqld/mysqld.sock", "ik_game");
 }
 
-Army Database::load_defensive_army(const Mission& mission)
+std::shared_ptr<Army> Database::load_defensive_army(const Mission& mission)
 {
-    Army army(std::make_unique<DefensiveStatLoader>(_conn, mission.to));
+    auto army = std::make_shared<Army>(std::make_unique<DefensiveStatLoader>(_conn, mission.to));
     std::stringstream query;
     query << "SELECT * FROM alpha_town_units where town_id = " << mission.to << ";";
     sql::Result result = _conn.query(query.str());
@@ -25,19 +25,26 @@ Army Database::load_defensive_army(const Mission& mission)
         auto row = result[i];
         auto unit = std::any_cast<int>(row["type"]);
         auto count = std::any_cast<int>(row["count"]);
-        army.reinforce(static_cast<Unit>(unit), count);
+        army->reinforce(static_cast<Unit>(unit), count);
     }
-
-    auto size = getBattlefieldSize(mission);
-    int wall_count = BattleField::BATTLE_FIELD_SIZES[size][Formation::Type::front].amount;
-    army.reinforce(Unit::wall, wall_count);
+    
+    auto statement = _conn.create_statement();
+    statement.execute("SELECT pos14_level FROM alpha_towns where id =  ?", mission.to);
+    result = statement.result();
+    auto row = result[0];
+    auto wall_level = std::any_cast<int>(row["pos14_level"]);
+    if (wall_level != 0) {
+        auto size = getBattlefieldSize(mission);
+        int wall_count = BattleField::BATTLE_FIELD_SIZES[size][Formation::Type::front].amount;
+        army->reinforce(Unit::wall, wall_count);   
+    }
 
     return army;
 }
 
-Army Database::load_attacking_army(const Mission& mission)
+std::shared_ptr<Army> Database::load_attacking_army(const Mission& mission)
 {
-    Army army(std::make_unique<StatLoader>());
+    auto army = std::make_shared<Army>(std::make_unique<StatLoader>());
     std::stringstream query;
     query << "SELECT type,count FROM alpha_mission_units where mission_id = " << mission.id << ";";
     sql::Result result = _conn.query(query.str());
@@ -47,7 +54,7 @@ Army Database::load_attacking_army(const Mission& mission)
         auto row = result[i];
         auto unit = std::any_cast<int>(row["type"]);
         auto count = std::any_cast<int>(row["count"]);
-        army.reinforce(static_cast<Unit>(unit), count);
+        army->reinforce(static_cast<Unit>(unit), count);
     }
 
     return army;

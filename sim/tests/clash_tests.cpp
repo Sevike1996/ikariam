@@ -110,12 +110,12 @@ TEST(Clash, RangedMelee) {
     auto spearman_meta = &UNITS_META[Unit::spearman];
     auto archer_meta = &UNITS_META[Unit::archer];
 
-    Army top_army(std::make_unique<StatLoader>());
-    top_army.reinforce(Unit::spearman, 1);
+    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    top_army->reinforce(Unit::spearman, 1);
     BattleField top(top_army, BattleField::small, "user");
     
-    Army bottom_army(std::make_unique<StatLoader>());
-    bottom_army.reinforce(Unit::archer, 1);
+    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    bottom_army->reinforce(Unit::archer, 1);
     BattleField bottom(bottom_army, BattleField::small, "user");
 
     clash(top, bottom);
@@ -133,12 +133,12 @@ TEST(Clash, RangedMelee) {
 }
 
 TEST(Clash, NoDefendingUnits) {
-    Army top_army(std::make_unique<StatLoader>());
-    top_army.reinforce(Unit::spearman, 1);
+    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    top_army->reinforce(Unit::spearman, 1);
     BattleField top(top_army, BattleField::small, "user");
     
-    Army bottom_army(std::make_unique<StatLoader>());
-    bottom_army.reinforce(Unit::ram, 1);
+    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    bottom_army->reinforce(Unit::ram, 1);
     BattleField bottom(bottom_army, BattleField::small, "user");   
 
     auto* winner = get_winner(bottom, top);
@@ -146,12 +146,12 @@ TEST(Clash, NoDefendingUnits) {
 }
 
 TEST(Clash, Draw) {
-    Army top_army(std::make_unique<StatLoader>());
-    top_army.reinforce(Unit::spearman, 1);
+    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    top_army->reinforce(Unit::spearman, 1);
     BattleField top(top_army, BattleField::small, "user");
     
-    Army bottom_army(std::make_unique<StatLoader>());
-    bottom_army.reinforce(Unit::steam_giant, 1);
+    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    bottom_army->reinforce(Unit::steam_giant, 1);
     BattleField bottom(bottom_army, BattleField::small, "user");   
 
     auto* winner = get_winner(bottom, top);

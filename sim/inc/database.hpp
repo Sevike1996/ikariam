@@ -15,8 +15,8 @@ class Database
 public:
     Database();
 
-    Army load_defensive_army(const Mission& mission);
-    Army load_attacking_army(const Mission& mission);
+    std::shared_ptr<Army> load_defensive_army(const Mission& mission);
+    std::shared_ptr<Army> load_attacking_army(const Mission& mission);
 
     std::string getTownsUsername(int town_id);
 

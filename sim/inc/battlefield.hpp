@@ -24,7 +24,7 @@ public:
     };
 
 
-    BattleField(Army& army, BattleFieldSize size, std::string username);
+    BattleField(std::shared_ptr<Army> army, BattleFieldSize size, std::string username);
 
     bool can_defend() const;
     int get_units_count() const;
@@ -43,7 +43,7 @@ private:
     bool has_spare(Formation::Type type) const;
 
     std::vector<Formation> _formations;
-    Army& _army;
+    std::shared_ptr<Army> _army;
     BattleFieldSize _size;
     std::string _username;
 };

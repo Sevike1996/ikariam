@@ -19,7 +19,7 @@ const std::vector<Unit> Formation::ACCEPTABLE_UNITS[] = {
     {Unit::bombardier},
     {Unit::mortar, Unit::ballista_ship, Unit::ram},
     {Unit::carbineer, Unit::archer, Unit::slinger},
-    {Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer, Unit::archer},
+    {Unit::wall, Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer, Unit::archer},
     {Unit::swordsman, Unit::spearman},
 };
 

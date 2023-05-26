@@ -2,6 +2,13 @@
 #include "attack_matrix.hpp"
 #include "slot_iterator.hpp"
 
+/**
+ * @brief Simulate the damage a special attack case:
+ * Enemy's front line is empty front, so when the ranged and artillery are attacked, they inflict their melee damage.
+ * 
+ * @param defending 
+ * @param attacking 
+ */
 void ranged_melee_hit(BattleField& defending, Formation& attacking);
 
 void clash(BattleField& top, BattleField& bottom)

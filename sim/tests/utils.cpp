@@ -25,3 +25,8 @@ std::ostream& operator<<(std::ostream &os, Formation const &formation) {
 
     return os;
 }
+
+Formation dummy_formation(Formation::Type formationType)
+{
+    return Formation(formationType, 0, 0);
+}

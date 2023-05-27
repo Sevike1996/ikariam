@@ -8,13 +8,13 @@
 
 TEST(Clash, SingleHitKill) {
     int pool;
-    Formation attack(Formation::front);
+    Formation attack = dummy_formation(Formation::front);
     attack.fill_slot(&UNITS_META[Unit::hoplite], 1, UNITS_META[Unit::hoplite].health, pool);
 
-    Formation defense(Formation::front);
+    Formation defense = dummy_formation(Formation::front);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
 
-    Formation expected(Formation::front);
+    Formation expected = dummy_formation(Formation::front);
     expected.fill_slot(&UNITS_META[Unit::barbarian], 0, 0, pool);
     expected[0].orig_count = 1;
 
@@ -25,13 +25,13 @@ TEST(Clash, SingleHitKill) {
 
 TEST(Clash, SingleHitAlive) {
     int pool;
-    Formation attack(Formation::Type::front);
+    Formation attack = dummy_formation(Formation::Type::front);
     attack.fill_slot(&UNITS_META[Unit::spearman], 1, UNITS_META[Unit::spearman].health, pool);
     
-    Formation defense(Formation::Type::front);
+    Formation defense = dummy_formation(Formation::Type::front);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
 
-    Formation expected(Formation::front);
+    Formation expected = dummy_formation(Formation::front);
     expected.fill_slot(&UNITS_META[Unit::barbarian], 1, 9, pool);
 
     clash_formation<NativeAttackMatrix>(attack, defense);
@@ -41,13 +41,13 @@ TEST(Clash, SingleHitAlive) {
 
 TEST(Clash, SimultaneousKill) {
     int pool;
-    Formation top(Formation::Type::front);
+    Formation top = dummy_formation(Formation::Type::front);
     top.fill_slot(&UNITS_META[Unit::spearman], 5, UNITS_META[Unit::spearman].health, pool);
     
-    Formation bottom(Formation::Type::front);
+    Formation bottom = dummy_formation(Formation::Type::front);
     bottom.fill_slot(&UNITS_META[Unit::spearman], 5, UNITS_META[Unit::spearman].health, pool);
 
-    Formation expected(Formation::front);
+    Formation expected = dummy_formation(Formation::front);
     expected.fill_slot(&UNITS_META[Unit::spearman], 5, 6, pool);
     expected[0].count--;
 
@@ -66,10 +66,10 @@ TEST(Clash, SimultaneousKill) {
 
 TEST(Clash, DoubleSlotKill) {
     int pool;
-    Formation attack(Formation::Type::front);
+    Formation attack = dummy_formation(Formation::Type::front);
     attack.fill_slot(&UNITS_META[Unit::spearman], 8, UNITS_META[Unit::hoplite].health, pool);
     
-    Formation defense(Formation::Type::front);
+    Formation defense = dummy_formation(Formation::Type::front);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
 
@@ -80,10 +80,10 @@ TEST(Clash, DoubleSlotKill) {
 
 TEST(Clash, DoubleSlotSingleKill) {
     int pool;
-    Formation attack(Formation::Type::front);
+    Formation attack = dummy_formation(Formation::Type::front);
     attack.fill_slot(&UNITS_META[Unit::spearman], 7, UNITS_META[Unit::hoplite].health, pool);
     
-    Formation defense(Formation::Type::front);
+    Formation defense = dummy_formation(Formation::Type::front);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
     
@@ -94,10 +94,10 @@ TEST(Clash, DoubleSlotSingleKill) {
 
 TEST(Clash, DoubleSlotDoubleKill) {
     int pool;
-    Formation attack(Formation::Type::front);
+    Formation attack = dummy_formation(Formation::Type::front);
     attack.fill_slot(&UNITS_META[Unit::spearman], 8, UNITS_META[Unit::hoplite].health, pool);
     
-    Formation defense(Formation::Type::front);
+    Formation defense = dummy_formation(Formation::Type::front);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
     defense.fill_slot(&UNITS_META[Unit::barbarian], 1, UNITS_META[Unit::barbarian].health, pool);
     
@@ -113,19 +113,21 @@ TEST(Clash, RangedMelee) {
 
     auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>());
     top_army->reinforce(Unit::spearman, 1);
-    BattleField top(top_army, BattleField::small);
+    BattleField top(BattleField::small);
+    top.fill(top_army);
     
     auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>());
     bottom_army->reinforce(Unit::archer, 1);
-    BattleField bottom(bottom_army, BattleField::small);
+    BattleField bottom(BattleField::small);
+    bottom.fill(bottom_army);
 
     clash(top, bottom);
 
-    Formation top_expected(Formation::front);
+    Formation top_expected = dummy_formation(Formation::front);
     int remaining_health = spearman_meta->health - archer_meta->attack - archer_meta->ranged_attack;
     top_expected.fill_slot(spearman_meta, 1, remaining_health, pool);
 
-    Formation bottom_expected(Formation::long_range);
+    Formation bottom_expected = dummy_formation(Formation::long_range);
     remaining_health = archer_meta->health - spearman_meta->attack;
     bottom_expected.fill_slot(archer_meta, 1, remaining_health, pool);
 
@@ -136,25 +138,29 @@ TEST(Clash, RangedMelee) {
 TEST(Clash, NoDefendingUnits) {
     auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>());
     top_army->reinforce(Unit::spearman, 1);
-    BattleField top(top_army, BattleField::small);
-    
+    BattleField top(BattleField::small);
+    top.fill(top_army);
+
     auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>());
     bottom_army->reinforce(Unit::ram, 1);
-    BattleField bottom(bottom_army, BattleField::small);   
+    BattleField bottom(BattleField::small);   
+    bottom.fill(bottom_army);
 
-    auto* winner = get_winner(bottom, top);
+    auto* winner = get_winner(bottom, bottom_army, top, top_army);
     ASSERT_EQ(winner, &top);
 }
 
 TEST(Clash, Draw) {
     auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>());
     top_army->reinforce(Unit::spearman, 1);
-    BattleField top(top_army, BattleField::small);
+    BattleField top(BattleField::small);
+    top.fill(top_army);
     
     auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>());
     bottom_army->reinforce(Unit::steam_giant, 1);
-    BattleField bottom(bottom_army, BattleField::small);   
+    BattleField bottom(BattleField::small);   
+    bottom.fill(bottom_army);
 
-    auto* winner = get_winner(bottom, top);
+    auto* winner = get_winner(bottom, bottom_army, top, top_army);
     ASSERT_EQ(winner, nullptr);
 }

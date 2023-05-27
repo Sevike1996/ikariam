@@ -6,6 +6,7 @@
 
 #include "unit.hpp"
 #include "slot.hpp"
+#include "army.hpp"
 
 class Formation
 {
@@ -24,7 +25,7 @@ public:
     static const std::string FORMATION_NAMES[];
     static const std::vector<Unit> ACCEPTABLE_UNITS[];
 
-    Formation(Type formatinType);
+    Formation(Type formationType, std::size_t max_slot_count, int slot_size);
     Formation(const Formation& other);
 
     const std::vector<Unit>& getAcceptableUnits() const;
@@ -41,13 +42,18 @@ public:
     bool operator==(const Formation& other) const;
 
     bool is_empty() const;
+    bool is_full() const;
 
     void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
+    void fill(std::shared_ptr<Army> army);
+    void fill(std::shared_ptr<Army> army, Unit unit_type);
 
     json to_json() const;
 
 private:
     std::vector<Slot> _slots;
+    std::size_t _max_slot_count;
+    int _slot_size;
     Type _type;
 };
 

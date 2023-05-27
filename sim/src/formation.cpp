@@ -34,11 +34,13 @@ static const std::vector<Formation::Type> ATTACK_ORDER[] = {
 
 static bool compare_slot_count(const Slot& a, const Slot& b);
 
-Formation::Formation(Type formatinType) : _type(formatinType)
+Formation::Formation(Type formationType, std::size_t max_slot_count, int slot_size) :
+    _max_slot_count(max_slot_count), _slot_size(slot_size), _type(formationType)
 {
 }
 
-Formation::Formation(const Formation& other) : _slots(other._slots), _type(other._type)
+Formation::Formation(const Formation& other) : _slots(other._slots), 
+    _max_slot_count(other._max_slot_count), _slot_size(other._slot_size), _type(other._type)
 {
 }
 
@@ -126,6 +128,32 @@ bool Formation::is_empty() const
         is_empty &= slot.count < 1;
     }
     return is_empty;
+}
+
+bool Formation::is_full() const
+{
+    return _slots.size() == _max_slot_count;
+}
+
+void Formation::fill(std::shared_ptr<Army> army)
+{
+    for (auto unit_type : getAcceptableUnits()) {
+        fill(army, unit_type);
+    }
+}
+
+void Formation::fill(std::shared_ptr<Army> army, Unit unit_type)
+{
+    while (!is_full()) {
+        auto squad = army->get_squad(unit_type, _slot_size);
+        if (!squad.has_value()) {
+            return;
+        }
+        auto [slot_allowance, meta] = squad.value();
+        int& ammo_pool = army->get_ammo_pool(unit_type);
+
+        fill_slot(meta, slot_allowance, meta->health, ammo_pool);
+    }
 }
 
 void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool)

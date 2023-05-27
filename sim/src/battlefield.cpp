@@ -8,65 +8,21 @@ const BattleField::SlotInfo BattleField::BATTLE_FIELD_SIZES[][Formation::Type::t
     {{2, 30}, {2, 30}, {5, 30}, {7, 50}, {7, 50}, {6, 40}},
 };
 
-BattleField::BattleField(std::shared_ptr<Army> army, BattleFieldSize size):
-    _army(army), _size(size)
+BattleField::BattleField(BattleFieldSize size):
+    _size(size)
 {
     for (int type = 0; type < Formation::type_count; type++) {
-        auto formation = create_formation(static_cast<Formation::Type>(type));
-        _formations.push_back(std::move(formation));
+        auto [max_slot_count, slot_size] = BATTLE_FIELD_SIZES[_size][type];
+        _formations.emplace_back(static_cast<Formation::Type>(type), max_slot_count, slot_size);
     }
 }
 
-Formation BattleField::create_formation(Formation::Type type)
+void BattleField::fill(std::shared_ptr<Army> army)
 {
-    const SlotInfo& slot_info = BATTLE_FIELD_SIZES[_size][type];
-    Formation formation(type);
-
-    for (auto unit_type : formation.getAcceptableUnits()) {
-        fill_formation(formation, slot_info, unit_type);
+    for (auto& formation : _formations)
+    {
+        formation.fill(army);
     }
-
-    return formation;
-}
-
-void BattleField::fill_formation(Formation& formation, const SlotInfo& slot_info, Unit type)
-{
-    auto [slot_count, slot_size] = slot_info;
-    while (formation.size() < slot_count) {
-        auto squad = _army->get_squad(type, slot_size);
-        if (!squad.has_value()) {
-            return;
-        }
-        auto [slot_allowance, meta] = squad.value();
-        int& ammo_pool = _army->get_ammo_pool(type);
-
-        formation.fill_slot(meta, slot_allowance, meta->health, ammo_pool);
-    }
-}
-
-bool BattleField::can_defend() const
-{
-    Formation::Type DEFENDING_FROMATION_TYPES[] = {Formation::front, Formation::flank, Formation::long_range};
-    for (auto type : DEFENDING_FROMATION_TYPES) {
-        if (!_formations[type].is_empty()) {
-            return true;
-        }
-        if (has_spare(type)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool BattleField::has_spare(Formation::Type type) const
-{
-    for (auto unit_type : Formation::ACCEPTABLE_UNITS[type]) {
-        if (_army->get_unit_count(unit_type) != 0) {
-            return true;
-        }
-    }
-    return false;
 }
 
 int BattleField::get_units_count() const
@@ -75,7 +31,6 @@ int BattleField::get_units_count() const
     for (const auto& formation : _formations) {
         count += formation.get_units_count();
     }
-    count += _army->get_units_count();
     return count;
 }
 
@@ -86,6 +41,11 @@ int BattleField::get_losses_count() const
         count += formation.get_losses_count();
     }
     return count;
+}
+
+void BattleField::set_formation(Formation::Type type, Formation formation)
+{
+    _formations[type] = std::move(formation);
 }
 
 Formation& BattleField::get_formation(Formation::Type type)

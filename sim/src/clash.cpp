@@ -52,11 +52,37 @@ void ranged_melee_hit(BattleField& defending, Formation& attacking)
     }
 }
 
-BattleField* get_winner(BattleField& top, BattleField& bottom)
+bool has_spare(std::shared_ptr<Army> army, Formation::Type type)
 {
-    if (!top.can_defend()) {
+    for (auto unit_type : Formation::ACCEPTABLE_UNITS[type]) {
+        if (army->get_unit_count(unit_type) != 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool can_defend(const BattleField& battlefield, const std::shared_ptr<Army> army)
+{
+    Formation::Type DEFENDING_FROMATION_TYPES[] = {Formation::front, Formation::flank, Formation::long_range};
+    for (auto type : DEFENDING_FROMATION_TYPES) {
+        if (!battlefield.get_formation(type).is_empty()) {
+            return true;
+        }
+        if (has_spare(army, type)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+BattleField* get_winner(BattleField& top, const std::shared_ptr<Army> top_army, 
+    BattleField& bottom, const std::shared_ptr<Army> bottom_army)
+{
+    if (!can_defend(top, top_army)) {
         return &bottom;
-    } else if (!bottom.can_defend()) {
+    } else if (!can_defend(bottom, bottom_army)) {
         return &top;
     }
     return nullptr;

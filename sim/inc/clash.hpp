@@ -19,4 +19,5 @@ void clash_formation(Formation& attacking, Formation& defending)
     clash_matrix(matrix, slot_chain);
 }
 
-BattleField* get_winner(BattleField& top, BattleField& bottom);
+BattleField* get_winner(BattleField& top, const std::shared_ptr<Army> top_army, 
+    BattleField& bottom, const std::shared_ptr<Army> bottom_army);

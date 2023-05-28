@@ -30,6 +30,8 @@ public:
     json get_units_json() const;
     json get_ammo_json() const;
 
+    UnitMeta* load_stats(Unit unit);
+
 private:
     typedef struct UnitPool {
         int count;

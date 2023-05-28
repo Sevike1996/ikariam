@@ -7,19 +7,19 @@ Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(sta
 void Army::reinforce(Unit unit, int count)
 {
     UnitMeta stats = _stat_loader->load_stats(unit);
-    _units.emplace(unit, UnitPool{count, stats});
+    int ammo = 0;
     if (is_ranged(stats)) {
-        _ammo_pools[unit] = UNITS_META[unit].ammo * count;
-    } else {
-        _ammo_pools[unit] = 0;
+        _ammo_pools[unit] += UNITS_META[unit].ammo * count;
     }
+    reinforce(unit, count, ammo);
 }
 
 void Army::reinforce(Unit unit, int count, int ammo)
 {
     UnitMeta stats = _stat_loader->load_stats(unit);
-    _units[unit] = {count, stats};
-    _ammo_pools[unit] = ammo;
+    auto key_value = _units.try_emplace(unit, UnitPool{0, stats}).first;
+    key_value->second.count += count;
+    _ammo_pools[unit] += ammo;
 }
 
 int Army::get_units_count() const
@@ -88,4 +88,10 @@ Army::json Army::get_ammo_json() const
         }
     }
     return serialized;
+}
+
+UnitMeta* Army::load_stats(Unit unit)
+{
+    reinforce(unit, 0);
+    return &_units[unit].stats;
 }

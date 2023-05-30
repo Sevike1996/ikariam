@@ -21,20 +21,24 @@ public:
     void reinforce(Unit unit, int count);
     void reinforce(Unit unit, int count, int ammo);
 
-    std::optional<Squad> get_squad(Unit unit, int slot_size);
+    std::optional<Squad> borrow_squad(Unit unit, int slot_size);
+    void return_squad(Unit unit, int count);
+
     int& get_ammo_pool(Unit unit);
 
     int get_units_count() const;
-    int get_unit_count(Unit type) const;
+    int get_spare_count(Unit type) const;
 
-    json get_units_json() const;
+    json get_reserves() const;
     json get_ammo_json() const;
+    json get_ammo_percentage() const;
 
     UnitMeta* load_stats(Unit unit);
 
 private:
     typedef struct UnitPool {
         int count;
+        int used;
         UnitMeta stats;
     } UnitPool;
 

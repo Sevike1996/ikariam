@@ -138,7 +138,7 @@ bool Formation::is_full() const
 void Formation::drain_into(std::shared_ptr<Army> army)
 {
     for (auto& slot : _slots) {
-        army->reinforce(slot.meta->type, slot.count, 0);
+        army->return_squad(slot.meta->type, slot.count);
     }
     _slots.clear();
 }
@@ -153,7 +153,7 @@ void Formation::fill(std::shared_ptr<Army> army)
 void Formation::fill(std::shared_ptr<Army> army, Unit unit_type)
 {
     while (!is_full()) {
-        auto squad = army->get_squad(unit_type, _slot_size);
+        auto squad = army->borrow_squad(unit_type, _slot_size);
         if (!squad.has_value()) {
             return;
         }

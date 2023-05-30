@@ -55,7 +55,7 @@ void ranged_melee_hit(BattleField& defending, Formation& attacking)
 bool has_spare(std::shared_ptr<Army> army, Formation::Type type)
 {
     for (auto unit_type : Formation::ACCEPTABLE_UNITS[type]) {
-        if (army->get_unit_count(unit_type) != 0) {
+        if (army->get_spare_count(unit_type) != 0) {
             return true;
         }
     }

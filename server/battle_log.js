@@ -264,7 +264,7 @@ class Slot {
 
 class RangedSlot extends Slot {
   static ELEMENTS_CLASSES = [["ammo"], ["ammoLoss"]];
-  static AMMO_DATA_INDEX = 4;
+  static AMMO_DATA_INDEX = 5;
   static AMMO_ELEM_INDEX = 3;
   static AMMO_LOSS_ELEM_INDEX = 4;
 
@@ -619,7 +619,7 @@ function updateInfoBox(infoBox) {
   if (typeof slotData === 'undefined') {
     return;
   }
-  let [unitType, _, loss, healthPercent, ammo] = slotData;
+  let [unitType, _, loss, healthPercent, _2, ammo] = slotData;
   
   let newHtml = `<h2><span><span>${UNITS[unitType]}</span></span></h2>`;
   if (typeof ammo !== 'undefined') {

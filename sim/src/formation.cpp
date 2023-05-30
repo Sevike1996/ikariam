@@ -180,5 +180,6 @@ void to_json(nlohmann::json &serialized, const Slot &slot)
         slot.count,
         slot.orig_count - slot.count,
         health_percentage / 100.0,
+        slot.first_health,
     });
 }

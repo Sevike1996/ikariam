@@ -22,7 +22,7 @@ public:
         type_count,
     };
 
-    static const std::string FORMATION_NAMES[];
+    static const std::vector<std::string> FORMATION_NAMES;
     static const std::vector<Unit> ACCEPTABLE_UNITS[];
 
     Formation(Type formationType, std::size_t max_slot_count, int slot_size);

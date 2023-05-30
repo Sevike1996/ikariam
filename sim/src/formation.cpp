@@ -5,7 +5,7 @@
 
 #include "formation.hpp"
 
-const std::string Formation::FORMATION_NAMES[] = {
+const std::vector<std::string> Formation::FORMATION_NAMES = {
     "air",
     "bomber",
     "artillery",

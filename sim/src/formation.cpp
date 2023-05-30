@@ -17,7 +17,7 @@ const std::string Formation::FORMATION_NAMES[] = {
 const std::vector<Unit> Formation::ACCEPTABLE_UNITS[] = {
     {Unit::gyrocopter},
     {Unit::bombardier},
-    {Unit::mortar, Unit::ballista_ship, Unit::ram},
+    {Unit::mortar, Unit::catapult, Unit::ram},
     {Unit::carbineer, Unit::archer, Unit::slinger},
     {Unit::wall, Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer, Unit::archer},
     {Unit::swordsman, Unit::spearman},

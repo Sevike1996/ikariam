@@ -135,6 +135,14 @@ bool Formation::is_full() const
     return _slots.size() == _max_slot_count;
 }
 
+void Formation::drain_into(std::shared_ptr<Army> army)
+{
+    for (auto& slot : _slots) {
+        army->reinforce(slot.meta->type, slot.count, 0);
+    }
+    _slots.clear();
+}
+
 void Formation::fill(std::shared_ptr<Army> army)
 {
     for (auto unit_type : getAcceptableUnits()) {

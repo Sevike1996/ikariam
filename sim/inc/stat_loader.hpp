@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sql/connection.hpp"
+#include "database.hpp"
 #include "unit.hpp"
 
 class StatLoader
@@ -8,21 +8,13 @@ class StatLoader
 public:
     virtual ~StatLoader() = default;
 
-    virtual UnitMeta load_stats(Unit unit) const;
-};
+    StatLoader(Database& db, int town_id);
 
-class DefensiveStatLoader : public StatLoader
-{
-public:
-    virtual ~DefensiveStatLoader() = default;
+    UnitMeta load_stats(Unit unit);
 
-    DefensiveStatLoader(sql::Connection& conn, int town_id);
-
-    UnitMeta load_stats(Unit unit) const override;
-
-    UnitMeta load_wall_stats() const;
+    UnitMeta load_wall_stats();
 
 private:
-    sql::Connection& _conn;
+    Database& _db;
     int _town_id;
 };

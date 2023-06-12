@@ -67,3 +67,18 @@ const std::shared_ptr<Army> BattleField::get_army() const
 {
     return _army;
 }
+
+BattleField::BattleFieldSize BattleField::get_size(int town_hall_level)
+{
+    if (town_hall_level <= 4) {
+        return BattleField::mini;
+    } else if (town_hall_level <= 9) {
+        return BattleField::small;
+    } else if (town_hall_level <= 16) {
+        return BattleField::medium;
+    } else if (town_hall_level <= 24) {
+        return BattleField::large;
+    } else {
+        return BattleField::big;
+    }
+}

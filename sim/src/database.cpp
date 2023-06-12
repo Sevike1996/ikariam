@@ -13,9 +13,9 @@ Database::Database() : _blobs("/tmp/ikariam/rounds")
     _conn.connect("/tmp/mysqld/mysqld.sock", "ik_game");
 }
 
-std::shared_ptr<Army> Database::load_defensive_army(const Mission& mission)
+std::list<std::tuple<Unit, int>> Database::load_defending_units(const Mission& mission)
 {
-    auto army = std::make_shared<Army>(std::make_unique<DefensiveStatLoader>(_conn, mission.to));
+    std::list<std::tuple<Unit, int>> units;
     std::stringstream query;
     query << "SELECT * FROM alpha_town_units where town_id = " << mission.to << ";";
     sql::Result result = _conn.query(query.str());
@@ -25,26 +25,15 @@ std::shared_ptr<Army> Database::load_defensive_army(const Mission& mission)
         auto row = result[i];
         auto unit = std::any_cast<int>(row["type"]);
         auto count = std::any_cast<int>(row["count"]);
-        army->reinforce(static_cast<Unit>(unit), count);
-    }
-    
-    auto statement = _conn.create_statement();
-    statement.execute("SELECT pos14_level FROM alpha_towns where id =  ?", mission.to);
-    result = statement.result();
-    auto row = result[0];
-    auto wall_level = std::any_cast<int>(row["pos14_level"]);
-    if (wall_level != 0) {
-        auto size = getBattlefieldSize(mission);
-        int wall_count = BattleField::BATTLE_FIELD_SIZES[size][Formation::Type::front].amount;
-        army->reinforce(Unit::wall, wall_count);   
+        units.emplace_back(static_cast<Unit>(unit), count);
     }
 
-    return army;
+    return units;
 }
 
-std::shared_ptr<Army> Database::load_attacking_army(const Mission& mission)
+std::list<std::tuple<Unit, int>> Database::load_attacking_units(const Mission& mission)
 {
-    auto army = std::make_shared<Army>(std::make_unique<StatLoader>());
+    std::list<std::tuple<Unit, int>> units;
     std::stringstream query;
     query << "SELECT type,count FROM alpha_mission_units where mission_id = " << mission.id << ";";
     sql::Result result = _conn.query(query.str());
@@ -54,10 +43,10 @@ std::shared_ptr<Army> Database::load_attacking_army(const Mission& mission)
         auto row = result[i];
         auto unit = std::any_cast<int>(row["type"]);
         auto count = std::any_cast<int>(row["count"]);
-        army->reinforce(static_cast<Unit>(unit), count);
+        units.emplace_back(static_cast<Unit>(unit), count);
     }
 
-    return army;
+    return units;
 }
 
 Mission Database::load_mission(int mission_id)
@@ -78,26 +67,14 @@ Mission Database::load_mission(int mission_id)
     return mission;
 }
 
-BattleField::BattleFieldSize Database::getBattlefieldSize(const Mission& mission)
+int Database::get_town_hall_level(int town_id)
 {
     std::stringstream query;
-    query << "SELECT pos0_level FROM alpha_towns where id = " << mission.to << +";";
+    query << "SELECT pos0_level FROM alpha_towns where id = " << town_id << +";";
     sql::Result res = _conn.query(query.str());
 
     auto row = res[0];
-    int town_level = std::any_cast<int>(row["pos0_level"]);
-
-    if (town_level <= 4) {
-        return BattleField::mini;
-    } else if (town_level <= 9) {
-        return BattleField::small;
-    } else if (town_level <= 16) {
-        return BattleField::medium;
-    } else if (town_level <= 24) {
-        return BattleField::large;
-    } else {
-        return BattleField::big;
-    }
+    return std::any_cast<int>(row["pos0_level"]);
 }
 
 std::string Database::getTownsUsername(int town_id)
@@ -132,17 +109,16 @@ std::list<Mission> Database::get_missions_needing_update(Mission::State state)
     return missions;
 }
 
-void Database::update_arrived(const Mission& mission)
+void Database::update_arrived(const Mission& mission, int battlefield_size)
 {
     auto statement = _conn.create_statement();
     statement.execute("update alpha_missions set state = ?, next_stage_time = ? where id = ?",
                       Mission::State::IN_BATTLE, mission.next_stage_time + Mission::STAGE_INTERVAL, mission.id);
-    _create_battle(mission);
+    _create_battle(mission, battlefield_size);
 }
 
-void Database::_create_battle(const Mission& mission)
+void Database::_create_battle(const Mission& mission, int battlefield_size)
 {
-    auto battlefield_size = getBattlefieldSize(mission);
     auto statement = _conn.create_statement();
     statement.execute("INSERT INTO alpha_battles(mission_id, start_time, battlefield_size) VALUES(?, ?, ?)", mission.id,
                       mission.next_stage_time, battlefield_size);
@@ -165,4 +141,27 @@ void Database::store_round(const Mission& mission, const std::string& round_data
     statement = _conn.create_statement();
     std::cout << mission.id << "," << round_id << "," << blob_id << std::endl;
     statement.execute("INSERT INTO alpha_rounds values (?,?,?)", mission.id, round_id, blob_id);
+}
+
+
+std::optional<std::string> Database::get_last_round(const Mission& mission)
+{
+    auto statement = _conn.create_statement();
+    statement.execute("select round_path from alpha_rounds where mission_id = ? order by round desc limit 1", mission.id);
+    auto result = statement.result();
+    if (result.row_count() < 1) {
+        return {};
+    }
+
+    auto round_path = std::any_cast<std::string>(result[0]["round_path"]);
+    return _blobs.get(round_path);
+}
+
+int Database::get_wall_level(int town_id)
+{
+    auto statement = _conn.create_statement();
+    statement.execute("SELECT pos14_level FROM alpha_towns where id =  ?", town_id);
+    auto result = statement.result();
+    auto row = result[0];
+    return std::any_cast<int>(row["pos14_level"]);
 }

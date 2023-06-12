@@ -75,6 +75,7 @@ INSERT INTO `alpha_towns` VALUES(0, 2, 1, "Badtown", 1, 1);
 -- from sourcetown to badtown, state=EN_ROUTE, type=PLUNDER, next_stage_time=1000
 INSERT INTO `alpha_missions` VALUES(0, 1, 2, 1, 5, 1000);
 INSERT INTO `alpha_mission_units` VALUES(1, 0, 5);
+INSERT INTO `alpha_mission_units` VALUES(1, 8, 1);
 
 -- defend badtown with 8 spearmans.
 INSERT INTO alpha_town_units(town_id, `type`, count) VALUES(2, 2, 8);

@@ -22,6 +22,15 @@ void Army::reinforce(Unit unit, int count, int ammo)
     _ammo_pools[unit] += ammo;
 }
 
+void Army::reinforce_used(Unit unit, int count, int ammo)
+{
+    UnitMeta stats = _stat_loader->load_stats(unit);
+    auto key_value = _units.try_emplace(unit, UnitPool{0, 0, stats}).first;
+    key_value->second.count += count;
+    key_value->second.used += count;
+    _ammo_pools[unit] += ammo;
+}
+
 int Army::get_units_count() const
 {
     int count = 0;
@@ -81,6 +90,11 @@ void Army::return_squad(Unit unit, int count)
 int& Army::get_ammo_pool(Unit unit)
 {
     return _ammo_pools[unit];
+}
+
+void Army::add_ammo(Unit unit, int ammo_count)
+{
+    _ammo_pools[unit] += ammo_count;
 }
 
 Army::json Army::get_reserves() const

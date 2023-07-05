@@ -686,7 +686,7 @@ function main(battleData) {
 
 window.addEventListener("DOMContentLoaded", (event) => {
   params = new URLSearchParams(location.search);
-  fetch(`fight?id=${params.id}`)
+  fetch(`fight?mission_id=${params.get('id')}`)
     .then((response) => response.json())
     .then(main);
 });

@@ -3,6 +3,12 @@
 This is a part of a bigger project, where I try to recreate the online strategy game "Ikariam".  
 Some of the code is available on GitHub, but the battle calculator is missing.
 
+## Prerequisites
+
+```sh
+apt install libmysqlclient-dev mysql-client php8.1 php-mysqli
+```
+
 ## Setup
 
 To compile the simulator:
@@ -39,6 +45,7 @@ And finally, run the simulator:
 * Load rounds from previous round json [DONE]
 * Bulk round calculation
 * Benchmark
+    * Convert to rapidjson if benching is bad
 * PHP to support json [DONE]
 * Better battle testing
 * Larger battle UI checking

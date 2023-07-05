@@ -1,4 +1,4 @@
-LIBS := mysqlclient nlohmann_json
+LIBS := mysqlclient
 CXX := clang++
 
 SRC_DIR := src
@@ -21,7 +21,7 @@ TEST_OBJS := $(patsubst $(TEST_DIR)/%,$(OBJ_DIR)/%.o,$(basename $(TEST_SRCS)))
 TEST_DEPS := $(patsubst $(TEST_DIR)/%,$(DEP_DIR)/%.d,$(basename $(TEST_SRCS)))
 
 CXXFLAGS := -Wall -Werror -std=c++2a -g
-CPPFLAGS := -I$(INC_DIR) $(shell pkg-config $(LIBS) --cflags-only-I)
+CPPFLAGS := -I$(INC_DIR) $(shell pkg-config $(LIBS) --cflags-only-I) -I .
 DEPFLAGS = -MM -MP
 LDLIBS := $(shell pkg-config $(LIBS) --libs)
 
@@ -54,7 +54,7 @@ $(OBJ_DIR)/%.o: %.cpp | $(OBJ_DIRS)
 $(DEP_DIR)/%.d: $(SRC_DIR)/%.cpp | $(DEP_DIRS)
 	$(CXX) $(CPPFLAGS) $(DEPFLAGS) -MF $@ -MT '$(OBJ_DIR)/$(basename $(<F)).o' $<
 
-include $(DEPS)
+-include $(DEPS)
 
 $(OBJ_DIRS) $(DEP_DIRS) $(BIN_DIR) :
 	@mkdir -p $@

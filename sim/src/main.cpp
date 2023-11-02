@@ -4,17 +4,17 @@
 #include <map>
 #include <string>
 
-#include "database.hpp"
-#include "date.hpp"
 #include "battlefield.hpp"
 #include "clash.hpp"
+#include "database.hpp"
+#include "date.hpp"
 #include "sql/error.hpp"
 
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
-json to_json(const BattleField& battlefield, std::string username, const std::shared_ptr<Army> army)
+json to_ui_json(const BattleField& battlefield, std::string username, const std::shared_ptr<Army> army)
 {
     json serialized = json::object();
 
@@ -27,8 +27,35 @@ json to_json(const BattleField& battlefield, std::string username, const std::sh
     serialized["ammo"] = army->get_ammo_percentage();
     serialized["reserve"] = army->get_reserves();
     auto round_info = json::array();
-    round_info.push_back(json::array({username, battlefield.get_units_count() + army->get_units_count(), battlefield.get_losses_count()}));
+    round_info.push_back(json::array(
+        {username, battlefield.get_units_count() + army->get_units_count(), battlefield.get_losses_count()}));
     serialized["info"] = round_info;
+
+    return serialized;
+}
+
+json to_data_json(BattleField& battlefield, std::string username, std::shared_ptr<Army> army)
+{
+    json serialized = json::object();
+    json healths = json::object();
+    std::map<Unit, std::list<size_t>> front_healths;
+
+    for (auto type = 0; type < Formation::type_count; type++) {
+        auto& formation = battlefield.get_formation((Formation::Type)type);
+        auto current_healts = formation.get_first_healths();
+        std::list<std::array<int, 2>> converted_healths;
+        for (const auto& health : current_healts) {
+            int type = static_cast<int>(std::get<0>(health));
+            converted_healths.push_back({type, std::get<1>(health)});
+        }
+        healths[std::to_string(formation.get_type())] = converted_healths;
+
+        formation.drain_into(army);
+    }
+
+    serialized["healths"] = std::move(healths);
+    serialized["units"] = army->get_reserves();
+    serialized["ammo"] = army->get_ammo_json();
 
     return serialized;
 }
@@ -40,8 +67,7 @@ Formation parse_formation(json obj)
 
 std::optional<Formation::Type> from_string(std::string s)
 {
-    for (int i = 0; i < Formation::FORMATION_NAMES.size(); i++)
-    {
+    for (int i = 0; i < Formation::FORMATION_NAMES.size(); i++) {
         if (Formation::FORMATION_NAMES[i] == s) {
             return static_cast<Formation::Type>(i);
         }
@@ -49,7 +75,7 @@ std::optional<Formation::Type> from_string(std::string s)
     return {};
 }
 
-void fill_formation(Formation& formation ,json formation_json, std::shared_ptr<Army> army)
+void fill_formation(Formation& formation, json formation_json, std::shared_ptr<Army> army)
 {
     for (auto slot : formation_json) {
         int count = slot[1].get<int>();
@@ -86,7 +112,9 @@ void load_reserves(std::shared_ptr<Army> army, json reserves)
     }
 }
 
-std::shared_ptr<BattleField> parse_round_side(json side, BattleField::BattleFieldSize battlefieldSize, std::shared_ptr<Army> army)
+std::shared_ptr<BattleField> parse_round_side(json side,
+                                              BattleField::BattleFieldSize battlefieldSize,
+                                              std::shared_ptr<Army> army)
 {
     auto battlefield = std::make_shared<BattleField>(battlefieldSize);
     for (auto& [key, value] : side.items()) {
@@ -118,14 +146,20 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
 
     clash(*top, *bottom);
 
-    json round = json::object();
-    round["attacker"] = to_json(*top, db.getTownsUsername(mission.from), top_army);
-    round["defender"] = to_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
-    round["date"] = datetime::to_string(mission.next_stage_time);
-    round["background"] = 2;  // TODO decide this better
-    std::cout << round.dump() << std::endl;
+    json ui_round = json::object();
+    ui_round["attacker"] = to_ui_json(*top, db.getTownsUsername(mission.from), top_army);
+    ui_round["defender"] = to_ui_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
+    ui_round["date"] = datetime::to_string(mission.next_stage_time);
+    ui_round["background"] = 2;  // TODO decide this better
+    std::cout << ui_round.dump() << std::endl;
+    db.store_round(mission, ui_round.dump());
 
-    db.store_round(mission, round.dump());
+    json data_round = json::object();
+    data_round["attacker"] = to_ui_json(*top, db.getTownsUsername(mission.from), top_army);
+    data_round["defender"] = to_ui_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
+    data_round["date"] = datetime::to_string(mission.next_stage_time);
+    std::cout << data_round.dump() << std::endl;
+    db.store_round(mission, data_round.dump());
 }
 
 void load_attacking_units(std::shared_ptr<Army> army, Database& db, const Mission& mission)
@@ -147,19 +181,19 @@ void load_defending_units(std::shared_ptr<Army> army, Database& db, const Missio
     if (wall_level != 0) {
         auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
         int wall_count = BattleField::BATTLE_FIELD_SIZES[size][Formation::Type::front].amount;
-        army->reinforce(Unit::wall, wall_count);   
+        army->reinforce(Unit::wall, wall_count);
     }
 }
 
-void update_mission_arrived(Database& db, const Mission m)
+void update_mission_arrived(Database& db, const Mission mission)
 {
     // TODO receive db in this, will be needed when unit upgrade are a feature
-    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, m.from));
-    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, m.to));
-    load_attacking_units(top_army, db, m);
-    load_defending_units(bottom_army, db, m);
-    
-    auto size = BattleField::get_size(db.get_town_hall_level(m.to));
+    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, mission.from));
+    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, mission.to));
+    load_attacking_units(top_army, db, mission);
+    load_defending_units(bottom_army, db, mission);
+
+    auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
     BattleField top(size);
     top.fill(top_army);
     BattleField bottom(size);
@@ -167,14 +201,28 @@ void update_mission_arrived(Database& db, const Mission m)
 
     clash(top, bottom);
 
-    json round = json::object();
-    round["attacker"] = to_json(top, db.getTownsUsername(m.from), top_army);
-    round["defender"] = to_json(bottom, db.getTownsUsername(m.to), bottom_army);
-    round["date"] = datetime::to_string(m.next_stage_time);
-    round["background"] = 2;  // TODO decide this better
-    std::cout << round.dump() << std::endl;
+    /* json round = json::object(); */
+    /* round["attacker"] = to_ui_json(top, db.getTownsUsername(mission.from), top_army); */
+    /* round["defender"] = to_ui_json(bottom, db.getTownsUsername(mission.to), bottom_army); */
+    /* round["date"] = datetime::to_string(mission.next_stage_time); */
+    /* round["background"] = 2;  // TODO decide this better */
+    /* std::cout << round.dump() << std::endl; */
+    /* db.store_round(mission, round.dump()); */
 
-    db.store_round(m, round.dump());
+    json ui_round = json::object();
+    ui_round["attacker"] = to_ui_json(top, db.getTownsUsername(mission.from), top_army);
+    ui_round["defender"] = to_ui_json(bottom, db.getTownsUsername(mission.to), bottom_army);
+    ui_round["date"] = datetime::to_string(mission.next_stage_time);
+    ui_round["background"] = 2;  // TODO decide this better
+    std::cout << ui_round.dump() << std::endl;
+    db.store_round(mission, ui_round.dump());
+
+    json data_round = json::object();
+    data_round["attacker"] = to_data_json(top, db.getTownsUsername(mission.from), top_army);
+    data_round["defender"] = to_data_json(bottom, db.getTownsUsername(mission.to), bottom_army);
+    data_round["date"] = datetime::to_string(mission.next_stage_time);
+    std::cout << data_round.dump() << std::endl;
+    db.store_round(mission, data_round.dump());
 
     // TODO load stored armies
 

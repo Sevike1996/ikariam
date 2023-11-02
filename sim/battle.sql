@@ -70,11 +70,11 @@ INSERT INTO `alpha_users` VALUES(0, "Badcake");
 
 INSERT INTO `alpha_towns` VALUES(0, 1, 1, "Sourcetown", 1, 0);
 -- id 0, user_id=2 (badcake), town_number (of user), name, city hall level 1, wall level 1
-INSERT INTO `alpha_towns` VALUES(0, 2, 1, "Badtown", 1, 1);
+INSERT INTO `alpha_towns` VALUES(0, 2, 1, "Badtown", 1, 5);
 
 -- from sourcetown to badtown, state=EN_ROUTE, type=PLUNDER, next_stage_time=1000
 INSERT INTO `alpha_missions` VALUES(0, 1, 2, 1, 5, 1000);
-INSERT INTO `alpha_mission_units` VALUES(1, 0, 5);
+INSERT INTO `alpha_mission_units` VALUES(1, 0, 10);
 INSERT INTO `alpha_mission_units` VALUES(1, 8, 1);
 
 -- defend badtown with 8 spearmans.

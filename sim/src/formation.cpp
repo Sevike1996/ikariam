@@ -39,7 +39,7 @@ Formation::Formation(Type formationType, std::size_t max_slot_count, int slot_si
 {
 }
 
-Formation::Formation(const Formation& other) : _slots(other._slots), 
+Formation::Formation(const Formation& other) : _slots(other._slots),
     _max_slot_count(other._max_slot_count), _slot_size(other._slot_size), _type(other._type)
 {
 }
@@ -72,6 +72,10 @@ std::size_t Formation::size() const {
     return _slots.size();
 }
 
+Formation::Type Formation::get_type() const {
+    return _type;
+}
+
 int Formation::get_units_count() const
 {
     int count = 0;
@@ -88,6 +92,15 @@ int Formation::get_losses_count() const
         count += slot.orig_count - slot.count;
     }
     return count;
+}
+
+std::list<std::tuple<Unit, int>> Formation::get_first_healths() const
+{
+    std::list<std::tuple<Unit, int>> healths;
+    for (const auto& slot : _slots) {
+        healths.push_back(std::make_tuple(slot.meta->type, slot.first_health));
+    }
+    return healths;
 }
 
 int Formation::get_next_occupied_index(int current)

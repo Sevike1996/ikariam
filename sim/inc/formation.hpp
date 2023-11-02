@@ -33,8 +33,10 @@ public:
 
     std::size_t get_biggest_slot_size() const;
     std::size_t size() const;
+    Type get_type() const;
     int get_units_count() const;
     int get_losses_count() const;
+    std::list<std::tuple<Unit, int>> get_first_healths() const;
 
     int get_next_occupied_index(int current);
     Slot& operator[](std::size_t index);

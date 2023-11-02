@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 bool create_directory(fs::path dir_path)
 {
     if (!fs::is_directory(dir_path) || !fs::exists(dir_path)) {
-        return fs::create_directory(dir_path);
+        return fs::create_directories(dir_path);
     }
     return true;
 }
@@ -22,6 +22,7 @@ fs::path BlobFS::get_document_path(const std::string& uid) const
 BlobFS::BlobFS(fs::path base)
 {
     _base = base;
+    ::create_directory(_base);
 }
 
 std::string BlobFS::put(const std::string& data)

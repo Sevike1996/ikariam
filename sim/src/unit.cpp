@@ -56,22 +56,22 @@ UnitMeta get_wall_meta(int level)
     base.armor = 4 * level;
     if (level < 10) {
         base.attack = 10 + (2 * level);
-        
     } else if (level < 20) {
         base.attack = 80 + (5 * (level - 10));
     } else {
-        base.attack = 250 + (10 * (level - 20)); 
+        base.attack = 250 + (10 * (level - 20));
     }
     return base;
 }
 
-bool is_ranged(const UnitMeta& unit) {
+bool is_ranged(const UnitMeta& unit)
+{
     return unit.ammo != NO_AMMO;
 }
 
-bool can_reserve(Unit type) {
-    switch (type)
-    {
+bool can_reserve(Unit type)
+{
+    switch (type) {
     case Unit::wall:
         return false;
     default:

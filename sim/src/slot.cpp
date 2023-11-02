@@ -2,7 +2,8 @@
 
 #include "slot.hpp"
 
-Slot& Slot::operator=(const Slot& other) {
+Slot& Slot::operator=(const Slot& other)
+{
     this->meta = other.meta;
     this->orig_count = other.orig_count;
     this->count = other.count;
@@ -13,12 +14,17 @@ Slot& Slot::operator=(const Slot& other) {
 
 bool Slot::operator==(const Slot& other) const
 {
-    return meta->type == other.meta->type && orig_count == other.orig_count && \
-        count == other.count && first_health == other.first_health;
+    return meta->type == other.meta->type && orig_count == other.orig_count && count == other.count &&
+           first_health == other.first_health;
 }
 
-void Slot::apply_damage(AttackInfo& info) {
+void Slot::apply_damage(AttackInfo& info)
+{
     int damage = info.damage - (info.unit_count * meta->armor);
+    if (damage <= 0) {
+        return;
+    }
+
     int damage_left = damage - first_health;
     first_health -= damage;
 

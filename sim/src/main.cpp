@@ -152,14 +152,14 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
     ui_round["date"] = datetime::to_string(mission.next_stage_time);
     ui_round["background"] = 2;  // TODO decide this better
     std::cout << ui_round.dump() << std::endl;
-    db.store_round(mission, ui_round.dump());
+    db.store_round_ui(mission, ui_round.dump());
 
     json data_round = json::object();
     data_round["attacker"] = to_ui_json(*top, db.getTownsUsername(mission.from), top_army);
     data_round["defender"] = to_ui_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
     data_round["date"] = datetime::to_string(mission.next_stage_time);
     std::cout << data_round.dump() << std::endl;
-    db.store_round(mission, data_round.dump());
+    db.store_round_data(mission, data_round.dump());
 }
 
 void load_attacking_units(std::shared_ptr<Army> army, Database& db, const Mission& mission)
@@ -201,28 +201,20 @@ void update_mission_arrived(Database& db, const Mission mission)
 
     clash(top, bottom);
 
-    /* json round = json::object(); */
-    /* round["attacker"] = to_ui_json(top, db.getTownsUsername(mission.from), top_army); */
-    /* round["defender"] = to_ui_json(bottom, db.getTownsUsername(mission.to), bottom_army); */
-    /* round["date"] = datetime::to_string(mission.next_stage_time); */
-    /* round["background"] = 2;  // TODO decide this better */
-    /* std::cout << round.dump() << std::endl; */
-    /* db.store_round(mission, round.dump()); */
-
     json ui_round = json::object();
     ui_round["attacker"] = to_ui_json(top, db.getTownsUsername(mission.from), top_army);
     ui_round["defender"] = to_ui_json(bottom, db.getTownsUsername(mission.to), bottom_army);
     ui_round["date"] = datetime::to_string(mission.next_stage_time);
     ui_round["background"] = 2;  // TODO decide this better
     std::cout << ui_round.dump() << std::endl;
-    db.store_round(mission, ui_round.dump());
+    db.store_round_ui(mission, ui_round.dump());
 
     json data_round = json::object();
     data_round["attacker"] = to_data_json(top, db.getTownsUsername(mission.from), top_army);
     data_round["defender"] = to_data_json(bottom, db.getTownsUsername(mission.to), bottom_army);
     data_round["date"] = datetime::to_string(mission.next_stage_time);
     std::cout << data_round.dump() << std::endl;
-    db.store_round(mission, data_round.dump());
+    db.store_round_data(mission, data_round.dump());
 
     // TODO load stored armies
 

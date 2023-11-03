@@ -4,10 +4,10 @@
 #include <list>
 #include <optional>
 
-#include "unit.hpp"
-#include "mission.hpp"
 #include "blobfs/blobfs.hpp"
+#include "mission.hpp"
 #include "sql/connection.hpp"
+#include "unit.hpp"
 
 class Database
 {
@@ -25,7 +25,8 @@ public:
 
     Mission load_mission(int mission_id);
 
-    void store_round(const Mission& mission, const std::string& round);
+    void store_round_ui(const Mission& mission, const std::string& round);
+    void store_round_data(const Mission& mission, const std::string& round);
 
     void update_arrived(const Mission& mission, int battlefield_size);
 
@@ -34,6 +35,8 @@ public:
     int get_wall_level(int town_id);
 
 private:
+    void store_round(const Mission& mission, const std::string& round, std::string round_table_name);
+
     void _create_battle(const Mission& mission, int battlefield_size);
 
     sql::Connection _conn;

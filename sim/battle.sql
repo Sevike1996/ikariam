@@ -26,7 +26,15 @@ CREATE TABLE `alpha_battles` (
     FOREIGN KEY (`mission_id`) REFERENCES alpha_missions(id)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
-CREATE TABLE `alpha_rounds` (
+CREATE TABLE `alpha_rounds_ui` (
+    `mission_id` int(11) NOT NULL,
+    `round` int(11) NOT NULL,
+    `round_path` varchar(255) NOT NULL,
+    PRIMARY KEY (`mission_id`, `round`),
+    FOREIGN KEY (mission_id) REFERENCES alpha_missions(id)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+CREATE TABLE `alpha_rounds_data` (
     `mission_id` int(11) NOT NULL,
     `round` int(11) NOT NULL,
     `round_path` varchar(255) NOT NULL,

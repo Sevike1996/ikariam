@@ -20,7 +20,7 @@ $fight_data = array(
     "rounds" => array()
 );
 
-$result = mysqli_query($mysqli, "select * from alpha_rounds where mission_id = " . $mission_id);
+$result = mysqli_query($mysqli, "select * from alpha_rounds_ui where mission_id = " . $mission_id);
 while($row = mysqli_fetch_assoc($result)){
     array_push($fight_data["rounds"], $row["round_path"]);
 }

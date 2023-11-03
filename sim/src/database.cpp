@@ -1,5 +1,5 @@
-#include "database.hpp"
 #include "blobfs/blobfs.hpp"
+#include "database.hpp"
 
 #include <ctime>
 #include <sstream>
@@ -124,30 +124,39 @@ void Database::_create_battle(const Mission& mission, int battlefield_size)
                       mission.next_stage_time, battlefield_size);
 }
 
+void Database::store_round_ui(const Mission& mission, const std::string& round_data)
+{
+    store_round(mission, round_data, "alpha_rounds_ui");
+}
+
+void Database::store_round_data(const Mission& mission, const std::string& round_data)
+{
+    store_round(mission, round_data, "alpha_rounds_data");
+}
+
 #include <iostream>
-void Database::store_round(const Mission& mission, const std::string& round_data)
+using namespace std::string_literals;
+void Database::store_round(const Mission& mission, const std::string& round_data, std::string round_table_name)
 {
     int round_id;
     std::string blob_id = _blobs.put(round_data);
 
     auto statement = _conn.create_statement();
-    statement.execute(
-        "select count(mission_id) as count from alpha_rounds where "
-        "mission_id = ?",
-        mission.id);
+    statement.execute("select count(mission_id) as count from "s + round_table_name + " where mission_id = ?",
+                      mission.id);
     auto result = statement.result();
     round_id = std::any_cast<long long>(result[0]["count"]) + 1;
 
     statement = _conn.create_statement();
     std::cout << mission.id << "," << round_id << "," << blob_id << std::endl;
-    statement.execute("INSERT INTO alpha_rounds values (?,?,?)", mission.id, round_id, blob_id);
+    statement.execute("INSERT INTO "s + round_table_name + " values (?,?,?)", mission.id, round_id, blob_id);
 }
-
 
 std::optional<std::string> Database::get_last_round(const Mission& mission)
 {
     auto statement = _conn.create_statement();
-    statement.execute("select round_path from alpha_rounds where mission_id = ? order by round desc limit 1", mission.id);
+    statement.execute("select round_path from alpha_rounds_data where mission_id = ? order by round desc limit 1",
+                      mission.id);
     auto result = statement.result();
     if (result.row_count() < 1) {
         return {};

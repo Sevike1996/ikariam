@@ -139,7 +139,12 @@ Army::json Army::get_ammo_json() const
 {
     json serialized = json::object();
     for (std::size_t i = 0; i < _ammo_pools.size(); i++) {
-        if (_ammo_pools[i] != 0) {
+        auto found = _units.find(static_cast<Unit>(i));
+        if (found == _units.end()) {
+            continue;
+        }
+        const auto& unit_pool = found->second;
+        if (unit_pool.count != 0 && (_ammo_pools[i] != 0 || is_ranged(unit_pool.stats))) {
             serialized[std::to_string(i)] = _ammo_pools[i];
         }
     }

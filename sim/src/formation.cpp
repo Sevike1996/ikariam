@@ -170,10 +170,10 @@ void Formation::fill(std::shared_ptr<Army> army, Unit unit_type)
         if (!squad.has_value()) {
             return;
         }
-        auto [slot_allowance, meta] = squad.value();
+        auto [slot_allowance, first_health, meta] = squad.value();
         int& ammo_pool = army->get_ammo_pool(unit_type);
 
-        fill_slot(meta, slot_allowance, meta->health, ammo_pool);
+        fill_slot(meta, slot_allowance, first_health, ammo_pool);
     }
 }
 
@@ -182,7 +182,7 @@ void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int
     _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});
 }
 
-Formation::json Formation::to_json() const 
+Formation::json Formation::to_json() const
 {
     json serialized = json::array();
     for (const auto& slot : _slots) {

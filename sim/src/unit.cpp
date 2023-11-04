@@ -68,13 +68,3 @@ bool is_ranged(const UnitMeta& unit)
 {
     return unit.ammo != NO_AMMO;
 }
-
-bool can_reserve(Unit type)
-{
-    switch (type) {
-    case Unit::wall:
-        return false;
-    default:
-        return true;
-    }
-}

@@ -55,5 +55,3 @@ extern const UnitMeta UNITS_META[];
 UnitMeta get_wall_meta(int level);
 
 bool is_ranged(const UnitMeta& unit);
-
-bool can_reserve(Unit type);

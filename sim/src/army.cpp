@@ -1,7 +1,10 @@
 #include "army.hpp"
 
-Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(stat_loader)), _ammo_pools{0}
+Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(stat_loader)), _ammo_pools{0} {}
+
+void Army::set_first_health(Unit unit, std::list<int> first_healths)
 {
+    _first_healths[unit] = std::move(first_healths);
 }
 
 void Army::reinforce(Unit unit, int count)
@@ -14,21 +17,19 @@ void Army::reinforce(Unit unit, int count)
     reinforce(unit, count, ammo);
 }
 
-void Army::reinforce(Unit unit, int count, int ammo)
+void Army::reinforce_no_ammo(Unit unit, int count)
 {
-    UnitMeta stats = _stat_loader->load_stats(unit);
-    auto key_value = _units.try_emplace(unit, UnitPool{0, 0, stats}).first;
-    key_value->second.count += count;
-    _ammo_pools[unit] += ammo;
+    reinforce(unit, count, {});
 }
 
-void Army::reinforce_used(Unit unit, int count, int ammo)
+void Army::reinforce(Unit unit, int count, std::optional<int> ammo)
 {
     UnitMeta stats = _stat_loader->load_stats(unit);
     auto key_value = _units.try_emplace(unit, UnitPool{0, 0, stats}).first;
     key_value->second.count += count;
-    key_value->second.used += count;
-    _ammo_pools[unit] += ammo;
+    if (ammo) {
+        _ammo_pools[unit] += ammo.value();
+    }
 }
 
 int Army::get_units_count() const
@@ -68,8 +69,24 @@ std::optional<Army::Squad> Army::borrow_squad(Unit unit, int slot_size)
     }
 
     pool.used += count;
+    int first_health = pop_first_health(unit).value_or(pool.stats.health);
 
-    return Squad{count, &pool.stats};
+    return Squad{count, first_health, &pool.stats};
+}
+
+std::optional<int> Army::pop_first_health(Unit unit)
+{
+    auto found = _first_healths.find(unit);
+    if (found == _first_healths.end()) {
+        return {};
+    }
+    auto& unit_first_healths = found->second;
+    if (unit_first_healths.empty()) {
+        return {};
+    }
+    int first_health = unit_first_healths.front();
+    unit_first_healths.pop_front();
+    return first_health;
 }
 
 void Army::return_squad(Unit unit, int count)
@@ -102,7 +119,7 @@ Army::json Army::get_reserves() const
     json serialized = json::array();
     for (const auto& [type, pool] : _units) {
         auto count = pool.count - pool.used;
-        if (count != 0 && can_reserve(type)) {
+        if (count != 0) {
             serialized.push_back({type, count});
         }
     }

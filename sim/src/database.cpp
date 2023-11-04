@@ -4,6 +4,8 @@
 #include <ctime>
 #include <sstream>
 
+using namespace std::string_literals;
+
 #ifdef RELEASE
 Database::Database() : _blobs("/var/ikariam/rounds")
 #else
@@ -135,7 +137,6 @@ void Database::store_round_data(const Mission& mission, const std::string& round
 }
 
 #include <iostream>
-using namespace std::string_literals;
 void Database::store_round(const Mission& mission, const std::string& round_data, std::string round_table_name)
 {
     int round_id;

@@ -38,22 +38,25 @@ json to_data_json(BattleField& battlefield, std::string username, std::shared_pt
 {
     json serialized = json::object();
     json healths = json::object();
-    std::map<Unit, std::list<size_t>> front_healths;
+    std::map<Unit, std::list<int>> front_healths;
 
     for (auto type = 0; type < Formation::type_count; type++) {
         auto& formation = battlefield.get_formation((Formation::Type)type);
         auto current_healts = formation.get_first_healths();
-        std::list<std::array<int, 2>> converted_healths;
-        for (const auto& health : current_healts) {
-            int type = static_cast<int>(std::get<0>(health));
-            converted_healths.push_back({type, std::get<1>(health)});
+        for (const auto& unit_health : current_healts) {
+            auto [type, health] = unit_health;
+            front_healths[type].push_back(health);
         }
-        healths[std::to_string(formation.get_type())] = converted_healths;
 
         formation.drain_into(army);
     }
 
-    serialized["healths"] = std::move(healths);
+    std::map<std::string, std::list<int>> converted_healths;
+    for (auto&& [key, value] : front_healths) {
+        converted_healths[std::to_string(static_cast<int>(key))] = std::move(value);
+    }
+
+    serialized["healths"] = std::move(converted_healths);
     serialized["units"] = army->get_reserves();
     serialized["ammo"] = army->get_ammo_json();
 
@@ -75,40 +78,22 @@ std::optional<Formation::Type> from_string(std::string s)
     return {};
 }
 
-void fill_formation(Formation& formation, json formation_json, std::shared_ptr<Army> army)
-{
-    for (auto slot : formation_json) {
-        int count = slot[1].get<int>();
-        if (count == 0) {
-            continue;
-        }
-        Unit type = static_cast<Unit>(slot[0].get<int>());
-        int first_health = slot[4].get<int>();
-        auto& ammo_pool = army->get_ammo_pool(type);
-
-        formation.fill_slot(army->load_stats(type), count, first_health, ammo_pool);
-        army->reinforce_used(type, count, 0);
+void load_ammo(json ammo, Army& army) {
+    for (const auto& [unit, ammo_count] : ammo.items()) {
+        army.add_ammo(static_cast<Unit>(std::stoi(unit)), ammo_count);
     }
 }
 
-void load_ammo(std::shared_ptr<Army> army, json ammo)
-{
-    for (auto& [unit_type, ammo_count] : ammo.items()) {
-        int i = 0;
-        std::istringstream(unit_type) >> i;
-        army->add_ammo(static_cast<Unit>(i), ammo_count.get<int>());
+void load_healths(json healths, Army& army) {
+    for (const auto& [unit, health] : healths.items()) {
+        army.set_first_health(static_cast<Unit>(std::stoi(unit)), std::move(health));
     }
 }
 
-void load_reserves(std::shared_ptr<Army> army, json reserves)
-{
-    for (auto& reserve_pair : reserves) {
-        // int i = 0;
-        // std::istringstream(unit_type) >> i;
-        // army->add_ammo(static_cast<Unit>(i), bar.get<int>());
-        auto unit_type = static_cast<Unit>(reserve_pair[0].get<int>());
-        int count = reserve_pair[1].get<int>();
-        army->reinforce(unit_type, count, 0);
+void load_units(json units, Army& army) {
+    for (json::iterator it = units.begin(); it != units.end(); ++it) {
+        const auto& [unit, count] = it->template get<std::array<int, 2>>();
+        army.reinforce_no_ammo(static_cast<Unit>(unit), count);
     }
 }
 
@@ -118,15 +103,12 @@ std::shared_ptr<BattleField> parse_round_side(json side,
 {
     auto battlefield = std::make_shared<BattleField>(battlefieldSize);
     for (auto& [key, value] : side.items()) {
-        auto formation_type = from_string(key);
-        if (formation_type.has_value()) {
-            fill_formation(battlefield->get_formation(formation_type.value()), value, army);
-        } else if (key == "_ammo") {
-            load_ammo(army, value);
-        } else if (key == "reserve") {
-            load_reserves(army, value);
-        } else {
-            continue;
+        if (key == "ammo") {
+            load_ammo(value, *army);
+        } else if (key == "healths") {
+            load_healths(value, *army);
+        } else if (key == "units") {
+            load_units(value, *army);
         }
     }
     return battlefield;
@@ -139,6 +121,7 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
 
     auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
     json prev_round = json::parse(round_raw);
+    // todo load ammo
     auto top = parse_round_side(prev_round["attacker"], size, top_army);
     top->fill(top_army);
     auto bottom = parse_round_side(prev_round["defender"], size, bottom_army);
@@ -155,8 +138,8 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
     db.store_round_ui(mission, ui_round.dump());
 
     json data_round = json::object();
-    data_round["attacker"] = to_ui_json(*top, db.getTownsUsername(mission.from), top_army);
-    data_round["defender"] = to_ui_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
+    data_round["attacker"] = to_data_json(*top, db.getTownsUsername(mission.from), top_army);
+    data_round["defender"] = to_data_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
     data_round["date"] = datetime::to_string(mission.next_stage_time);
     std::cout << data_round.dump() << std::endl;
     db.store_round_data(mission, data_round.dump());
@@ -168,6 +151,11 @@ void load_attacking_units(std::shared_ptr<Army> army, Database& db, const Missio
     for (auto& [type, count] : units) {
         army->reinforce(type, count);
     }
+}
+
+void load_prev_round()
+{
+
 }
 
 void load_defending_units(std::shared_ptr<Army> army, Database& db, const Mission& mission)

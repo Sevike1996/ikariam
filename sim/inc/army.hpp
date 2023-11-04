@@ -13,14 +13,23 @@ using json = nlohmann::json;
 public:
     typedef struct Squad {
         int count;
+        int first_health;
         UnitMeta* stats;
     } Squad;
 
     Army(std::unique_ptr<StatLoader> stat_loader);
 
+    void set_first_health(Unit unit, std::list<int> first_healths);
+
+    /**
+     * @breif Add `count` units to reserves. If unit requires ammo, it is initialized to full.
+     */
     void reinforce(Unit unit, int count);
-    void reinforce(Unit unit, int count, int ammo);
-    void reinforce_used(Unit unit, int count, int ammo);
+
+    /**
+     * @breif Same as reinforce, but does not change the ammo pool of the unit.
+     */
+    void reinforce_no_ammo(Unit unit, int count);
 
     std::optional<Squad> borrow_squad(Unit unit, int slot_size);
     void return_squad(Unit unit, int count);
@@ -38,6 +47,9 @@ public:
     UnitMeta* load_stats(Unit unit);
 
 private:
+    std::optional<int> pop_first_health(Unit unit);
+    void reinforce(Unit unit, int count, std::optional<int> ammo);
+
     typedef struct UnitPool {
         int count;
         int used;
@@ -47,4 +59,5 @@ private:
     std::unique_ptr<StatLoader> _stat_loader;
     std::map<Unit, UnitPool> _units;
     std::array<int, Unit::type_count> _ammo_pools;
+    std::map<Unit, std::list<int>> _first_healths;
 };

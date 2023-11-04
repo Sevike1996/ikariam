@@ -2,6 +2,11 @@
 
 Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(stat_loader)), _ammo_pools{0} {}
 
+void Army::eliminate_dead(Unit unit, int died)
+{
+        _units[unit].count -= died;
+}
+
 void Army::set_first_health(Unit unit, std::list<int> first_healths)
 {
     _first_healths[unit] = std::move(first_healths);

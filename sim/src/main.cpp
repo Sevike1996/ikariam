@@ -38,21 +38,30 @@ json to_data_json(BattleField& battlefield, std::string username, std::shared_pt
 {
     json serialized = json::object();
     json healths = json::object();
-    std::map<Unit, std::list<int>> front_healths;
+    std::map<Unit, std::list<int>> first_healths;
 
     for (auto type = 0; type < Formation::type_count; type++) {
         auto& formation = battlefield.get_formation((Formation::Type)type);
         auto current_healts = formation.get_first_healths();
         for (const auto& unit_health : current_healts) {
             auto [type, health] = unit_health;
-            front_healths[type].push_back(health);
+            first_healths[type].push_back(health);
         }
 
         formation.drain_into(army);
     }
 
+    for (auto& [unit, healths] : first_healths) {
+        auto before = healths.size();
+        healths.erase(std::remove(healths.begin(), healths.end(), 0), healths.end());
+        auto after = healths.size();
+        auto died = before - after;
+        army->eliminate_dead(unit, died);
+    }
+
+
     std::map<std::string, std::list<int>> converted_healths;
-    for (auto&& [key, value] : front_healths) {
+    for (auto&& [key, value] : first_healths) {
         converted_healths[std::to_string(static_cast<int>(key))] = std::move(value);
     }
 
@@ -61,21 +70,6 @@ json to_data_json(BattleField& battlefield, std::string username, std::shared_pt
     serialized["ammo"] = army->get_ammo_json();
 
     return serialized;
-}
-
-Formation parse_formation(json obj)
-{
-    return Formation(Formation::front, 0, 0);
-}
-
-std::optional<Formation::Type> from_string(std::string s)
-{
-    for (int i = 0; i < Formation::FORMATION_NAMES.size(); i++) {
-        if (Formation::FORMATION_NAMES[i] == s) {
-            return static_cast<Formation::Type>(i);
-        }
-    }
-    return {};
 }
 
 void load_ammo(json ammo, Army& army) {

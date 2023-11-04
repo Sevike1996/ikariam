@@ -19,6 +19,8 @@ public:
 
     Army(std::unique_ptr<StatLoader> stat_loader);
 
+    void eliminate_dead(Unit unit, int died);
+
     void set_first_health(Unit unit, std::list<int> first_healths);
 
     /**

@@ -4,7 +4,7 @@ Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(sta
 
 void Army::eliminate_dead(Unit unit, int died)
 {
-        _units[unit].count -= died;
+    _units[unit].count -= died;
 }
 
 void Army::set_first_health(Unit unit, std::list<int> first_healths)
@@ -71,6 +71,10 @@ std::optional<Army::Squad> Army::borrow_squad(Unit unit, int slot_size)
     int count = std::min(pool.count - pool.used, slot_size / size);
     if (is_ranged(pool.stats)) {
         count = std::min(count, _ammo_pools[unit] - pool.used);
+    }
+
+    if (count == 0) {
+        return {};
     }
 
     pool.used += count;

@@ -23,7 +23,6 @@ json to_ui_json(const BattleField& battlefield, std::string username, const std:
         serialized[Formation::FORMATION_NAMES[type]] = formation.to_json();
     }
 
-    serialized["_ammo"] = army->get_ammo_json();
     serialized["ammo"] = army->get_ammo_percentage();
     serialized["reserve"] = army->get_reserves();
     auto round_info = json::array();
@@ -38,31 +37,16 @@ json to_data_json(BattleField& battlefield, std::string username, std::shared_pt
 {
     json serialized = json::object();
     json healths = json::object();
-    std::map<Unit, std::list<int>> first_healths;
 
     for (auto type = 0; type < Formation::type_count; type++) {
         auto& formation = battlefield.get_formation((Formation::Type)type);
-        auto current_healts = formation.get_first_healths();
-        for (const auto& unit_health : current_healts) {
-            auto [type, health] = unit_health;
-            first_healths[type].push_back(health);
-        }
-
         formation.drain_into(army);
     }
 
-    for (auto& [unit, healths] : first_healths) {
-        auto before = healths.size();
-        healths.erase(std::remove(healths.begin(), healths.end(), 0), healths.end());
-        auto after = healths.size();
-        auto died = before - after;
-        army->eliminate_dead(unit, died);
-    }
-
-
+    std::map<Unit, std::list<int>> first_healths = army->get_first_healths();
     std::map<std::string, std::list<int>> converted_healths;
     for (auto&& [key, value] : first_healths) {
-        converted_healths[std::to_string(static_cast<int>(key))] = std::move(value);
+        converted_healths[std::to_string(static_cast<int>(key))] = value;
     }
 
     serialized["healths"] = std::move(converted_healths);

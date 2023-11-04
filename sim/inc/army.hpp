@@ -34,7 +34,7 @@ public:
     void reinforce_no_ammo(Unit unit, int count);
 
     std::optional<Squad> borrow_squad(Unit unit, int slot_size);
-    void return_squad(Unit unit, int count);
+    void return_squad(Unit unit, int count, int first_health);
 
     int& get_ammo_pool(Unit unit);
     void add_ammo(Unit unit, int ammo_count);
@@ -42,6 +42,7 @@ public:
     int get_units_count() const;
     int get_spare_count(Unit type) const;
 
+    std::map<Unit, std::list<int>> get_first_healths() const;
     json get_reserves() const;
     json get_ammo_json() const;
     json get_ammo_percentage() const;

@@ -98,7 +98,7 @@ std::optional<int> Army::pop_first_health(Unit unit)
     return first_health;
 }
 
-void Army::return_squad(Unit unit, int count)
+void Army::return_squad(Unit unit, int count, int first_health)
 {
     auto found = _units.find(unit);
     if (found == _units.end()) {
@@ -111,6 +111,10 @@ void Army::return_squad(Unit unit, int count)
     }
 
     pool.used -= count;
+
+    if (count != 0) {
+    _first_healths[unit].push_back(first_health);
+    }
 }
 
 int& Army::get_ammo_pool(Unit unit)
@@ -121,6 +125,11 @@ int& Army::get_ammo_pool(Unit unit)
 void Army::add_ammo(Unit unit, int ammo_count)
 {
     _ammo_pools[unit] += ammo_count;
+}
+
+std::map<Unit, std::list<int>> Army::get_first_healths() const
+{
+    return _first_healths;
 }
 
 Army::json Army::get_reserves() const
@@ -144,9 +153,12 @@ Army::json Army::get_ammo_json() const
             continue;
         }
         const auto& unit_pool = found->second;
-        if (unit_pool.count != 0 && (_ammo_pools[i] != 0 || is_ranged(unit_pool.stats))) {
-            serialized[std::to_string(i)] = _ammo_pools[i];
+
+        if (!is_ranged(unit_pool.stats) || (_ammo_pools[i] == 0 && unit_pool.count == 0)) {
+            continue;
         }
+
+        serialized[std::to_string(i)] = _ammo_pools[i];
     }
     return serialized;
 }
@@ -155,14 +167,15 @@ Army::json Army::get_ammo_percentage() const
 {
     json serialized = json::object();
     for (std::size_t i = 0; i < _ammo_pools.size(); i++) {
-        if (_ammo_pools[i] == 0) {
-            continue;
-        }
-        auto unit = static_cast<Unit>(i);
-        auto found = _units.find(unit);
+        auto found = _units.find(static_cast<Unit>(i));
         if (found == _units.end()) {
             continue;
         }
+        const auto& unit_pool = found->second;
+        if (!is_ranged(unit_pool.stats) || (_ammo_pools[i] == 0 && unit_pool.count == 0)) {
+            continue;
+        }
+
         auto max_ammo = found->second.count * found->second.stats.ammo;
         auto percentage = static_cast<float>(_ammo_pools[i]) / max_ammo;
         serialized[std::to_string(i)] = percentage;

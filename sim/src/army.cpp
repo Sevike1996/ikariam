@@ -1,6 +1,15 @@
 #include "army.hpp"
 
-Army::Army(std::unique_ptr<StatLoader> stat_loader) : _stat_loader(std::move(stat_loader)), _ammo_pools{0} {}
+Army::Army(std::unique_ptr<ArmyImprovements> army_improvements) : _ammo_pools{0}
+{
+    for (size_t i = 0; i < static_cast<size_t>(Unit::type_count); i++) {
+        if (i == Unit::wall) {
+            _stats[i] = get_wall_meta(army_improvements->wall_level);
+        } else {
+            _stats[i] = UNITS_META[i];
+        }
+    }
+}
 
 void Army::eliminate_dead(Unit unit, int died)
 {
@@ -14,9 +23,8 @@ void Army::set_first_health(Unit unit, std::list<int> first_healths)
 
 void Army::reinforce(Unit unit, int count)
 {
-    UnitMeta stats = _stat_loader->load_stats(unit);
     int ammo = 0;
-    if (is_ranged(stats)) {
+    if (_stats[unit].is_ranged()) {
         _ammo_pools[unit] += UNITS_META[unit].ammo * count;
     }
     reinforce(unit, count, ammo);
@@ -29,8 +37,8 @@ void Army::reinforce_no_ammo(Unit unit, int count)
 
 void Army::reinforce(Unit unit, int count, std::optional<int> ammo)
 {
-    UnitMeta stats = _stat_loader->load_stats(unit);
-    auto key_value = _units.try_emplace(unit, UnitPool{0, 0, stats}).first;
+    auto key_value =
+        _units.try_emplace(unit, UnitPool{0, 0, _stats[unit]}).first;
     key_value->second.count += count;
     if (ammo) {
         _ammo_pools[unit] += ammo.value();
@@ -69,7 +77,7 @@ std::optional<Army::Squad> Army::borrow_squad(Unit unit, int slot_size)
 
     int size = pool.stats.size;
     int count = std::min(pool.count - pool.used, slot_size / size);
-    if (is_ranged(pool.stats)) {
+    if (pool.stats.is_ranged()) {
         count = std::min(count, _ammo_pools[unit] - pool.used);
     }
 
@@ -113,7 +121,7 @@ void Army::return_squad(Unit unit, int count, int first_health)
     pool.used -= count;
 
     if (count != 0) {
-    _first_healths[unit].push_back(first_health);
+        _first_healths[unit].push_back(first_health);
     }
 }
 
@@ -154,7 +162,8 @@ Army::json Army::get_ammo_json() const
         }
         const auto& unit_pool = found->second;
 
-        if (!is_ranged(unit_pool.stats) || (_ammo_pools[i] == 0 && unit_pool.count == 0)) {
+        if (!unit_pool.stats.is_ranged() ||
+            (_ammo_pools[i] == 0 && unit_pool.count == 0)) {
             continue;
         }
 
@@ -172,7 +181,8 @@ Army::json Army::get_ammo_percentage() const
             continue;
         }
         const auto& unit_pool = found->second;
-        if (!is_ranged(unit_pool.stats) || (_ammo_pools[i] == 0 && unit_pool.count == 0)) {
+        if (!unit_pool.stats.is_ranged() ||
+            (_ammo_pools[i] == 0 && unit_pool.count == 0)) {
             continue;
         }
 
@@ -181,10 +191,4 @@ Army::json Army::get_ammo_percentage() const
         serialized[std::to_string(i)] = percentage;
     }
     return serialized;
-}
-
-UnitMeta* Army::load_stats(Unit unit)
-{
-    reinforce(unit, 0);
-    return &_units[unit].stats;
 }

@@ -1,20 +1,27 @@
 #pragma once
 
+#include <array>
+#include <memory>
+
 #include "database.hpp"
 #include "unit.hpp"
+
+struct ArmyImprovements
+{
+    int wall_level;
+
+    // Not yet supported in the server
+    struct UnitIprovments
+    {
+        int damage_bonus;
+        int armor_bonus;
+    };
+    std::array<UnitIprovments, Unit::type_count> improvments;
+};
 
 class StatLoader
 {
 public:
-    virtual ~StatLoader() = default;
-
-    StatLoader(Database& db, int town_id);
-
-    UnitMeta load_stats(Unit unit);
-
-    UnitMeta load_wall_stats();
-
-private:
-    Database& _db;
-    int _town_id;
+    static std::unique_ptr<ArmyImprovements> load_stats(Database &db,
+        int town_id);
 };

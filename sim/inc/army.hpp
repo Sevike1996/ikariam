@@ -1,30 +1,33 @@
 #pragma once
 
 #include <memory>
-#include <optional>
 #include <nlohmann/json.hpp>
+#include <optional>
 
 #include "stat_loader.hpp"
 #include "unit.hpp"
 
 class Army
 {
-using json = nlohmann::json;
+    using json = nlohmann::json;
+
 public:
-    typedef struct Squad {
+    typedef struct Squad
+    {
         int count;
         int first_health;
         UnitMeta* stats;
     } Squad;
 
-    Army(std::unique_ptr<StatLoader> stat_loader);
+    Army(std::unique_ptr<ArmyImprovements> stat_loader);
 
     void eliminate_dead(Unit unit, int died);
 
     void set_first_health(Unit unit, std::list<int> first_healths);
 
     /**
-     * @breif Add `count` units to reserves. If unit requires ammo, it is initialized to full.
+     * @breif Add `count` units to reserves. If unit requires ammo, it is
+     * initialized to full.
      */
     void reinforce(Unit unit, int count);
 
@@ -47,20 +50,19 @@ public:
     json get_ammo_json() const;
     json get_ammo_percentage() const;
 
-    UnitMeta* load_stats(Unit unit);
-
 private:
     std::optional<int> pop_first_health(Unit unit);
     void reinforce(Unit unit, int count, std::optional<int> ammo);
 
-    typedef struct UnitPool {
+    typedef struct UnitPool
+    {
         int count;
         int used;
         UnitMeta stats;
     } UnitPool;
 
-    std::unique_ptr<StatLoader> _stat_loader;
     std::map<Unit, UnitPool> _units;
     std::array<int, Unit::type_count> _ammo_pools;
+    std::array<UnitMeta, Unit::type_count> _stats;
     std::map<Unit, std::list<int>> _first_healths;
 };

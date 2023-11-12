@@ -64,7 +64,7 @@ UnitMeta get_wall_meta(int level)
     return base;
 }
 
-bool is_ranged(const UnitMeta& unit)
+bool UnitMeta::is_ranged() const
 {
-    return unit.ammo != NO_AMMO;
+    return this->ammo != NO_AMMO;
 }

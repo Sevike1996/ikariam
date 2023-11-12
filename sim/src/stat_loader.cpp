@@ -2,22 +2,9 @@
 
 #include <any>
 
-StatLoader::StatLoader(Database& db, int town_id) : _db(db), _town_id(town_id)
+std::unique_ptr<ArmyImprovements> StatLoader::load_stats(Database& db, int town_id)
 {
-}
-
-UnitMeta StatLoader::load_stats(Unit unit)
-{
-    switch (unit)
-    {
-    case Unit::wall:
-        return load_wall_stats();
-    default:
-        return UNITS_META[unit];
-    }
-}
-
-UnitMeta StatLoader::load_wall_stats()
-{
-    return get_wall_meta(_db.get_wall_level(_town_id));
+    auto stats = std::make_unique<ArmyImprovements>();
+    stats->wall_level = db.get_wall_level(town_id);
+    return stats;
 }

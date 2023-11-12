@@ -46,6 +46,8 @@ struct UnitMeta {
     int armor;
     int size;
     bool isHuman;
+
+    bool is_ranged() const;
 };
 
 extern const std::map<std::string, Unit> UNIT_TYPES;
@@ -54,4 +56,3 @@ extern const UnitMeta UNITS_META[];
 
 UnitMeta get_wall_meta(int level);
 
-bool is_ranged(const UnitMeta& unit);

@@ -1,5 +1,6 @@
 .idea/
 .venv/
 .vscode/
+ignore/
 __pycache__/
 compile_commands.json

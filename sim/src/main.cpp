@@ -94,8 +94,8 @@ std::shared_ptr<BattleField> parse_round_side(json side,
 
 void update_mission_in_battle(Database& db, const Mission& mission, std::string_view round_raw)
 {
-    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, mission.from));
-    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, mission.to));
+    auto top_army = std::make_shared<Army>(StatLoader::load_stats(db, mission.from));
+    auto bottom_army = std::make_shared<Army>(StatLoader::load_stats(db, mission.to));
 
     auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
     json prev_round = json::parse(round_raw);
@@ -154,8 +154,8 @@ void load_defending_units(std::shared_ptr<Army> army, Database& db, const Missio
 void update_mission_arrived(Database& db, const Mission mission)
 {
     // TODO receive db in this, will be needed when unit upgrade are a feature
-    auto top_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, mission.from));
-    auto bottom_army = std::make_shared<Army>(std::make_unique<StatLoader>(db, mission.to));
+    auto top_army = std::make_shared<Army>(StatLoader::load_stats(db, mission.from));
+    auto bottom_army = std::make_shared<Army>(StatLoader::load_stats(db, mission.to));
     load_attacking_units(top_army, db, mission);
     load_defending_units(bottom_army, db, mission);
 

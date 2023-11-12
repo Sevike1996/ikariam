@@ -1,0 +1,20 @@
+services:
+  php-mysqli:
+    build: php_mysqli
+    image: "php-mysqli"
+    command: php -S 0.0.0.0:5000
+    ports:
+      - "5000:5000"
+    user: "33:33"
+    working_dir:
+      /server
+    volumes:
+      - ./server:/server
+      - /tmp/ikariam/rounds:/tmp/ikariam/rounds
+      - /tmp/mysqld:/tmp/mysqld
+  sql:
+    image: "mysql:latest"
+    volumes:
+      - /tmp/mysqld:/var/run/mysqld/
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1

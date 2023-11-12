@@ -303,10 +303,10 @@ class RangedSlot extends Slot {
 function updateRoundInfo(battleSide, roundInfo) {
   let sideName = SIDES[battleSide];
   let roundInfoElement = document.getElementById("roundInfo");
-  
+
   let infoTable = document.createElement("table");
   infoTable.classList.add('table01', 'container_morale', 'center', 'border', 'dotted');
-  
+
   let tableBody = document.createElement("tbody");
   tableBody.innerHTML = `
   <tr>
@@ -314,14 +314,14 @@ function updateRoundInfo(battleSide, roundInfo) {
     <th>Units</th>
   </tr>`;
   infoTable.appendChild(tableBody);
-  
+
   for (let playerInfo of roundInfo) {
     let player = new PlayerInfo(...playerInfo);
     if (player.units != 0) {
       tableBody.appendChild(player.toHTML());
     }
   }
-  
+
   // Hide if no sides are left
   if (tableBody.childElementCount > 1) {
     roundInfoElement.appendChild(infoTable);
@@ -431,7 +431,7 @@ class ReservedDisplay {
     let reserves = this.getPageUnits();
     let page = this.getUnitPage();
     page.innerHTML = "";
-  
+
     for (let [unitType, unitCount] of reserves) {
       let unit = ReservedDisplay.createReserveElement(unitType, unitCount);
       page.appendChild(unit);
@@ -454,11 +454,11 @@ class ReservedDisplay {
   static createReserveElement(unitType, unitCount) {
     let container = document.createElement("li");
     let image = document.createElement("div");
-  
+
     image.classList.add("army_small", "normal", getUnitClassName(unitType));
     container.appendChild(image);
     container.innerHTML += unitCount;
-  
+
     return container;
   }
 }
@@ -486,24 +486,24 @@ class RoundDisplay {
   async showRound() {
     await this.fetchRound();
     let round = this.getRound();
-  
+
     let roundInfoElement = document.getElementById("roundInfo");
     roundInfoElement.innerHTML = ''
-  
+
     updateBattleSide(ATTACKER, round.attacker);
     updateBattleSide(DEFENDER, round.defender);
 
     for (let reservedDisplay of this.reservedDisplays) {
       reservedDisplay.reset();
     }
-  
+
     this.updateTitle();
-   
+
     setPlayerNames("attacker", round.attacker.info);
     setPlayerNames("defender", round.defender.info);
-  
+
     updateBackground(round.background);
-  
+
     this.updateRoundNavButtons();
   }
 
@@ -620,7 +620,7 @@ function updateInfoBox(infoBox) {
     return;
   }
   let [unitType, _, loss, healthPercent, _2, ammo] = slotData;
-  
+
   let newHtml = `<h2><span><span>${UNITS[unitType]}</span></span></h2>`;
   if (typeof ammo !== 'undefined') {
     newHtml += `<p>Ammunition: ${Math.floor(ammo * 100)}%</p>`;
@@ -690,3 +690,29 @@ window.addEventListener("DOMContentLoaded", (event) => {
     .then((response) => response.json())
     .then(main);
 });
+
+window.addEventListener("keydown", function (event) {
+  if (event.defaultPrevented) {
+    return;
+  }
+
+  switch (event.key) {
+    case "Right":
+    case "ArrowRight":
+      if (display.hasNextRound()) {
+        display.nextRound()
+      }
+      break;
+    case "Left":
+    case "ArrowLeft":
+      if (display.hasPrevRound()) {
+        display.prevRound()
+      }
+      break;
+
+    default:
+      return;
+  }
+
+  event.preventDefault();
+}, true);

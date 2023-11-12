@@ -6,13 +6,6 @@
 #include "formation.hpp"
 #include "utils.hpp"
 
-std::unique_ptr<ArmyImprovements> mock_army_improvements()
-{
-    auto mock = std::make_unique<ArmyImprovements>();
-    mock->wall_level = 0;
-    return mock;
-}
-
 TEST(Clash, SingleHitKill)
 {
     int pool;

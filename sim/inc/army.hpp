@@ -46,6 +46,7 @@ public:
     int get_spare_count(Unit type) const;
 
     std::map<Unit, std::list<int>> get_first_healths() const;
+
     json get_reserves() const;
     json get_ammo_json() const;
     json get_ammo_percentage() const;

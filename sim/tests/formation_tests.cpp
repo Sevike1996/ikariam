@@ -27,3 +27,22 @@ TEST(Formation, WrapAroundNextIndex) {
 
     ASSERT_EQ(attack.get_next_occupied_index(1), 0);
 }
+
+TEST(Formation, FillWithAmmo) {
+    auto army = std::make_shared<Army>(mock_army_improvements());
+    army->reinforce_no_ammo(Unit::archer, 1);
+    Formation formation(Formation::long_range, 1, 1);
+    formation.fill(army);
+
+    ASSERT_TRUE(formation.is_empty());
+}
+
+TEST(Formation, NoFillWithoutAmmo) {
+    auto army = std::make_shared<Army>(mock_army_improvements());
+    army->reinforce_no_ammo(Unit::archer, 1);
+    Formation formation(Formation::long_range, 1, 1);
+    formation.fill(army);
+
+    ASSERT_TRUE(formation.is_empty());
+}
+

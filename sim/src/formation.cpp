@@ -1,4 +1,3 @@
-#include <cmath>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -19,7 +18,8 @@ const std::vector<Unit> Formation::ACCEPTABLE_UNITS[] = {
     {Unit::bombardier},
     {Unit::mortar, Unit::catapult, Unit::ram},
     {Unit::carbineer, Unit::archer, Unit::slinger},
-    {Unit::wall, Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer, Unit::archer},
+    {Unit::wall, Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer,
+        Unit::archer},
     {Unit::swordsman, Unit::spearman},
 };
 
@@ -34,13 +34,13 @@ static const std::vector<Formation::Type> ATTACK_ORDER[] = {
 
 static bool compare_slot_count(const Slot& a, const Slot& b);
 
-Formation::Formation(Type formationType, std::size_t max_slot_count, int slot_size) :
-    _max_slot_count(max_slot_count), _slot_size(slot_size), _type(formationType)
+Formation::Formation(Type formationType, std::size_t max_slot_count, int slot_size)
+    : _max_slot_count(max_slot_count), _slot_size(slot_size), _type(formationType)
 {
 }
 
-Formation::Formation(const Formation& other) : _slots(other._slots),
-    _max_slot_count(other._max_slot_count), _slot_size(other._slot_size), _type(other._type)
+Formation::Formation(const Formation& other)
+    : _slots(other._slots), _max_slot_count(other._max_slot_count), _slot_size(other._slot_size), _type(other._type)
 {
 }
 
@@ -68,11 +68,13 @@ static bool compare_slot_count(const Slot& a, const Slot& b)
     return a.count < b.count;
 }
 
-std::size_t Formation::size() const {
+std::size_t Formation::size() const
+{
     return _slots.size();
 }
 
-Formation::Type Formation::get_type() const {
+Formation::Type Formation::get_type() const
+{
     return _type;
 }
 
@@ -111,11 +113,9 @@ int Formation::get_next_occupied_index(int current)
 
     int hit_slot_index = current;
     int size = _slots.size();
-    do
-    {
+    do {
         hit_slot_index = (hit_slot_index + 1) % size;
-    }
-    while (_slots[hit_slot_index].count == 0);
+    } while (_slots[hit_slot_index].count == 0);
     return hit_slot_index;
 }
 
@@ -182,25 +182,7 @@ void Formation::fill_slot(const UnitMeta* meta, int count, int first_health, int
     _slots.push_back(Slot{meta, count, count, first_health, ammo_pool});
 }
 
-Formation::json Formation::to_json() const
+std::span<const Slot> Formation::get_slots() const
 {
-    json serialized = json::array();
-    for (const auto& slot : _slots) {
-        serialized.push_back(json(slot));
-    }
-
-    return serialized;
-}
-
-void to_json(nlohmann::json &serialized, const Slot &slot)
-{
-    int health_percentage = (static_cast<float>(slot.first_health) / slot.meta->health) * 100;
-
-    serialized = nlohmann::json({
-        static_cast<int>(slot.meta->type),
-        slot.count,
-        slot.orig_count - slot.count,
-        health_percentage / 100.0,
-        slot.first_health,
-    });
+    return {_slots.data(), _slots.size()};
 }

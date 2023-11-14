@@ -1,7 +1,7 @@
-#include <mysql/mysql.h>
-#include <stdio.h>
 #include <iostream>
 #include <map>
+#include <mysql/mysql.h>
+#include <stdio.h>
 #include <string>
 
 #include "battlefield.hpp"
@@ -28,13 +28,33 @@ json map_to_json(T&& mapping)
     return converted;
 }
 
+void to_json(nlohmann::json& serialized, const Slot& slot)
+{
+    int health_percentage = (static_cast<float>(slot.first_health) / slot.meta->health) * 100;
+
+    serialized = nlohmann::json({
+        static_cast<int>(slot.meta->type),
+        slot.count,
+        slot.orig_count - slot.count,
+        health_percentage / 100.0,
+        slot.first_health,
+    });
+}
+
+void to_json(nlohmann::json& serialized, const Formation& formation)
+{
+    for (const auto& slot : formation.get_slots()) {
+        serialized.push_back(json(slot));
+    }
+}
+
 json to_ui_json(const BattleField& battlefield, std::string username, const std::shared_ptr<Army> army)
 {
     json serialized = json::object();
 
     for (auto type = 0; type < Formation::type_count; type++) {
         auto formation = battlefield.get_formation((Formation::Type)type);
-        serialized[Formation::FORMATION_NAMES[type]] = formation.to_json();
+        serialized[Formation::FORMATION_NAMES[type]] = json(formation);
     }
 
     serialized["ammo"] = map_to_json(army->get_ammo_percentage());
@@ -70,28 +90,30 @@ json to_data_json(BattleField& battlefield, std::string username, std::shared_pt
     return serialized;
 }
 
-void load_ammo(json ammo, Army& army) {
+void load_ammo(json ammo, Army& army)
+{
     for (const auto& [unit, ammo_count] : ammo.items()) {
         army.add_ammo(static_cast<Unit>(std::stoi(unit)), ammo_count);
     }
 }
 
-void load_healths(json healths, Army& army) {
+void load_healths(json healths, Army& army)
+{
     for (const auto& [unit, health] : healths.items()) {
         army.set_first_health(static_cast<Unit>(std::stoi(unit)), std::move(health));
     }
 }
 
-void load_units(json units, Army& army) {
+void load_units(json units, Army& army)
+{
     for (json::iterator it = units.begin(); it != units.end(); ++it) {
         const auto& [unit, count] = it->template get<std::array<int, 2>>();
         army.reinforce_no_ammo(static_cast<Unit>(unit), count);
     }
 }
 
-std::shared_ptr<BattleField> parse_round_side(json side,
-                                              BattleField::BattleFieldSize battlefieldSize,
-                                              std::shared_ptr<Army> army)
+std::shared_ptr<BattleField> parse_round_side(json side, BattleField::BattleFieldSize battlefieldSize,
+    std::shared_ptr<Army> army)
 {
     auto battlefield = std::make_shared<BattleField>(battlefieldSize);
     for (auto& [key, value] : side.items()) {
@@ -125,7 +147,7 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
     ui_round["attacker"] = to_ui_json(*top, db.getTownsUsername(mission.from), top_army);
     ui_round["defender"] = to_ui_json(*bottom, db.getTownsUsername(mission.to), bottom_army);
     ui_round["date"] = datetime::to_string(mission.next_stage_time);
-    ui_round["background"] = 2;  // TODO decide this better
+    ui_round["background"] = 2; // TODO decide this better
     std::cout << ui_round.dump() << std::endl;
     db.store_round_ui(mission, ui_round.dump());
 
@@ -147,7 +169,6 @@ void load_attacking_units(std::shared_ptr<Army> army, Database& db, const Missio
 
 void load_prev_round()
 {
-
 }
 
 void load_defending_units(std::shared_ptr<Army> army, Database& db, const Mission& mission)
@@ -185,7 +206,7 @@ void update_mission_arrived(Database& db, const Mission mission)
     ui_round["attacker"] = to_ui_json(top, db.getTownsUsername(mission.from), top_army);
     ui_round["defender"] = to_ui_json(bottom, db.getTownsUsername(mission.to), bottom_army);
     ui_round["date"] = datetime::to_string(mission.next_stage_time);
-    ui_round["background"] = 2;  // TODO decide this better
+    ui_round["background"] = 2; // TODO decide this better
     std::cout << ui_round.dump() << std::endl;
     db.store_round_ui(mission, ui_round.dump());
 

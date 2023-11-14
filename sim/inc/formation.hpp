@@ -1,18 +1,18 @@
 #pragma once
 
-#include <vector>
 #include <ostream>
-#include <nlohmann/json.hpp>
+#include <span>
+#include <vector>
 
-#include "unit.hpp"
-#include "slot.hpp"
 #include "army.hpp"
+#include "slot.hpp"
+#include "unit.hpp"
 
 class Formation
 {
-using json = nlohmann::json;
 public:
-    enum Type {
+    enum Type
+    {
         air_defense,
         bomber,
         artillery,
@@ -36,6 +36,8 @@ public:
     Type get_type() const;
     int get_units_count() const;
     int get_losses_count() const;
+
+    std::span<const Slot> get_slots() const;
     std::list<std::tuple<Unit, int>> get_first_healths() const;
 
     int get_next_occupied_index(int current);
@@ -51,13 +53,9 @@ public:
     void fill(std::shared_ptr<Army> army, Unit unit_type);
     void drain_into(std::shared_ptr<Army> army);
 
-    json to_json() const;
-
 private:
     std::vector<Slot> _slots;
     std::size_t _max_slot_count;
     int _slot_size;
     Type _type;
 };
-
-void to_json(nlohmann::json &serialized, const Slot &slot);

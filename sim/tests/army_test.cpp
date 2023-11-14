@@ -5,12 +5,35 @@
 
 TEST(Army, NoAmmoForMelee)
 {
-    // TODO check get_ammo
+    Army army(mock_army_improvements());
+    army.reinforce(Unit::spearman, 1);
+    army.reinforce(Unit::archer, 1);
+
+    std::map<Unit, int> expected{
+        {Unit::archer, UNITS_META[Unit::archer].ammo},
+    };
+    ASSERT_EQ(army.get_ammo(), expected);
+
+    std::map<Unit, float> expected_percentage{
+        {Unit::archer, 1},
+    };
+    ASSERT_EQ(army.get_ammo_percentage(), expected_percentage);
 }
 
-TEST(Army, ZeroPercentAmmoForRanged)
+TEST(Army, ZeroAmmoForRanged)
 {
-    // TODO check get_ammo_percentage
+    Army army(mock_army_improvements());
+    army.reinforce_no_ammo(Unit::archer, 1);
+
+    std::map<Unit, int> expected{
+        {Unit::archer, 0},
+    };
+    ASSERT_EQ(army.get_ammo(), expected);
+
+    std::map<Unit, float> expected_percentage{
+        {Unit::archer, 0},
+    };
+    ASSERT_EQ(army.get_ammo_percentage(), expected_percentage);
 }
 
 TEST(Army, BorrowMelee)

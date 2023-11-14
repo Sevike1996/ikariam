@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <nlohmann/json.hpp>
 #include <optional>
 
 #include "stat_loader.hpp"
@@ -9,8 +8,6 @@
 
 class Army
 {
-    using json = nlohmann::json;
-
 public:
     typedef struct Squad
     {
@@ -47,9 +44,9 @@ public:
 
     std::map<Unit, std::list<int>> get_first_healths() const;
 
-    json get_reserves() const;
-    json get_ammo_json() const;
-    json get_ammo_percentage() const;
+    std::map<Unit, int> get_reserves() const;
+    std::map<Unit, int> get_ammo() const;
+    std::map<Unit, float> get_ammo_percentage() const;
 
 private:
     std::optional<int> pop_first_health(Unit unit);

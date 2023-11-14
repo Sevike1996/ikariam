@@ -140,21 +140,21 @@ std::map<Unit, std::list<int>> Army::get_first_healths() const
     return _first_healths;
 }
 
-Army::json Army::get_reserves() const
+std::map<Unit, int> Army::get_reserves() const
 {
-    json serialized = json::object();
+    std::map<Unit, int> reserves;
     for (const auto& [type, pool] : _units) {
         auto count = pool.count - pool.used;
         if (count != 0) {
-            serialized[std::to_string(type)] = count;
+            reserves[type] = count;
         }
     }
-    return serialized;
+    return reserves;
 }
 
-Army::json Army::get_ammo_json() const
+std::map<Unit, int> Army::get_ammo() const
 {
-    json serialized = json::object();
+    std::map<Unit, int> ammo;
     for (std::size_t i = 0; i < _ammo_pools.size(); i++) {
         auto found = _units.find(static_cast<Unit>(i));
         if (found == _units.end()) {
@@ -167,14 +167,14 @@ Army::json Army::get_ammo_json() const
             continue;
         }
 
-        serialized[std::to_string(i)] = _ammo_pools[i];
+        ammo[static_cast<Unit>(i)] = _ammo_pools[i];
     }
-    return serialized;
+    return ammo;
 }
 
-Army::json Army::get_ammo_percentage() const
+std::map<Unit, float> Army::get_ammo_percentage() const
 {
-    json serialized = json::object();
+    std::map<Unit, float> ammo;
     for (std::size_t i = 0; i < _ammo_pools.size(); i++) {
         auto found = _units.find(static_cast<Unit>(i));
         if (found == _units.end()) {
@@ -188,7 +188,7 @@ Army::json Army::get_ammo_percentage() const
 
         auto max_ammo = found->second.count * found->second.stats.ammo;
         auto percentage = static_cast<float>(_ammo_pools[i]) / max_ammo;
-        serialized[std::to_string(i)] = percentage;
+        ammo[static_cast<Unit>(i)] = percentage;
     }
-    return serialized;
+    return ammo;
 }

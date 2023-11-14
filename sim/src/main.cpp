@@ -14,6 +14,20 @@
 
 using json = nlohmann::json;
 
+template<typename T>
+json map_to_json(T&& mapping)
+{
+    json converted = json::object();
+    for (auto [key, value] : mapping) {
+        if constexpr (std::is_enum_v<typename T::key_type>) {
+            converted[std::to_string(static_cast<int>(key))] = value;
+        } else {
+            converted[std::to_string(key)] = value;
+        }
+    }
+    return converted;
+}
+
 json to_ui_json(const BattleField& battlefield, std::string username, const std::shared_ptr<Army> army)
 {
     json serialized = json::object();
@@ -23,8 +37,8 @@ json to_ui_json(const BattleField& battlefield, std::string username, const std:
         serialized[Formation::FORMATION_NAMES[type]] = formation.to_json();
     }
 
-    serialized["ammo"] = army->get_ammo_percentage();
-    serialized["reserve"] = army->get_reserves();
+    serialized["ammo"] = map_to_json(army->get_ammo_percentage());
+    serialized["reserve"] = map_to_json(army->get_reserves());
     auto round_info = json::array();
     round_info.push_back(json::array(
         {username, battlefield.get_units_count() + army->get_units_count(), battlefield.get_losses_count()}));
@@ -50,8 +64,8 @@ json to_data_json(BattleField& battlefield, std::string username, std::shared_pt
     }
 
     serialized["healths"] = std::move(converted_healths);
-    serialized["units"] = army->get_reserves();
-    serialized["ammo"] = army->get_ammo_json();
+    serialized["units"] = map_to_json(army->get_reserves());
+    serialized["ammo"] = map_to_json(army->get_ammo());
 
     return serialized;
 }

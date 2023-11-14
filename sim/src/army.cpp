@@ -142,11 +142,11 @@ std::map<Unit, std::list<int>> Army::get_first_healths() const
 
 Army::json Army::get_reserves() const
 {
-    json serialized = json::array();
+    json serialized = json::object();
     for (const auto& [type, pool] : _units) {
         auto count = pool.count - pool.used;
         if (count != 0) {
-            serialized.push_back({type, count});
+            serialized[std::to_string(type)] = count;
         }
     }
     return serialized;

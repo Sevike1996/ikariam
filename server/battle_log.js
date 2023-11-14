@@ -507,12 +507,29 @@ class RoundDisplay {
     this.updateRoundNavButtons();
   }
 
+  static transformReserved(reserves) {
+    let transformed = []
+    for (let [unit, count] of Object.entries(reserves)) {
+      transformed.push([parseInt(unit), count]);
+    }
+    console.log(reserves)
+    console.log(transformed);
+    return transformed;
+  }
+
+  static transformRound(round) {
+    round.attacker.reserve = RoundDisplay.transformReserved(round.attacker.reserve);
+    round.defender.reserve = RoundDisplay.transformReserved(round.defender.reserve);
+    return round;
+  }
+
   async fetchRound() {
     if (typeof this.rounds[this.roundIndex] !== 'undefined') {
       return;
     }
     let response = await fetch(`/rounds?id=${this.battle.rounds[this.roundIndex]}`)
-    this.rounds[this.roundIndex] = await response.json();
+    response = await response.json();
+    this.rounds[this.roundIndex] = RoundDisplay.transformRound(response);
   }
 
   updateTitle() {

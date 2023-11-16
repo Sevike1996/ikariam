@@ -49,9 +49,9 @@ public:
     bool is_full() const;
 
     void fill_slot(const UnitMeta* meta, int count, int first_health, int& ammo_pool);
-    void fill(std::shared_ptr<Army> army);
-    void fill(std::shared_ptr<Army> army, Unit unit_type);
-    void drain_into(std::shared_ptr<Army> army);
+    void fill(Army& army);
+    void fill(Army& army, Unit unit_type);
+    void drain_into(Army& army);
 
 private:
     std::vector<Slot> _slots;

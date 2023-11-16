@@ -29,8 +29,8 @@ TEST(Formation, WrapAroundNextIndex) {
 }
 
 TEST(Formation, FillWithAmmo) {
-    auto army = std::make_shared<Army>(mock_army_improvements());
-    army->reinforce_no_ammo(Unit::archer, 1);
+    Army army(mock_army_improvements());
+    army.reinforce_no_ammo(Unit::archer, 1);
     Formation formation(Formation::long_range, 1, 1);
     formation.fill(army);
 
@@ -38,8 +38,8 @@ TEST(Formation, FillWithAmmo) {
 }
 
 TEST(Formation, NoFillWithoutAmmo) {
-    auto army = std::make_shared<Army>(mock_army_improvements());
-    army->reinforce_no_ammo(Unit::archer, 1);
+    Army army(mock_army_improvements());
+    army.reinforce_no_ammo(Unit::archer, 1);
     Formation formation(Formation::long_range, 1, 1);
     formation.fill(army);
 

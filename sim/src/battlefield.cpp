@@ -17,7 +17,7 @@ BattleField::BattleField(BattleFieldSize size):
     }
 }
 
-void BattleField::fill(std::shared_ptr<Army> army)
+void BattleField::fill(Army& army)
 {
     for (auto& formation : _formations)
     {
@@ -56,16 +56,6 @@ Formation& BattleField::get_formation(Formation::Type type)
 const Formation& BattleField::get_formation(Formation::Type type) const
 {
     return _formations[type];
-}
-
-void BattleField::set_army(std::shared_ptr<Army> army)
-{
-    _army = army;
-}
-
-const std::shared_ptr<Army> BattleField::get_army() const
-{
-    return _army;
 }
 
 BattleField::BattleFieldSize BattleField::get_size(int town_hall_level)

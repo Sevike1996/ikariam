@@ -22,16 +22,11 @@ public:
     };
 
     BattleField(BattleFieldSize size);
-    void fill(std::shared_ptr<Army> army);
-
-    void fill();
+    void fill(Army& army);
 
     bool can_defend() const;
     int get_units_count() const;
     int get_losses_count() const;
-
-    void set_army(std::shared_ptr<Army> army);
-    const std::shared_ptr<Army> get_army() const;
 
     void set_formation(Formation::Type type, Formation formation);
     Formation& get_formation(Formation::Type type);
@@ -46,6 +41,5 @@ private:
     bool has_spare(Formation::Type type) const;
 
     std::vector<Formation> _formations;
-    std::shared_ptr<Army> _army;
     BattleFieldSize _size;
 };

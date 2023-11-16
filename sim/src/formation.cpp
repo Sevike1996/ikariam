@@ -148,30 +148,30 @@ bool Formation::is_full() const
     return _slots.size() == _max_slot_count;
 }
 
-void Formation::drain_into(std::shared_ptr<Army> army)
+void Formation::drain_into(Army& army)
 {
     for (auto& slot : _slots) {
-        army->return_squad(slot.meta->type, slot.count, slot.first_health);
+        army.return_squad(slot.meta->type, slot.count, slot.first_health);
     }
     _slots.clear();
 }
 
-void Formation::fill(std::shared_ptr<Army> army)
+void Formation::fill(Army& army)
 {
     for (auto unit_type : getAcceptableUnits()) {
         fill(army, unit_type);
     }
 }
 
-void Formation::fill(std::shared_ptr<Army> army, Unit unit_type)
+void Formation::fill(Army& army, Unit unit_type)
 {
     while (!is_full()) {
-        auto squad = army->borrow_squad(unit_type, _slot_size);
+        auto squad = army.borrow_squad(unit_type, _slot_size);
         if (!squad.has_value()) {
             return;
         }
         auto [slot_allowance, first_health, meta] = squad.value();
-        int& ammo_pool = army->get_ammo_pool(unit_type);
+        int& ammo_pool = army.get_ammo_pool(unit_type);
 
         fill_slot(meta, slot_allowance, first_health, ammo_pool);
     }

@@ -8,8 +8,8 @@ TEST(Battlefield, FrontFill) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    auto army = std::make_shared<Army>(mock_army_improvements());
-    army->reinforce(Unit::spearman, 10);
+    Army army(mock_army_improvements());
+    army.reinforce(Unit::spearman, 10);
     BattleField battlefield(BattleField::mini);
     battlefield.fill(army);
 
@@ -22,8 +22,8 @@ TEST(Battlefield, FrontFlood) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    auto army = std::make_shared<Army>(mock_army_improvements());
-    army->reinforce(Unit::spearman, 100);
+    Army army(mock_army_improvements());
+    army.reinforce(Unit::spearman, 100);
     BattleField battlefield(BattleField::mini);
     battlefield.fill(army);
 
@@ -38,8 +38,8 @@ TEST(Battlefield, FrontFlankOverflow) {
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
-    auto army = std::make_shared<Army>(mock_army_improvements());
-    army->reinforce(Unit::spearman, 170);
+    Army army(mock_army_improvements());
+    army.reinforce(Unit::spearman, 170);
     BattleField battlefield(BattleField::small);
     battlefield.fill(army);
 
@@ -53,9 +53,9 @@ TEST(Battlefield, ArtilleryPrio) {
     int pool;
     const UnitMeta* mortar_meta = &(UNITS_META[Unit::mortar]);
 
-    auto army = std::make_shared<Army>(mock_army_improvements());
-    army->reinforce(Unit::mortar, 7);
-    army->reinforce(Unit::ram, 6);
+    Army army(mock_army_improvements());
+    army.reinforce(Unit::mortar, 7);
+    army.reinforce(Unit::ram, 6);
     BattleField battlefield(BattleField::small);
     battlefield.fill(army);
 

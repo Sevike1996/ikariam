@@ -133,13 +133,13 @@ TEST(Clash, RangedMelee)
     auto spearman_meta = &UNITS_META[Unit::spearman];
     auto archer_meta = &UNITS_META[Unit::archer];
 
-    auto top_army = std::make_shared<Army>(mock_army_improvements());
-    top_army->reinforce(Unit::spearman, 1);
+    Army top_army(mock_army_improvements());
+    top_army.reinforce(Unit::spearman, 1);
     BattleField top(BattleField::small);
     top.fill(top_army);
 
-    auto bottom_army = std::make_shared<Army>(mock_army_improvements());
-    bottom_army->reinforce(Unit::archer, 1);
+    Army bottom_army(mock_army_improvements());
+    bottom_army.reinforce(Unit::archer, 1);
     BattleField bottom(BattleField::small);
     bottom.fill(bottom_army);
 
@@ -158,34 +158,46 @@ TEST(Clash, RangedMelee)
     ASSERT_EQ(bottom.get_formation(Formation::long_range), bottom_expected);
 }
 
-TEST(Clash, NoDefendingUnits)
+TEST(Clash, DefenderCantFight)
 {
-    auto top_army = std::make_shared<Army>(mock_army_improvements());
-    top_army->reinforce(Unit::spearman, 1);
-    BattleField top(BattleField::small);
-    top.fill(top_army);
+    Army attacker(mock_army_improvements());
+    attacker.reinforce(Unit::spearman, 1);
 
-    auto bottom_army = std::make_shared<Army>(mock_army_improvements());
-    bottom_army->reinforce(Unit::ram, 1);
-    BattleField bottom(BattleField::small);
-    bottom.fill(bottom_army);
+    Army defender(mock_army_improvements());
+    defender.reinforce(Unit::ram, 1);
 
-    auto* winner = get_winner(bottom, bottom_army, top, top_army);
-    ASSERT_EQ(winner, &top);
+    ASSERT_EQ(get_winner(attacker, defender), ATTACKER);
 }
 
-TEST(Clash, Draw)
+TEST(Clash, AttackerCantFight)
 {
-    auto top_army = std::make_shared<Army>(mock_army_improvements());
-    top_army->reinforce(Unit::spearman, 1);
-    BattleField top(BattleField::small);
-    top.fill(top_army);
+    Army attacker(mock_army_improvements());
+    attacker.reinforce(Unit::ram, 1);
 
-    auto bottom_army = std::make_shared<Army>(mock_army_improvements());
-    bottom_army->reinforce(Unit::steam_giant, 1);
-    BattleField bottom(BattleField::small);
-    bottom.fill(bottom_army);
+    Army defender(mock_army_improvements());
+    defender.reinforce(Unit::spearman, 1);
 
-    auto* winner = get_winner(bottom, bottom_army, top, top_army);
-    ASSERT_EQ(winner, nullptr);
+    ASSERT_EQ(get_winner(attacker, defender), DEFENDER);
+}
+
+TEST(Clash, BothCanFight)
+{
+    Army attacker(mock_army_improvements());
+    attacker.reinforce(Unit::spearman, 1);
+
+    Army defender(mock_army_improvements());
+    defender.reinforce(Unit::steam_giant, 1);
+
+    ASSERT_EQ(get_winner(attacker, defender), NONE);
+}
+
+TEST(Clash, DefenderWinsDraw)
+{
+    Army attacker(mock_army_improvements());
+    attacker.reinforce(Unit::ram, 1);
+
+    Army defender(mock_army_improvements());
+    defender.reinforce(Unit::ram, 1);
+
+    ASSERT_EQ(get_winner(attacker, defender), DEFENDER);
 }

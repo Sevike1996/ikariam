@@ -27,7 +27,11 @@ BlobFS::BlobFS(fs::path base)
 
 std::string BlobFS::put(const std::string& data)
 {
-    auto uid = uuid::generate_uid();  // TODO make sure the uid doesn't already exists
+    std::string uid;
+    do {
+        uid = uuid::generate_uid();
+    } while (fs::exists(get_document_path(uid)));
+
     auto document = open(uid, std::ios::out);
     if (!document) {
         throw std::runtime_error("Failed to open blob file");

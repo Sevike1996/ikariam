@@ -74,12 +74,6 @@ json to_ui_json(const BattleField& battlefield, std::string username, const Army
 json to_data_json(BattleField& battlefield, std::string username, Army& army)
 {
     json serialized = json::object();
-    json healths = json::object();
-
-    for (auto type = 0; type < Formation::type_count; type++) {
-        auto& formation = battlefield.get_formation((Formation::Type)type);
-        formation.drain_into(army);
-    }
 
     std::map<Unit, std::list<int>> first_healths = army.get_first_healths();
     std::map<std::string, std::list<int>> converted_healths;
@@ -154,6 +148,9 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
     std::cout << ui_round.dump() << std::endl;
     db.store_round_ui(mission, ui_round.dump());
 
+    top->drain_into(*top_army);
+    bottom->drain_into(*bottom_army);
+
     json data_round = json::object();
     data_round["attacker"] = to_data_json(*top, db.getTownsUsername(mission.from), *top_army);
     data_round["defender"] = to_data_json(*bottom, db.getTownsUsername(mission.to), *bottom_army);
@@ -212,6 +209,9 @@ void update_mission_arrived(Database& db, const Mission mission)
     ui_round["background"] = 2; // TODO decide this better
     std::cout << ui_round.dump() << std::endl;
     db.store_round_ui(mission, ui_round.dump());
+
+    top.drain_into(*top_army);
+    bottom.drain_into(*bottom_army);
 
     json data_round = json::object();
     data_round["attacker"] = to_data_json(top, db.getTownsUsername(mission.from), *top_army);

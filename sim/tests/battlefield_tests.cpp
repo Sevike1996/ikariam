@@ -1,10 +1,11 @@
 #include "gtest/gtest.h"
 
-#include "battlefield.hpp"
 #include "army.hpp"
+#include "battlefield.hpp"
 #include "utils.hpp"
 
-TEST(Battlefield, FrontFill) {
+TEST(Battlefield, FrontFill)
+{
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
@@ -18,7 +19,8 @@ TEST(Battlefield, FrontFill) {
     ASSERT_EQ(battlefield.get_formation(Formation::front), expected);
 }
 
-TEST(Battlefield, FrontFlood) {
+TEST(Battlefield, FrontFlood)
+{
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
@@ -34,7 +36,8 @@ TEST(Battlefield, FrontFlood) {
     ASSERT_EQ(battlefield.get_formation(Formation::front), expected);
 }
 
-TEST(Battlefield, FrontFlankOverflow) {
+TEST(Battlefield, FrontFlankOverflow)
+{
     int pool;
     const UnitMeta* spearman_meta = &(UNITS_META[Unit::spearman]);
 
@@ -49,7 +52,8 @@ TEST(Battlefield, FrontFlankOverflow) {
     ASSERT_EQ(battlefield.get_formation(Formation::flank), expected);
 }
 
-TEST(Battlefield, ArtilleryPrio) {
+TEST(Battlefield, ArtilleryPrio)
+{
     int pool;
     const UnitMeta* mortar_meta = &(UNITS_META[Unit::mortar]);
 
@@ -64,4 +68,25 @@ TEST(Battlefield, ArtilleryPrio) {
     expected.fill_slot(mortar_meta, 1, mortar_meta->health, pool);
 
     ASSERT_EQ(battlefield.get_formation(Formation::artillery), expected);
+}
+
+TEST(Battlefield, FillAndDrain)
+{
+    Army army(mock_army_improvements());
+    army.reinforce(Unit::hoplite, 30);
+    army.reinforce(Unit::archer, 20);
+    army.reinforce(Unit::ram, 10);
+
+    BattleField battlefield(BattleField::small);
+    battlefield.fill(army);
+
+    ASSERT_TRUE(army.get_reserves().empty());
+
+    battlefield.drain_into(army);
+    std::map<Unit, int> expected = {
+        {Unit::hoplite, 30},
+        {Unit::archer, 20},
+        {Unit::ram, 10},
+    };
+    ASSERT_EQ(army.get_reserves(), expected);
 }

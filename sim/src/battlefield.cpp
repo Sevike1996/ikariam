@@ -25,6 +25,14 @@ void BattleField::fill(Army& army)
     }
 }
 
+void BattleField::drain_into(Army& army)
+{
+    for (auto& formation : _formations)
+    {
+        formation.drain_into(army);
+    }
+}
+
 int BattleField::get_units_count() const
 {
     int count = 0;

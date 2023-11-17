@@ -23,6 +23,7 @@ public:
 
     BattleField(BattleFieldSize size);
     void fill(Army& army);
+    void drain_into(Army& army);
 
     bool can_defend() const;
     int get_units_count() const;

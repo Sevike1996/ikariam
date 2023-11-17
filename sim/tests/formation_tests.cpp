@@ -46,3 +46,26 @@ TEST(Formation, NoFillWithoutAmmo) {
     ASSERT_TRUE(formation.is_empty());
 }
 
+TEST(Formation, FillAndDrain) {
+    Army army(mock_army_improvements());
+    army.reinforce_no_ammo(Unit::archer, 1);
+    Formation formation(Formation::long_range, 1, 1);
+    formation.fill(army);
+    formation.drain_into(army);
+
+    ASSERT_EQ(army.get_reserves()[Unit::archer], 1);
+}
+
+TEST(Formation, FillAndDrainKeepsHealth) {
+    std::list<int> first_healths{1,2,3};
+
+    Army army(mock_army_improvements());
+    army.reinforce_no_ammo(Unit::archer, 3);
+    army.set_first_health(Unit::archer, first_healths);
+
+    Formation formation(Formation::long_range, 3, 1);
+    formation.fill(army);
+    formation.drain_into(army);
+
+    ASSERT_EQ(army.get_first_healths()[Unit::archer], first_healths);
+}

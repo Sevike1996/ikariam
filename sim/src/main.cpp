@@ -110,9 +110,8 @@ void load_healths(json healths, Army& army)
 
 void load_units(json units, Army& army)
 {
-    for (json::iterator it = units.begin(); it != units.end(); ++it) {
-        const auto& [unit, count] = it->template get<std::array<int, 2>>();
-        army.reinforce_no_ammo(static_cast<Unit>(unit), count);
+    for (const auto& [unit, health] : units.items()) {
+        army.reinforce_no_ammo(static_cast<Unit>(std::stoi(unit)), std::move(health));
     }
 }
 

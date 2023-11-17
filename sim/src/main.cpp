@@ -109,20 +109,17 @@ void load_units(json units, Army& army)
     }
 }
 
-std::shared_ptr<BattleField> parse_round_side(json side, BattleField::BattleFieldSize battlefieldSize,
-    std::shared_ptr<Army> army)
+void parse_round_side(json side, Army& army)
 {
-    auto battlefield = std::make_shared<BattleField>(battlefieldSize);
     for (auto& [key, value] : side.items()) {
         if (key == "ammo") {
-            load_ammo(value, *army);
+            load_ammo(value, army);
         } else if (key == "healths") {
-            load_healths(value, *army);
+            load_healths(value, army);
         } else if (key == "units") {
-            load_units(value, *army);
+            load_units(value, army);
         }
     }
-    return battlefield;
 }
 
 void update_mission_in_battle(Database& db, const Mission& mission, std::string_view round_raw)
@@ -130,30 +127,33 @@ void update_mission_in_battle(Database& db, const Mission& mission, std::string_
     auto top_army = std::make_shared<Army>(StatLoader::load_stats(db, mission.from));
     auto bottom_army = std::make_shared<Army>(StatLoader::load_stats(db, mission.to));
 
-    auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
     json prev_round = json::parse(round_raw);
-    // todo load ammo
-    auto top = parse_round_side(prev_round["attacker"], size, top_army);
-    top->fill(*top_army);
-    auto bottom = parse_round_side(prev_round["defender"], size, bottom_army);
-    bottom->fill(*bottom_army);
+    parse_round_side(prev_round["attacker"], *top_army);
+    parse_round_side(prev_round["defender"], *bottom_army);
 
-    clash(*top, *bottom);
+    auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
+
+    BattleField top(size);
+    top.fill(*top_army);
+    BattleField bottom(size);
+    bottom.fill(*bottom_army);
+
+    clash(top, bottom);
 
     json ui_round = json::object();
-    ui_round["attacker"] = to_ui_json(*top, db.getTownsUsername(mission.from), *top_army);
-    ui_round["defender"] = to_ui_json(*bottom, db.getTownsUsername(mission.to), *bottom_army);
+    ui_round["attacker"] = to_ui_json(top, db.getTownsUsername(mission.from), *top_army);
+    ui_round["defender"] = to_ui_json(bottom, db.getTownsUsername(mission.to), *bottom_army);
     ui_round["date"] = datetime::to_string(mission.next_stage_time);
     ui_round["background"] = 2; // TODO decide this better
     std::cout << ui_round.dump() << std::endl;
     db.store_round_ui(mission, ui_round.dump());
 
-    top->drain_into(*top_army);
-    bottom->drain_into(*bottom_army);
+    top.drain_into(*top_army);
+    bottom.drain_into(*bottom_army);
 
     json data_round = json::object();
-    data_round["attacker"] = to_data_json(*top, db.getTownsUsername(mission.from), *top_army);
-    data_round["defender"] = to_data_json(*bottom, db.getTownsUsername(mission.to), *bottom_army);
+    data_round["attacker"] = to_data_json(top, db.getTownsUsername(mission.from), *top_army);
+    data_round["defender"] = to_data_json(bottom, db.getTownsUsername(mission.to), *bottom_army);
     data_round["date"] = datetime::to_string(mission.next_stage_time);
     std::cout << data_round.dump() << std::endl;
     db.store_round_data(mission, data_round.dump());

@@ -43,6 +43,10 @@ void to_json(nlohmann::json& serialized, const Slot& slot)
 
 void to_json(nlohmann::json& serialized, const Formation& formation)
 {
+    if (formation.is_empty()) {
+        serialized = json::array();
+        return;
+    }
     for (const auto& slot : formation.get_slots()) {
         serialized.push_back(json(slot));
     }

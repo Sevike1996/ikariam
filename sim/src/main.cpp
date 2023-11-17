@@ -186,6 +186,19 @@ void load_defending_units(std::shared_ptr<Army> army, Database& db, const Missio
     }
 }
 
+enum BattleBackgrounds
+{
+    OPEN_LAND, // more soliders then garrisson limit
+    SEA,
+    CITY_GATE, // less soliders then garrison limnit, even after walls have collapsed.
+    BARBARIANS,
+    REBELLION,
+};
+
+int get_background() {
+    return 0;
+}
+
 void update_mission_arrived(Database& db, const Mission mission)
 {
     // TODO receive db in this, will be needed when unit upgrade are a feature
@@ -194,6 +207,7 @@ void update_mission_arrived(Database& db, const Mission mission)
     load_attacking_units(top_army, db, mission);
     load_defending_units(bottom_army, db, mission);
 
+    // TODO use GarrissonEnforcer
     auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
     BattleField top(size);
     top.fill(*top_army);

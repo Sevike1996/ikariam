@@ -1,0 +1,2 @@
+friend invite and placement algorithm
+damage carry on when attacking and killing a unit

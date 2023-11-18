@@ -37,35 +37,35 @@ const std::vector<Unit> ACCEPTABLE_NAVAL_UNITS[BattleMeta::formation_count] = {
     {Unit::ram_ship},
 };
 
-BattleField::BattleFieldSize get_land_battlefield_size(const BuildingLevels& levels)
+BattleFieldSize get_land_battlefield_size(const BuildingLevels& levels)
 {
     int level = levels.town_hall;
     if (level <= 4) {
-        return BattleField::mini;
+        return BattleFieldSize::mini;
     } else if (level <= 9) {
-        return BattleField::small;
+        return BattleFieldSize::small;
     } else if (level <= 16) {
-        return BattleField::medium;
+        return BattleFieldSize::medium;
     } else if (level <= 24) {
-        return BattleField::large;
+        return BattleFieldSize::large;
     } else {
-        return BattleField::big;
+        return BattleFieldSize::big;
     }
 }
 
-BattleField::BattleFieldSize get_navel_battlefield_size(const BuildingLevels& levels)
+BattleFieldSize get_navel_battlefield_size(const BuildingLevels& levels)
 {
     int level = std::max(levels.trade_port, levels.shipyard);
     if (level <= 7) {
-        return BattleField::mini;
+        return BattleFieldSize::mini;
     } else if (level <= 14) {
-        return BattleField::small;
+        return BattleFieldSize::small;
     } else if (level <= 21) {
-        return BattleField::medium;
+        return BattleFieldSize::medium;
     } else if (level <= 28) {
-        return BattleField::large;
+        return BattleFieldSize::large;
     } else {
-        return BattleField::big;
+        return BattleFieldSize::big;
     }
 }
 
@@ -83,6 +83,7 @@ BattleMeta LandBattleMetaCalc::calc_battle_meta(const BuildingLevels& levels)
 {
     auto size = get_land_battlefield_size(levels);
     return BattleMeta{
+        size,
         BattleMeta::FormationSizes{LAND_FORMATIONS_SIZE[size]},
         BattleMeta::AcceptableUnits{ACCEPTABLE_LAND_UNITS},
         get_land_garrison_limit(levels),
@@ -93,6 +94,7 @@ BattleMeta NavalBattleMetaCalc::calc_battle_meta(const BuildingLevels& levels)
 {
     auto size = get_navel_battlefield_size(levels);
     return BattleMeta{
+        size,
         BattleMeta::FormationSizes{NAVAL_FORMATIONS_SIZE[size]},
         BattleMeta::AcceptableUnits{ACCEPTABLE_NAVAL_UNITS},
         get_naval_garrison_limit(levels),

@@ -19,7 +19,6 @@ CREATE TABLE `alpha_battles` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
     `mission_id` int NOT NULL,
     `start_time` bigint NOT NULL,
-    `battlefield_size` int NOT NULL,
     `winner` int(11),
     PRIMARY KEY (`id`, `mission_id`),
     FOREIGN KEY (`winner`) REFERENCES alpha_users(id),

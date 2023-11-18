@@ -51,7 +51,7 @@ const BATTLE_FIELDS = [
 
 function zip(a, b) {
   return a.map((k, i) => [k, b[i]]);
-} 
+}
 
 var battle = null;
 var battleField = null;
@@ -212,6 +212,7 @@ class Slot {
   }
 
   populate() {
+    this.element.innerHTML = "";
     for (let classes of Slot.ELEMENTS_CLASSES) {
       let element = document.createElement("div");
       element.classList.add(...classes);
@@ -487,6 +488,13 @@ class RoundDisplay {
     await this.fetchRound();
     let round = this.getRound();
 
+    console.log(round);
+    hideUnusedSlots(round.battlefield_size);
+    battleField = new BattleField(round.battlefield_size);
+    for (let sideNumber of Object.keys(SIDES)) {
+      populateSide(sideNumber);
+    }
+
     let roundInfoElement = document.getElementById("roundInfo");
     roundInfoElement.innerHTML = ''
 
@@ -580,7 +588,7 @@ class RoundDisplay {
 
 var display = null;
 
-function populateField(playerSide) {
+function populateSide(playerSide) {
   for (key of Object.keys(Layout.LAYOUTS)) {
     let layout = battleField.getLayout(playerSide, key);
     for (let slot of layout.getSlots()) {
@@ -601,18 +609,6 @@ function hideUnusedSlots(battlefieldSize) {
       }
     }
   }
-}
-
-function handleBattleData(battleData) {
-  battle = battleData;
-
-  hideUnusedSlots(battle.size);
-
-  battleField = new BattleField(battle.size);
-  for (let sideNumber of Object.keys(SIDES)) {
-    populateField(sideNumber);
-  }
-  display.showRound();
 }
 
 function displayInfoBox(infoBox, dims) {
@@ -696,9 +692,9 @@ function last() {
 
 function main(battleData) {
   display = new RoundDisplay(battleData)
-  // TODO add battleData class
-  handleBattleData(battleData);
+  battle = battleData;
   setup_hover_handlers();
+  display.showRound();
 }
 
 window.addEventListener("DOMContentLoaded", (event) => {

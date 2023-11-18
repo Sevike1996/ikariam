@@ -20,6 +20,14 @@ enum class BattleType
     NAVAL,
 };
 
+enum BattleFieldSize {
+    mini,
+    small,
+    medium,
+    large,
+    big,
+};
+
 struct SlotInfo {
     std::size_t amount;
     int size;
@@ -31,6 +39,7 @@ struct BattleMeta
     using FormationSizes = std::span<const SlotInfo, formation_count>;
     using AcceptableUnits = std::span<const std::vector<Unit>, formation_count>;
 
+    BattleFieldSize size;
     FormationSizes formations_size;
     AcceptableUnits acceptable_units;
     int garrison_limit;

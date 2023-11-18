@@ -137,7 +137,8 @@ void run_round(Database& db, const Mission& mission, const BuildingLevels& level
     ui_round["attacker"] = to_ui_json(attacking, db.getTownsUsername(mission.from), attacking_army);
     ui_round["defender"] = to_ui_json(defending, db.getTownsUsername(mission.to), defending_army);
     ui_round["date"] = datetime::to_string(mission.next_stage_time);
-    ui_round["background"] = 2; // TODO decide this better
+    ui_round["battlefield_size"] = battle_meta.size;
+    ui_round["background"] = 2;
     std::cout << ui_round.dump() << std::endl;
     db.store_round_ui(mission, ui_round.dump());
 
@@ -202,7 +203,7 @@ int get_background(Mission::Type mission_type, bool inside_garrison)
     }
 }
 
-void update_mission_arrived(Database& db, const Mission& mission)
+void update_mission_arrived(Database& db, const Mission mission)
 {
     BuildingLevels levels = db.get_buildings(mission.to);
     Army top_army(db.get_army_improvements(db.get_town_player_id(mission.from)));
@@ -247,9 +248,7 @@ __attribute__((weak)) int main()
 
         auto missions = db.get_missions_needing_update(Mission::State::EN_ROUTE);
         for (auto mission : missions) {
-            // Apparently the battlefield can change size mid-battle, and this is too much for a single commit
-            // TODO fix this and javascript
-            db.update_arrived(mission, BattleField::BattleFieldSize::mini);
+            db.update_arrived(mission);
         }
 
         // TODO remove old rounds from db

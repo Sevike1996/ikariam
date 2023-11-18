@@ -7,14 +7,6 @@
 class BattleField
 {
 public:
-    enum BattleFieldSize {
-        mini,
-        small,
-        medium,
-        large,
-        big,
-    };
-
     BattleField(const BattleMeta& battle_meta);
     void fill(Army& army);
     void drain_into(Army& army);

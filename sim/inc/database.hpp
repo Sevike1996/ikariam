@@ -33,14 +33,14 @@ public:
     void store_round_ui(const Mission& mission, const std::string& round);
     void store_round_data(const Mission& mission, const std::string& round);
 
-    void update_arrived(const Mission& mission, int battlefield_size);
+    void update_arrived(const Mission& mission);
 
     std::optional<std::string> get_last_round(const Mission& mission);
 
 private:
     void store_round(const Mission& mission, const std::string& round, std::string round_table_name);
 
-    void _create_battle(const Mission& mission, int battlefield_size);
+    void _create_battle(const Mission& mission);
 
     sql::Connection _conn;
     BlobFS _blobs;

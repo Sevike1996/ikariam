@@ -133,19 +133,19 @@ std::list<Mission> Database::get_missions_needing_update(Mission::State state)
     return missions;
 }
 
-void Database::update_arrived(const Mission& mission, int battlefield_size)
+void Database::update_arrived(const Mission& mission)
 {
     auto statement = _conn.create_statement();
     statement.execute("update alpha_missions set state = ?, next_stage_time = ? where id = ?",
                       Mission::State::IN_BATTLE, mission.next_stage_time + Mission::STAGE_INTERVAL, mission.id);
-    _create_battle(mission, battlefield_size);
+    _create_battle(mission);
 }
 
-void Database::_create_battle(const Mission& mission, int battlefield_size)
+void Database::_create_battle(const Mission& mission)
 {
     auto statement = _conn.create_statement();
-    statement.execute("INSERT INTO alpha_battles(mission_id, start_time, battlefield_size) VALUES(?, ?, ?)", mission.id,
-                      mission.next_stage_time, battlefield_size);
+    statement.execute("INSERT INTO alpha_battles(mission_id, start_time) VALUES(?, ?)", mission.id,
+                      mission.next_stage_time);
 }
 
 void Database::store_round_ui(const Mission& mission, const std::string& round_data)

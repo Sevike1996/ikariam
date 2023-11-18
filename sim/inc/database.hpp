@@ -3,11 +3,14 @@
 #include <ctime>
 #include <list>
 #include <optional>
+#include <memory>
 
 #include "blobfs/blobfs.hpp"
 #include "mission.hpp"
 #include "sql/connection.hpp"
 #include "unit.hpp"
+#include "battle_meta.hpp"
+#include "army.hpp"
 
 class Database
 {
@@ -18,8 +21,10 @@ public:
     std::list<std::tuple<Unit, int>> load_attacking_units(const Mission& mission);
 
     std::string getTownsUsername(int town_id);
+    int get_town_player_id(int town_id);
 
-    int get_town_hall_level(int town_id);
+    BuildingLevels get_buildings(int town_id);
+    std::unique_ptr<Army::Improvements> get_army_improvements(int town_id);
 
     std::list<Mission> get_missions_needing_update(Mission::State state);
 
@@ -31,8 +36,6 @@ public:
     void update_arrived(const Mission& mission, int battlefield_size);
 
     std::optional<std::string> get_last_round(const Mission& mission);
-
-    int get_wall_level(int town_id);
 
 private:
     void store_round(const Mission& mission, const std::string& round, std::string round_table_name);

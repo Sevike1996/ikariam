@@ -52,9 +52,9 @@ void ranged_melee_hit(BattleField& defending, Formation& attacking)
     }
 }
 
-bool has_spare(Army& army, Formation::Type type)
+bool has_spare(Army& army, const Formation::AcceptableUnits& acceptable_units)
 {
-    for (auto unit_type : Formation::ACCEPTABLE_UNITS[type]) {
+    for (auto unit_type : acceptable_units) {
         if (army.get_spare_count(unit_type) != 0) {
             return true;
         }
@@ -62,11 +62,11 @@ bool has_spare(Army& army, Formation::Type type)
     return false;
 }
 
-bool can_fight(Army& army)
+bool can_fight(Army& army, BattleMeta& meta)
 {
     Formation::Type DEFENDING_FROMATION_TYPES[] = {Formation::front, Formation::flank, Formation::long_range};
     for (auto type : DEFENDING_FROMATION_TYPES) {
-        if (has_spare(army, type)) {
+        if (has_spare(army, meta.acceptable_units[type])) {
             return true;
         }
     }
@@ -74,12 +74,12 @@ bool can_fight(Army& army)
     return false;
 }
 
-Winner get_winner(Army& attacker, Army& defender)
+Winner get_winner(Army& attacker, Army& defender, BattleMeta& meta)
 {
     // even in case of draw, we want the attacker to fail.
-    if (!can_fight(attacker)) {
+    if (!can_fight(attacker, meta)) {
         return DEFENDER;
-    } else if (!can_fight(defender)) {
+    } else if (!can_fight(defender, meta)) {
         return ATTACKER;
     }
     return NONE;

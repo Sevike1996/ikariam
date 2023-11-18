@@ -1,6 +1,4 @@
 #include <algorithm>
-#include <iostream>
-#include <iterator>
 
 #include "formation.hpp"
 
@@ -11,16 +9,6 @@ const std::vector<std::string> Formation::FORMATION_NAMES = {
     "range",
     "front",
     "flank",
-};
-
-const std::vector<Unit> Formation::ACCEPTABLE_UNITS[] = {
-    {Unit::gyrocopter},
-    {Unit::bombardier},
-    {Unit::mortar, Unit::catapult, Unit::ram},
-    {Unit::carbineer, Unit::archer, Unit::slinger},
-    {Unit::wall, Unit::hoplite, Unit::steam_giant, Unit::spearman, Unit::swordsman, Unit::slinger, Unit::carbineer,
-        Unit::archer},
-    {Unit::swordsman, Unit::spearman},
 };
 
 static const std::vector<Formation::Type> ATTACK_ORDER[] = {
@@ -34,19 +22,21 @@ static const std::vector<Formation::Type> ATTACK_ORDER[] = {
 
 static bool compare_slot_count(const Slot& a, const Slot& b);
 
-Formation::Formation(Type formationType, std::size_t max_slot_count, int slot_size)
-    : _max_slot_count(max_slot_count), _slot_size(slot_size), _type(formationType)
+Formation::Formation(Type formationType, std::size_t max_slot_count, int slot_size,
+    const AcceptableUnits& acceptable_units)
+    : _max_slot_count(max_slot_count), _slot_size(slot_size), _type(formationType), _acceptable_units(acceptable_units)
 {
 }
 
 Formation::Formation(const Formation& other)
-    : _slots(other._slots), _max_slot_count(other._max_slot_count), _slot_size(other._slot_size), _type(other._type)
+    : _slots(other._slots), _max_slot_count(other._max_slot_count), _slot_size(other._slot_size), _type(other._type),
+      _acceptable_units(other._acceptable_units)
 {
 }
 
-const std::vector<Unit>& Formation::getAcceptableUnits() const
+const Formation::AcceptableUnits& Formation::getAcceptableUnits() const
 {
-    return ACCEPTABLE_UNITS[_type];
+    return _acceptable_units;
 }
 
 const std::vector<Formation::Type>& Formation::get_attack_order() const
@@ -71,11 +61,6 @@ static bool compare_slot_count(const Slot& a, const Slot& b)
 std::size_t Formation::size() const
 {
     return _slots.size();
-}
-
-Formation::Type Formation::get_type() const
-{
-    return _type;
 }
 
 int Formation::get_units_count() const

@@ -2,13 +2,22 @@
 
 #include <memory>
 #include <optional>
+#include <array>
+#include <list>
 
-#include "stat_loader.hpp"
 #include "unit.hpp"
 
 class Army
 {
 public:
+    struct UnitIprovments
+    {
+        int damage_bonus;
+        int armor_bonus;
+    };
+    // Not yet supported in the server
+    using Improvements = std::array<UnitIprovments, Unit::type_count>;
+
     typedef struct Squad
     {
         int count;
@@ -16,7 +25,7 @@ public:
         UnitMeta* stats;
     } Squad;
 
-    Army(std::unique_ptr<ArmyImprovements> stat_loader);
+    Army(std::unique_ptr<Improvements> stat_loader, int wall_level = 0);
 
     void eliminate_dead(Unit unit, int died);
 

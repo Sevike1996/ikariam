@@ -1,10 +1,10 @@
 #include "army.hpp"
 
-Army::Army(std::unique_ptr<ArmyImprovements> army_improvements) : _ammo_pools{0}
+Army::Army(std::unique_ptr<Improvements> army_improvements, int wall_level) : _ammo_pools{0}
 {
     for (size_t i = 0; i < static_cast<size_t>(Unit::type_count); i++) {
         if (i == Unit::wall) {
-            _stats[i] = get_wall_meta(army_improvements->wall_level);
+            _stats[i] = get_wall_meta(wall_level);
         } else {
             _stats[i] = UNITS_META[i];
         }

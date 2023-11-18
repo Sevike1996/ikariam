@@ -23,9 +23,9 @@ struct Mission {
         DEFEND,
         DEFEND_PORT,
         PLUNDER,
+        PLUNDER_BARBARIANS,
         OCCUPY_TOWN,
         OCCUPY_PORT,
-        CAPTURING_PORT,
     };
 
     int id;

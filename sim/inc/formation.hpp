@@ -23,17 +23,16 @@ public:
     };
 
     static const std::vector<std::string> FORMATION_NAMES;
-    static const std::vector<Unit> ACCEPTABLE_UNITS[];
+    using AcceptableUnits = std::vector<Unit>;
 
-    Formation(Type formationType, std::size_t max_slot_count, int slot_size);
+    Formation(Type formationType, std::size_t max_slot_count, int slot_size, const AcceptableUnits& acceptable_units);
     Formation(const Formation& other);
 
-    const std::vector<Unit>& getAcceptableUnits() const;
+    const AcceptableUnits& getAcceptableUnits() const;
     const std::vector<Formation::Type>& get_attack_order() const;
 
     std::size_t get_biggest_slot_size() const;
     std::size_t size() const;
-    Type get_type() const;
     int get_units_count() const;
     int get_losses_count() const;
 
@@ -58,4 +57,5 @@ private:
     std::size_t _max_slot_count;
     int _slot_size;
     Type _type;
+    const AcceptableUnits& _acceptable_units;
 };

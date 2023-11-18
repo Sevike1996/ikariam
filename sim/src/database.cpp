@@ -64,19 +64,41 @@ Mission Database::load_mission(int mission_id)
     mission.from = std::any_cast<int>(row["from"]);
     mission.to = std::any_cast<int>(row["to"]);
     mission.state = static_cast<Mission::State>(std::any_cast<int>(row["state"]));
+    mission.type = static_cast<Mission::Type>(std::any_cast<int>(row["type"]));
     mission.next_stage_time = std::any_cast<long long>(row["next_stage_time"]);
 
     return mission;
 }
-
-int Database::get_town_hall_level(int town_id)
+int Database::get_town_player_id(int town_id)
 {
     std::stringstream query;
-    query << "SELECT pos0_level FROM alpha_towns where id = " << town_id << +";";
+    query << "SELECT user_id FROM alpha_towns where id = " << town_id << +";";
+    sql::Result res = _conn.query(query.str());
+    auto row = res[0];
+    return std::any_cast<int>(row["user_id"]);
+}
+
+BuildingLevels Database::get_buildings(int town_id)
+{
+    std::stringstream query;
+    // TODO load pos1, pos2 (ports/shipyards)
+    query << "SELECT pos0_level, pos14_level FROM alpha_towns where id = " << town_id << +";";
     sql::Result res = _conn.query(query.str());
 
     auto row = res[0];
-    return std::any_cast<int>(row["pos0_level"]);
+    return BuildingLevels{
+        std::any_cast<int>(row["pos0_level"]),
+        std::any_cast<int>(row["pos14_level"]),
+        0,
+        0,
+    };
+}
+
+
+std::unique_ptr<Army::Improvements> Database::get_army_improvements(int town_id)
+{
+    auto stats = std::make_unique<Army::Improvements>();
+    return stats;
 }
 
 std::string Database::getTownsUsername(int town_id)
@@ -98,7 +120,7 @@ std::list<Mission> Database::get_missions_needing_update(Mission::State state)
     auto statement = _conn.create_statement();
     statement.execute(
         "select id from alpha_missions where next_stage_time < now() and state = ? and type between ? and ?", state,
-        Mission::Type::PLUNDER, Mission::Type::CAPTURING_PORT);
+        Mission::Type::PLUNDER, Mission::Type::OCCUPY_PORT);
     auto result = statement.result();
 
     auto count = result.row_count();
@@ -165,13 +187,4 @@ std::optional<std::string> Database::get_last_round(const Mission& mission)
 
     auto round_path = std::any_cast<std::string>(result[0]["round_path"]);
     return _blobs.get(round_path);
-}
-
-int Database::get_wall_level(int town_id)
-{
-    auto statement = _conn.create_statement();
-    statement.execute("SELECT pos14_level FROM alpha_towns where id =  ?", town_id);
-    auto result = statement.result();
-    auto row = result[0];
-    return std::any_cast<int>(row["pos14_level"]);
 }

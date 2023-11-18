@@ -1,9 +1,9 @@
 #include <iostream>
 #include <map>
 #include <mysql/mysql.h>
-#include <stdio.h>
 #include <string>
 
+#include "battle_meta_calc.hpp"
 #include "battlefield.hpp"
 #include "clash.hpp"
 #include "database.hpp"
@@ -122,13 +122,13 @@ void parse_round_side(json side, Army& army)
     }
 }
 
-void run_round(Database& db, const Mission& mission, Army& attacking_army, Army& defending_army)
+void run_round(Database& db, const Mission& mission, const BuildingLevels& levels, Army& attacking_army, Army& defending_army)
 {
-    auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
+    auto battle_meta = create_battle_meta_calc(BattleType::LAND)->calc_battle_meta(levels);
 
-    BattleField attacking(size);
+    BattleField attacking(battle_meta);
     attacking.fill(attacking_army);
-    BattleField defending(size);
+    BattleField defending(battle_meta);
     defending.fill(defending_army);
 
     clash(attacking, defending);
@@ -152,18 +152,6 @@ void run_round(Database& db, const Mission& mission, Army& attacking_army, Army&
     db.store_round_data(mission, data_round.dump());
 }
 
-void update_mission_in_battle(Database& db, const Mission& mission, std::string_view round_raw)
-{
-    Army top_army(StatLoader::load_stats(db, mission.from));
-    Army bottom_army(StatLoader::load_stats(db, mission.to));
-
-    json prev_round = json::parse(round_raw);
-    parse_round_side(prev_round["attacker"], top_army);
-    parse_round_side(prev_round["defender"], bottom_army);
-
-    run_round(db, mission, top_army, bottom_army);
-}
-
 void load_attacking_units(Army& army, Database& db, const Mission& mission)
 {
     auto units = db.load_attacking_units(mission);
@@ -179,10 +167,10 @@ void load_defending_units(Army& army, Database& db, const Mission& mission)
         army.reinforce(type, count);
     }
 
-    auto wall_level = db.get_wall_level(mission.to);
-    if (wall_level != 0) {
-        auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
-        int wall_count = BattleField::BATTLE_FIELD_SIZES[size][Formation::Type::front].amount;
+    BuildingLevels levels = db.get_buildings(mission.to);
+    if (levels.wall != 0 && (mission.type == Mission::Type::PLUNDER || mission.type == Mission::Type::OCCUPY_TOWN)) {
+        auto battle_meta = LandBattleMetaCalc().calc_battle_meta(levels);
+        int wall_count = battle_meta.formations_size[Formation::Type::front].amount;
         army.reinforce(Unit::wall, wall_count);
     }
 }
@@ -196,22 +184,51 @@ enum BattleBackgrounds
     REBELLION,
 };
 
-int get_background() {
-    return 0;
+int get_background(Mission::Type mission_type, bool inside_garrison)
+{
+    switch (mission_type) {
+    case Mission::Type::OCCUPY_PORT:
+    case Mission::Type::DEFEND_PORT:
+        return BattleBackgrounds::SEA;
+    case Mission::Type::PLUNDER:
+    case Mission::Type::OCCUPY_TOWN:
+        return inside_garrison ? BattleBackgrounds::CITY_GATE : BattleBackgrounds::OPEN_LAND;
+    case Mission::Type::PLUNDER_BARBARIANS:
+        return BattleBackgrounds::BARBARIANS;
+    case Mission::Type::DEFEND:
+        return BattleBackgrounds::REBELLION;
+    default:
+        return OPEN_LAND;
+    }
 }
 
-void update_mission_arrived(Database& db, const Mission mission)
+void update_mission_arrived(Database& db, const Mission& mission)
 {
-    Army top_army(StatLoader::load_stats(db, mission.from));
-    Army bottom_army(StatLoader::load_stats(db, mission.to));
+    BuildingLevels levels = db.get_buildings(mission.to);
+    Army top_army(db.get_army_improvements(db.get_town_player_id(mission.from)));
+    Army bottom_army(db.get_army_improvements(db.get_town_player_id(mission.to)), levels.wall);
 
     load_attacking_units(top_army, db, mission);
     load_defending_units(bottom_army, db, mission);
 
-    run_round(db, mission, top_army, bottom_army);
+    run_round(db, mission, levels, top_army, bottom_army);
 
     // TODO while (!winner and !next_time > current_time)
 }
+
+void update_mission_in_battle(Database& db, const Mission& mission, std::string_view round_raw)
+{
+    BuildingLevels levels = db.get_buildings(mission.to);
+    Army top_army(db.get_army_improvements(db.get_town_player_id(mission.from)));
+    Army bottom_army(db.get_army_improvements(db.get_town_player_id(mission.to)), levels.wall);
+
+    json prev_round = json::parse(round_raw);
+    parse_round_side(prev_round["attacker"], top_army);
+    parse_round_side(prev_round["defender"], bottom_army);
+
+    run_round(db, mission, levels, top_army, bottom_army);
+}
+
 
 void update_mission(Database& db, const Mission& m)
 {
@@ -230,8 +247,9 @@ __attribute__((weak)) int main()
 
         auto missions = db.get_missions_needing_update(Mission::State::EN_ROUTE);
         for (auto mission : missions) {
-            auto size = BattleField::get_size(db.get_town_hall_level(mission.to));
-            db.update_arrived(mission, size);
+            // Apparently the battlefield can change size mid-battle, and this is too much for a single commit
+            // TODO fix this and javascript
+            db.update_arrived(mission, BattleField::BattleFieldSize::mini);
         }
 
         // TODO remove old rounds from db
